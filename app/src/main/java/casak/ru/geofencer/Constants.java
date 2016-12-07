@@ -1,6 +1,7 @@
 package casak.ru.geofencer;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.HashMap;
 
@@ -30,6 +31,17 @@ public class Constants {
 
     public static final String GEOFENCES_ADDED_KEY = PACKAGE_NAME + ".GEOFENCES_ADDED_KEY";
 
+    //Rectangle field corners
+    public static final Integer NORTH_EAST = 0;
+    public static final Integer SOUTH_EAST = 1;
+    public static final Integer SOUTH_WEST = 2;
+    public static final Integer NORTH_WEST = 3;
+
+
+    //TODO delete this shit
+    public static final double HEADING = SphericalUtil.computeHeading(
+            new LatLng(50.097119d, 30.124142d), new LatLng(50.099563d, 30.127152d)) - 90;
+
     /**
      * Used to set an expiration time for a geofence. After this amount of time Location Services
      * stops tracking the geofence.
@@ -54,5 +66,6 @@ public class Constants {
         // Googleplex.
         BAY_AREA_LANDMARKS.put("GOOGLE", new LatLng(37.422611,-122.0840577));
 
+        BAY_AREA_LANDMARKS.put("HOME", new LatLng(50.430705,30.422127));
     }
 }
