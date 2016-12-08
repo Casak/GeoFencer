@@ -29,6 +29,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import casak.ru.geofencer.R;
 
@@ -43,9 +47,12 @@ public class LocationService extends Service implements ResultCallback<LocationS
 
 
     private boolean isEnabledGPS = false;
+    private boolean isMoving = false;
+    private boolean isCreatingRoute = false;
     private Location currentLocation;
     private Context mContext;
     private LocationRequest mLocationRequest;
+    private List<LatLng> route = new LinkedList<>();
 
     public LocationService(final Context context, GoogleApiClient googleApiClient) throws Exception {
         this.mContext = context;
@@ -107,7 +114,21 @@ public class LocationService extends Service implements ResultCallback<LocationS
     }
 
     public boolean isMoving() {
-        return false;
+        return isMoving;
+    }
+
+
+    public void startRecordRoute(){
+        route = new LinkedList<>();
+        isCreatingRoute = true;
+    }
+
+    public void stopRecordRoute(){
+        isCreatingRoute = false;
+    }
+
+    public List<LatLng> getRoute(){
+        return route;
     }
 
     //TODO listeners
@@ -150,12 +171,24 @@ public class LocationService extends Service implements ResultCallback<LocationS
 
     @Override
     public void onLocationChanged(Location location) {
+        if(currentLocation != null && currentLocation == location) {
+            isMoving = false;
+            return;
+        }
+        isMoving = true;
         currentLocation = location;
+
+        if(isCreatingRoute){
+            LatLng currentLocation = new LatLng(currentLocation().getLatitude(),
+                    currentLocation().getLongitude());
+            route.add(currentLocation);
+        }
         Log.d("TAG", "Current location = " + location.getLatitude() +
                 ", " + location.getLongitude());
         Toast.makeText(mContext, "Current location = " + location.getLatitude() +
                 ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data, GoogleApiClient googleApiClient) {
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {

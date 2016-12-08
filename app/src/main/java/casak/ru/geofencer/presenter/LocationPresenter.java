@@ -99,8 +99,6 @@ public class LocationPresenter implements ILocationPresenter, ResultCallback<Loc
         }
     }
 
-
-
     @Override
     public boolean isConnected() {
         return isEnabledGPS;
@@ -162,10 +160,5 @@ public class LocationPresenter implements ILocationPresenter, ResultCallback<Loc
                 ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data, GoogleApiClient googleApiClient) {
-        if(requestCode == 1000 && resultCode == Activity.RESULT_OK){
-            checkGPS(googleApiClient);
-        }
-    }
+
 }

@@ -25,11 +25,13 @@ public class Constants {
     private Constants() {
     }
 
+    public static final Integer WIDTH_METERS = 20;
+
     //Rectangle field corners
-    public static final Integer NORTH_EAST = 0;
-    public static final Integer SOUTH_EAST = 1;
-    public static final Integer SOUTH_WEST = 2;
-    public static final Integer NORTH_WEST = 3;
+    public static final Integer NORTH_WEST = 0;
+    public static final Integer SOUTH_WEST = 1;
+    public static final Integer SOUTH_EAST = 2;
+    public static final Integer NORTH_EAST = 3;
 
 
     //TODO delete this shit
