@@ -25,8 +25,8 @@ import java.lang.ref.WeakReference;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.presenter.LocationPresenter;
 import casak.ru.geofencer.presenter.MapPresenter;
-import casak.ru.geofencer.presenter.interfaces.ILocationPresenter;
 import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
+import casak.ru.geofencer.service.LocationService;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -43,7 +43,7 @@ public class MapActivity extends AppCompatActivity implements GoogleApiClient.Co
     private GoogleApiClient mGoogleApiClient;
     //TODO Inject
     private IMapPresenter mapPresenter;
-    private ILocationPresenter locationPresenter;
+    private LocationService locationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class MapActivity extends AppCompatActivity implements GoogleApiClient.Co
         }
 
         try {
-            locationPresenter = new LocationPresenter(this, mGoogleApiClient);
+            locationService = new LocationService(this, mGoogleApiClient);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,7 +125,7 @@ public class MapActivity extends AppCompatActivity implements GoogleApiClient.Co
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        locationPresenter.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
+        locationService.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
         super.onActivityResult(requestCode, resultCode, data);
 
     }
