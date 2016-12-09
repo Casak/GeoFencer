@@ -174,8 +174,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         route.add(latLng2);
         route.add(latLng3);
         if (route != null && route.size() > 1) {
-            Polygon leftField = createField(route.get(0), route.get(route.size()-1), Constants.WIDTH_METERS, true);
-            Polygon rightField = createField(route.get(0), route.get(route.size()-1), Constants.WIDTH_METERS, false);
+            Polygon leftField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, true);
+            Polygon rightField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, false);
             leftField.setClickable(true);
             rightField.setClickable(true);
 
@@ -185,8 +185,9 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
             harvestedPolygon = mGoogleMap
                     .addPolygon(MapsUtils.harvestedPolygonOptions(routePolyline)
-                    .fillColor(Color.BLUE)
-                    .strokeColor(Color.BLUE));
+                            .fillColor(Color.BLUE)
+                            .strokeColor(Color.BLUE)
+                            .geodesic(true));
 
             addHeatMap(routePolyline);
 
@@ -202,14 +203,14 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
                 .geodesic(true));
     }
 
-    private List<Polyline> createPolylines(Polyline oldPolyline, double heading){
+    private List<Polyline> createPolylines(Polyline oldPolyline, double heading) {
         List<Polyline> polylines = new LinkedList<>();
         polylines.add(oldPolyline);
 
         List<LatLng> oldPolylineList = oldPolyline.getPoints();
         //TODO Normal check
         LatLng start = oldPolylineList.get(0);
-        LatLng end = oldPolylineList.get(oldPolylineList.size()-1);
+        LatLng end = oldPolylineList.get(oldPolylineList.size() - 1);
 
         double currentHeading = SphericalUtil.computeHeading(start, end) + heading;
 

@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import casak.ru.geofencer.Constants;
@@ -91,5 +92,35 @@ public class MapsUtils {
                         .bearing(Float.parseFloat(SphericalUtil.computeHeading(start, end)+""))
                         .build()
         );
+    }
+
+    public static PolygonOptions harvestedPolygonOptions(Polyline route){
+        List<LatLng> points = route.getPoints();
+        List<LatLng> upperBound = new LinkedList<>();
+        List<LatLng> bottomBound = new LinkedList<>();
+        List<LatLng> fullArea = new LinkedList<>();
+
+        if(points.size() > 1) {
+            LatLng start = points.get(0);
+            LatLng end = points.get(points.size()-1);
+            double heading = SphericalUtil.computeHeading(start, end);
+
+            for (LatLng point : points) {
+                upperBound.add(SphericalUtil.computeOffset(point,
+                        Constants.WIDTH_METERS / 2,
+                        heading + 90));
+                bottomBound.add(SphericalUtil.computeOffset(point,
+                        Constants.WIDTH_METERS / 2,
+                        heading - 90));
+            }
+            fullArea.addAll(upperBound);
+            for (int i = bottomBound.size()-1; i >= 0; i--)
+                fullArea.add(bottomBound.get(i));
+            //TODO Handle this shit as a man
+            if(fullArea.size() % 2 != 0)
+                return null;
+            return new PolygonOptions().add(fullArea.toArray(new LatLng[fullArea.size()]));
+        }
+        return null;
     }
 }
