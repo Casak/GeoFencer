@@ -175,9 +175,9 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         route.add(latLng3);
         if (route != null && route.size() > 1) {
             Polygon leftField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, true);
-            Polygon rightField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, false);
+//            Polygon rightField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, false);
             leftField.setClickable(true);
-            rightField.setClickable(true);
+//            rightField.setClickable(true);
 
             mGoogleMap.moveCamera(MapsUtils.polygonToCameraUpdate(leftField));
 
@@ -192,7 +192,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
             addHeatMap(routePolyline);
 
             createPolylines(routePolyline, Constants.HEADING_TO_LEFT);
-            createPolylines(routePolyline, Constants.HEADING_TO_RIGHT);
+//            createPolylines(routePolyline, Constants.HEADING_TO_RIGHT);
         }
     }
 
@@ -204,34 +204,51 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     }
 
     private List<Polyline> createPolylines(Polyline oldPolyline, double heading) {
-        List<Polyline> polylines = new LinkedList<>();
-        polylines.add(oldPolyline);
+        List<Polyline> routes = new LinkedList<>();
+        routes.add(oldPolyline);
 
         List<LatLng> oldPolylineList = oldPolyline.getPoints();
         //TODO Normal check
         LatLng start = oldPolylineList.get(0);
         LatLng end = oldPolylineList.get(oldPolylineList.size() - 1);
 
-        double currentHeading = SphericalUtil.computeHeading(start, end) + heading;
+        double computedHeading = SphericalUtil.computeHeading(start, end);
+        double normalHeading = computedHeading + heading;
+        double backwardHeading = computedHeading + 180;
 
         int transparentColor = 0x9FFF00FF;
+        boolean first = true;
         for (int i = 0; i < 4; i++) {
             transparentColor = transparentColor - 0x20000000;
-            Polyline polyline1 = polylines.get(i);
-            List<LatLng> oldPoints = polyline1.getPoints();
-            LatLng[] points =
-                    MapsUtils.computeNewPath(polyline1, Constants.WIDTH_METERS, currentHeading)
-                            .toArray(new LatLng[oldPoints.size()]);
 
+            Polyline path = routes.get(i);
 
-            polylines.add(
+            List<LatLng> resultPoints = MapsUtils.computeNewPath(path,
+                    Constants.WIDTH_METERS,
+                    normalHeading);
+
+            List<LatLng> points = new LinkedList<>();
+            if (first)
+                points.add(SphericalUtil.computeOffset(resultPoints.get(0),
+                        Constants.WIDTH_METERS*2,
+                        backwardHeading));
+
+            points.addAll(resultPoints);
+            if (first) {
+                first = false;
+                points.add(SphericalUtil.computeOffset(resultPoints.get(resultPoints.size() - 1),
+                        Constants.WIDTH_METERS*2,
+                        computedHeading));
+            }
+
+            routes.add(
                     mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(points)
                             .color(transparentColor)
                             .width(5)
                             .geodesic(true)
                     ));
         }
-        return polylines;
+        return routes;
     }
 
 
