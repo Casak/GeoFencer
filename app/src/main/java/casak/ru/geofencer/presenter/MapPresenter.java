@@ -1,10 +1,10 @@
 package casak.ru.geofencer.presenter;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +20,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,9 +32,7 @@ import casak.ru.geofencer.Constants;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.service.LocationService;
 import casak.ru.geofencer.util.MapsUtils;
-import casak.ru.geofencer.model.Field;
 import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
-import casak.ru.geofencer.view.MapActivity;
 
 /**
  * Created by Casak on 08.12.2016.
@@ -47,6 +48,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     private LocationService locationService;
     private List<LatLng> route;
     private Polyline routePolyline;
+    private Polygon harvestedPolygon;
+    private TileOverlay heatMap;
     private GoogleApiClient mGoogleApiClient;
 
     public MapPresenter(Context context) {
@@ -180,8 +183,15 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
             routePolyline = mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(route));
 
-            createPolylines(routePolyline, true);
-            createPolylines(routePolyline, false);
+            harvestedPolygon = mGoogleMap
+                    .addPolygon(MapsUtils.harvestedPolygonOptions(routePolyline)
+                    .fillColor(Color.BLUE)
+                    .strokeColor(Color.BLUE));
+
+            addHeatMap(routePolyline);
+
+            createPolylines(routePolyline, Constants.HEADING_TO_LEFT);
+            createPolylines(routePolyline, Constants.HEADING_TO_RIGHT);
         }
     }
 
@@ -192,7 +202,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
                 .geodesic(true));
     }
 
-    private List<Polyline> createPolylines(Polyline oldPolyline, boolean toLeft){
+    private List<Polyline> createPolylines(Polyline oldPolyline, double heading){
         List<Polyline> polylines = new LinkedList<>();
         polylines.add(oldPolyline);
 
@@ -201,30 +211,36 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         LatLng start = oldPolylineList.get(0);
         LatLng end = oldPolylineList.get(oldPolylineList.size()-1);
 
-        double heading = SphericalUtil.computeHeading(start, end);
+        double currentHeading = SphericalUtil.computeHeading(start, end) + heading;
 
-        if(toLeft){
-            heading -= 90;
-        }
-        else{
-            heading += 90;
-        }
-
+        int transparentColor = 0x9FFF00FF;
         for (int i = 0; i < 4; i++) {
-
+            transparentColor = transparentColor - 0x20000000;
             Polyline polyline1 = polylines.get(i);
             List<LatLng> oldPoints = polyline1.getPoints();
             LatLng[] points =
-                    MapsUtils.computeNewPath(polyline1, Constants.WIDTH_METERS, heading).toArray(new LatLng[oldPoints.size()]);
+                    MapsUtils.computeNewPath(polyline1, Constants.WIDTH_METERS, currentHeading)
+                            .toArray(new LatLng[oldPoints.size()]);
+
 
             polylines.add(
                     mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(points)
-                            .color(0x7FFF00FF)
+                            .color(transparentColor)
                             .width(5)
                             .geodesic(true)
                     ));
         }
         return polylines;
+    }
+
+
+    private void addHeatMap(Polyline path) {
+        List<LatLng> list = path.getPoints();
+        HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
+                .data(list)
+                .radius(10)
+                .build();
+        heatMap = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
     }
 
     @Override

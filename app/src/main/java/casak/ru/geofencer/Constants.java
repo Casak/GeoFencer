@@ -26,6 +26,9 @@ public class Constants {
     }
 
     public static final Integer WIDTH_METERS = 20;
+    public static final double HEADING_TO_LEFT = -90;
+    public static final double HEADING_TO_RIGHT = 90;
+
 
     //Rectangle field corners
     public static final Integer NORTH_WEST = 0;
