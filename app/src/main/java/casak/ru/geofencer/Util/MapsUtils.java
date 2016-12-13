@@ -5,12 +5,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.SphericalUtil;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +31,39 @@ public class MapsUtils {
 
     public static PolylineOptions createPolylineOptions(LatLng... latLngs) {
         return new PolylineOptions().add(latLngs);
+    }
+
+    public static PolylineOptions createArrow(LatLng routeCenter, double routeDistance, double routeHeading, boolean toLeft) {
+        List<LatLng> result = new LinkedList<>();
+
+        result.add(routeCenter);
+
+        double headingArrowToTop;
+
+        if (toLeft) {
+            headingArrowToTop = routeHeading + Constants.HEADING_TO_LEFT;
+        } else {
+            headingArrowToTop = routeHeading + Constants.HEADING_TO_RIGHT;
+        }
+
+        double headingArrowToLeft = headingArrowToTop + 180 + 30;
+        double headingArrowToRight = headingArrowToTop + 180 - 30;
+
+        LatLng leftArrowTop = SphericalUtil.computeOffset(routeCenter, routeDistance / 2, headingArrowToTop);
+        LatLng leftArrowFromTopToLeft = SphericalUtil.computeOffset(leftArrowTop, routeDistance / 4, headingArrowToLeft);
+        LatLng leftArrowFromTopToRight = SphericalUtil.computeOffset(leftArrowTop, routeDistance / 4, headingArrowToRight);
+
+        result.add(leftArrowTop);
+        result.add(leftArrowFromTopToLeft);
+        result.add(leftArrowTop);
+        result.add(leftArrowFromTopToRight);
+        result.add(leftArrowTop);
+
+        return new PolylineOptions()
+                .addAll(result)
+                .color(0x7FF4F142)
+                .geodesic(true)
+                .clickable(true);
     }
 
     public static PolylineOptions createPolylineOptions(List<LatLng> latLngs) {
@@ -89,20 +124,20 @@ public class MapsUtils {
                 CameraPosition.builder()
                         .target(polygon.getPoints().get(Constants.SOUTH_WEST))
                         .zoom(16)
-                        .bearing(Float.parseFloat(SphericalUtil.computeHeading(start, end)+""))
+                        .bearing(Float.parseFloat(SphericalUtil.computeHeading(start, end) + ""))
                         .build()
         );
     }
 
-    public static PolygonOptions harvestedPolygonOptions(Polyline route){
+    public static PolygonOptions harvestedPolygonOptions(Polyline route) {
         List<LatLng> points = route.getPoints();
         List<LatLng> upperBound = new LinkedList<>();
         List<LatLng> bottomBound = new LinkedList<>();
         List<LatLng> fullArea = new LinkedList<>();
 
-        if(points.size() > 1) {
+        if (points.size() > 1) {
             LatLng start = points.get(0);
-            LatLng end = points.get(points.size()-1);
+            LatLng end = points.get(points.size() - 1);
             double heading = SphericalUtil.computeHeading(start, end);
 
             for (LatLng point : points) {
@@ -114,10 +149,10 @@ public class MapsUtils {
                         heading - 90));
             }
             fullArea.addAll(upperBound);
-            for (int i = bottomBound.size()-1; i >= 0; i--)
+            for (int i = bottomBound.size() - 1; i >= 0; i--)
                 fullArea.add(bottomBound.get(i));
             //TODO Handle this shit as a man
-            if(fullArea.size() % 2 != 0)
+            if (fullArea.size() % 2 != 0)
                 return null;
             return new PolygonOptions().add(fullArea.toArray(new LatLng[fullArea.size()]));
         }
