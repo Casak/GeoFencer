@@ -61,19 +61,25 @@ public class MapsUtils {
 
         return new PolylineOptions()
                 .addAll(result)
+                .width(20f)
                 .color(0x7FF4F142)
                 .geodesic(true)
                 .clickable(true);
     }
 
     public static PolylineOptions createPolylineOptions(List<LatLng> latLngs) {
-        return new PolylineOptions().add(latLngs.toArray(new LatLng[latLngs.size()]));
+        return new PolylineOptions()
+                .add(latLngs.toArray(new LatLng[latLngs.size()]))
+                .geodesic(true);
     }
 
     //TODO rename signature
     public static PolygonOptions createFieldPolygonOptions(LatLng start, LatLng end, double width, boolean toLeft) {
         double offset = width == 0 ? 0d : width / 2;
-        return new PolygonOptions().add(computeCorners(start, end, offset, toLeft).toArray(new LatLng[4]));
+        return new PolygonOptions()
+                .add(computeCorners(start, end, offset, toLeft).toArray(new LatLng[4]))
+                .fillColor(0x7F00FF00)
+                .geodesic(true);
     }
 
     public static List<LatLng> computeCorners(LatLng start, LatLng end, double offset, boolean toLeft) {
@@ -154,7 +160,9 @@ public class MapsUtils {
             //TODO Handle this shit as a man
             if (fullArea.size() % 2 != 0)
                 return null;
-            return new PolygonOptions().add(fullArea.toArray(new LatLng[fullArea.size()]));
+            return new PolygonOptions()
+                    .add(fullArea.toArray(new LatLng[fullArea.size()]))
+                    .geodesic(true);
         }
         return null;
     }

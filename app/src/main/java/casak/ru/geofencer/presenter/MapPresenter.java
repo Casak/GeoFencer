@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,23 +14,21 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.maps.android.SphericalUtil;
-import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import casak.ru.geofencer.Constants;
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.model.FieldModel;
 import casak.ru.geofencer.service.LocationService;
-import casak.ru.geofencer.util.MapsUtils;
 import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
 
 /**
@@ -39,20 +36,16 @@ import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
  */
 
 public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, GoogleMap.OnPolylineClickListener {
+        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
     private static final String TAG = MapPresenter.class.getSimpleName();
 
     private Context context;
     private GoogleMap mGoogleMap;
+    private static GoogleApiClient mGoogleApiClient;
     private LocationService locationService;
-    private List<LatLng> route;
-    private Polyline leftArrow;
-    private Polyline rightArrow;
-    private Polyline routePolyline;
-    private Polygon harvestedPolygon;
-    private TileOverlay heatMap;
-    private GoogleApiClient mGoogleApiClient;
+    //TODO Inject
+    private FieldModel field;
 
     public MapPresenter(Context context) {
         if (mGoogleApiClient == null) {
@@ -64,7 +57,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         }
 
         this.context = context;
-        route = new LinkedList<>();
+        field = new FieldModel(this);
     }
 
     @Override
@@ -112,150 +105,9 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.mGoogleMap = googleMap;
+        mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        mGoogleMap.setOnPolylineClickListener(this);
-/*
-        //Combine width
-        double width = 20;
-
-        LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
-        LatLng latLng2 = new LatLng(50.099563d, 30.127152d);
-        LatLng latLng3 = new LatLng(50.098466d, 30.125510d);
-
-        Polygon polygon = mGoogleMap.addPolygon(MapsUtils.createFieldPolygonOptions(latLng1, latLng2, width, true)
-                .strokeColor(0x7FFF0000)
-                .fillColor(0x7F00FF00)
-                .geodesic(true));
-        //TODO Normalize the direction
-        Polyline polyline = mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(new LatLng[]{latLng1, latLng3, latLng2})
-                .color(0x7F000000)
-                .geodesic(true));
-
-        List<Polyline> polylines = new LinkedList<>();
-        polylines.add(polyline);
-
-
-        for (int i = 0; i < 4; i++) {
-
-            Polyline polyline1 = polylines.get(i);
-            List<LatLng> oldPoints = polyline1.getPoints();
-
-            LatLng start = oldPoints.get(Constants.SOUTH_WEST);
-            LatLng end = oldPoints.get(Constants.SOUTH_EAST);
-
-            double heading = SphericalUtil.computeHeading(start, end) + 90;
-            LatLng[] points =
-                    MapsUtils.computeNewPath(polyline1, width, heading).toArray(new LatLng[oldPoints.size()]);
-
-            polylines.add(
-                    mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(points)
-                            .color(0x7FFF00FF)
-                            .width(5)
-                            .geodesic(true)
-                    ));
-        }
-
-        Field field = new Field(polygon, polylines);
-
-        mGoogleMap.moveCamera(MapsUtils.polygonToCameraUpdate(polygon));*/
-    }
-
-    public void startCreatingRoute() {
-        route = new LinkedList<>();
-        locationService.startRecordRoute();
-    }
-
-    public void finishCreatingRoute() {
-        locationService.stopRecordRoute();
-//        route = locationService.getRoute()
-
-
-        LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
-        LatLng latLng2 = new LatLng(50.098466d, 30.125510d);
-        LatLng latLng3 = new LatLng(50.099563d, 30.127152d);
-        route.add(latLng1);
-        route.add(latLng2);
-        route.add(latLng3);
-
-        addArrows(route);
-
-        routePolyline = mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(route));
-
-        harvestedPolygon = mGoogleMap
-                .addPolygon(MapsUtils.harvestedPolygonOptions(routePolyline)
-                        .fillColor(Color.BLUE)
-                        .strokeColor(Color.BLUE)
-                        .geodesic(true));
-
-        mGoogleMap.moveCamera(MapsUtils.polygonToCameraUpdate(harvestedPolygon));
-
-        addHeatMap(routePolyline);
-    }
-
-    private Polygon createField(LatLng start, LatLng end, double width, boolean toLeft) {
-        return mGoogleMap.addPolygon(MapsUtils.createFieldPolygonOptions(start, end, width, toLeft)
-                .strokeColor(0x7FFF0000)
-                .fillColor(0x7F00FF00)
-                .geodesic(true));
-    }
-
-    private List<Polyline> createPolylines(Polyline oldPolyline, double heading) {
-        List<Polyline> routes = new LinkedList<>();
-        routes.add(oldPolyline);
-
-        List<LatLng> oldPolylineList = oldPolyline.getPoints();
-        //TODO Normal check
-        LatLng start = oldPolylineList.get(0);
-        LatLng end = oldPolylineList.get(oldPolylineList.size() - 1);
-
-        double computedHeading = SphericalUtil.computeHeading(start, end);
-        double normalHeading = computedHeading + heading;
-        double backwardHeading = computedHeading + 180;
-
-        int transparentColor = 0x9FFF00FF;
-        boolean first = true;
-        for (int i = 0; i < 4; i++) {
-            transparentColor = transparentColor - 0x20000000;
-
-            Polyline path = routes.get(i);
-
-            List<LatLng> resultPoints = MapsUtils.computeNewPath(path,
-                    Constants.WIDTH_METERS,
-                    normalHeading);
-
-            List<LatLng> points = new LinkedList<>();
-            if (first)
-                points.add(SphericalUtil.computeOffset(resultPoints.get(0),
-                        Constants.WIDTH_METERS * 2,
-                        backwardHeading));
-
-            points.addAll(resultPoints);
-            if (first) {
-                first = false;
-                points.add(SphericalUtil.computeOffset(resultPoints.get(resultPoints.size() - 1),
-                        Constants.WIDTH_METERS * 2,
-                        computedHeading));
-            }
-
-            routes.add(
-                    mGoogleMap.addPolyline(MapsUtils.createPolylineOptions(points)
-                            .color(transparentColor)
-                            .width(5)
-                            .geodesic(true)
-                    ));
-        }
-        return routes;
-    }
-
-
-    private void addHeatMap(Polyline path) {
-        List<LatLng> list = path.getPoints();
-        HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
-                .data(list)
-                .radius(10)
-                .build();
-        heatMap = mGoogleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+        mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
     }
 
     @Override
@@ -263,38 +115,54 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         locationService.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
     }
 
-    @Override
-    public void onPolylineClick(Polyline polyline) {
-        if (leftArrow != null && polyline.equals(leftArrow)){
-            leftArrow.setVisible(false);
-            rightArrow.setVisible(false);
-            Polygon leftField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, true);
-            mGoogleMap.moveCamera(MapsUtils.polygonToCameraUpdate(leftField));
-            createPolylines(routePolyline, Constants.HEADING_TO_LEFT);
-        }
-        if (rightArrow != null && polyline.equals(rightArrow)){
-            leftArrow.setVisible(false);
-            rightArrow.setVisible(false);
-            Polygon rightField = createField(route.get(0), route.get(route.size() - 1), Constants.WIDTH_METERS, false);
-            mGoogleMap.moveCamera(MapsUtils.polygonToCameraUpdate(rightField));
-            createPolylines(routePolyline, Constants.HEADING_TO_RIGHT);
-        }
+    public void startCreatingRoute() {
+        if (locationService != null)
+            locationService.startRecordRoute();
     }
 
-    private void addArrows(List<LatLng> route) {
-        if (route.size() > 1) {
-            LatLng start = route.get(0);
-            LatLng end = route.get(route.size() - 1);
+    public void finishCreatingRoute() {
+        if (locationService != null)
+            locationService.stopRecordRoute();
+        field.initBuildingField();
+    }
 
-            double distanceBetween = SphericalUtil
-                    .computeDistanceBetween(start, end);
-            double heading = SphericalUtil.computeHeading(start, end);
-            LatLng routeCenter = SphericalUtil.computeOffset(start, distanceBetween / 2, heading);
-            leftArrow = mGoogleMap.addPolyline(
-                    MapsUtils.createArrow(routeCenter, distanceBetween, heading, true));
-            rightArrow = mGoogleMap.addPolyline(
-                    MapsUtils.createArrow(routeCenter, distanceBetween, heading, false));
+    public Marker showMarker(MarkerOptions options) {
+        return mGoogleMap.addMarker(options);
+    }
 
-        }
+    public Polyline showPolyline(PolylineOptions options) {
+        return mGoogleMap.addPolyline(options);
+    }
+
+    public Polygon showPolygon(PolygonOptions options) {
+        return mGoogleMap.addPolygon(options);
+    }
+
+    public TileOverlay showTileOverlay(TileOverlayOptions options) {
+        return mGoogleMap.addTileOverlay(options);
+    }
+
+    public void removeMarker(Marker marker) {
+        marker.setVisible(false);
+        marker.remove();
+    }
+
+    public void removePolyline(Polyline polyline) {
+        polyline.setVisible(false);
+        polyline.remove();
+    }
+
+    public void removePolygon(Polygon polygon) {
+        polygon.setVisible(false);
+        polygon.remove();
+    }
+
+    public void removeTileOverlay(TileOverlay tileOverlay) {
+        tileOverlay.setVisible(false);
+        tileOverlay.remove();
+    }
+
+    public void moveCamera(CameraUpdate cameraUpdate) {
+        mGoogleMap.moveCamera(cameraUpdate);
     }
 }
