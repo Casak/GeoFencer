@@ -37,7 +37,9 @@ public class FieldModel {
         currentRoute = new LinkedList<>();
     }
 
-    public void initBuildingField() {
+    public void initBuildingField(List<LatLng> route) {
+        //currentRoute = route;
+
         LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
         LatLng latLng2 = new LatLng(50.098466d, 30.125510d);
         LatLng latLng3 = new LatLng(50.099563d, 30.127152d);
@@ -45,12 +47,6 @@ public class FieldModel {
         currentRoute.add(latLng2);
         currentRoute.add(latLng3);
 
-       /* Marker marker = mapPresenter.addMarker(new MarkerOptions()
-                .position(latLng2)
-                .flat(true)
-                .rotation(Float.parseFloat(Constants.HEADING + ""))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.current_position_moving_icon)));
-*/
         leftArrow = mapPresenter.showPolyline(createArrow(currentRoute, true));
         rightArrow = mapPresenter.showPolyline(createArrow(currentRoute, false));
 

@@ -40,25 +40,24 @@ import casak.ru.geofencer.R;
  * Created by Casak on 08.12.2016.
  */
 
-public class LocationService extends Service implements ResultCallback<LocationSettingsResult>,
-        LocationListener {
+public class LocationService extends Service implements ResultCallback<LocationSettingsResult> {
     private static final int LOCATION_UPDATE_INTERVAL_SECONDS = 30 * 1000;
     private static final int LOCATION_FASTEST_UPDATE_INTERVAL_SECONDS = 5 * 1000;
 
 
     private boolean isEnabledGPS = false;
-    private boolean isMoving = false;
-    private boolean isCreatingRoute = false;
-    private Location currentLocation;
     private Context mContext;
     private LocationRequest mLocationRequest;
-    private List<LatLng> route = new LinkedList<>();
+    private LocationListener locationListenerCallback;
 
-    public LocationService(final Context context, GoogleApiClient googleApiClient) throws Exception {
+    public LocationService(final Context context,
+                           GoogleApiClient googleApiClient,
+                           LocationListener locationListenerCallback) throws Exception {
         this.mContext = context;
+        this.locationListenerCallback = locationListenerCallback;
 
         if (ActivityCompat.checkSelfPermission(mContext,
-                Manifest.permission.ACCESS_FINE_LOCATION) !=  PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Alert or dialog, new Exception type
             throw new Exception();
         }
@@ -72,10 +71,9 @@ public class LocationService extends Service implements ResultCallback<LocationS
         enableLocationUpdates(googleApiClient);
     }
 
-    public boolean enableLocationUpdates(GoogleApiClient googleApiClient) {
+    public void enableLocationUpdates(GoogleApiClient googleApiClient) {
         LocationServices.FusedLocationApi.requestLocationUpdates(
-                googleApiClient, mLocationRequest, this);
-        return false;
+                googleApiClient, mLocationRequest, locationListenerCallback);
     }
 
     private void checkGPS(GoogleApiClient googleApiClient) {
@@ -104,33 +102,9 @@ public class LocationService extends Service implements ResultCallback<LocationS
         }
     }
 
-
     public boolean isConnected() {
         return isEnabledGPS;
     }
-
-    public Location currentLocation() {
-        return currentLocation;
-    }
-
-    public boolean isMoving() {
-        return isMoving;
-    }
-
-
-    public void startRecordRoute(){
-        route = new LinkedList<>();
-        isCreatingRoute = true;
-    }
-
-    public void stopRecordRoute(){
-        isCreatingRoute = false;
-    }
-
-    public List<LatLng> getRoute(){
-        return route;
-    }
-
     //TODO listeners
     @Override
     public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
@@ -169,33 +143,11 @@ public class LocationService extends Service implements ResultCallback<LocationS
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        if(currentLocation != null && currentLocation == location) {
-            isMoving = false;
-            return;
-        }
-        isMoving = true;
-        currentLocation = location;
-
-        if(isCreatingRoute){
-            LatLng currentLocation = new LatLng(currentLocation().getLatitude(),
-                    currentLocation().getLongitude());
-            route.add(currentLocation);
-        }
-        Log.d("TAG", "Current location = " + location.getLatitude() +
-                ", " + location.getLongitude());
-        Toast.makeText(mContext, "Current location = " + location.getLatitude() +
-                ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-    }
-
-
     public void onActivityResult(int requestCode, int resultCode, Intent data, GoogleApiClient googleApiClient) {
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK) {
             checkGPS(googleApiClient);
         }
     }
-
 
     @Nullable
     @Override

@@ -46,21 +46,7 @@ public class MapActivity extends AppCompatActivity {
 
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
-        myFab.setOnClickListener(new View.OnClickListener() {
-            boolean firstClick = true;
-
-            public void onClick(View v) {
-                Log.d(TAG, "ONCLICKKKK!!!11");
-
-                if (firstClick) {
-                    firstClick = false;
-                    mapPresenter.startCreatingRoute();
-                } else {
-                    firstClick = true;
-                    mapPresenter.finishCreatingRoute();
-                }
-            }
-        });
+        myFab.setOnClickListener(mapPresenter.getOnClickListener());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);

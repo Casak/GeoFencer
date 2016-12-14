@@ -78,6 +78,7 @@ public class MapsUtils {
         double offset = width == 0 ? 0d : width / 2;
         return new PolygonOptions()
                 .add(computeCorners(start, end, offset, toLeft).toArray(new LatLng[4]))
+                .strokeColor(0x7F00F000)
                 .fillColor(0x7F00FF00)
                 .geodesic(true);
     }
@@ -123,14 +124,10 @@ public class MapsUtils {
 
     //TODO implement
     public static CameraUpdate polygonToCameraUpdate(Polygon polygon) {
-        List<LatLng> points = polygon.getPoints();
-        LatLng start = points.get(Constants.SOUTH_WEST);
-        LatLng end = points.get(Constants.SOUTH_EAST);
         return CameraUpdateFactory.newCameraPosition(
                 CameraPosition.builder()
                         .target(polygon.getPoints().get(Constants.SOUTH_WEST))
                         .zoom(16)
-                        .bearing(Float.parseFloat(SphericalUtil.computeHeading(start, end) + ""))
                         .build()
         );
     }

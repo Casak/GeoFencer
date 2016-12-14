@@ -4,19 +4,23 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
@@ -26,8 +30,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 
+import java.util.List;
+
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.model.FieldModel;
+import casak.ru.geofencer.model.HarvesterModel;
 import casak.ru.geofencer.service.LocationService;
 import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
 
@@ -36,7 +43,7 @@ import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
  */
 
 public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
+        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, LocationListener {
 
     private static final String TAG = MapPresenter.class.getSimpleName();
 
@@ -44,8 +51,11 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     private GoogleMap mGoogleMap;
     private static GoogleApiClient mGoogleApiClient;
     private LocationService locationService;
+    private View.OnClickListener onClickListener;
+
     //TODO Inject
     private FieldModel field;
+    private HarvesterModel harvester;
 
     public MapPresenter(Context context) {
         if (mGoogleApiClient == null) {
@@ -58,6 +68,25 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
         this.context = context;
         field = new FieldModel(this);
+        harvester = new HarvesterModel(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng currentLocation = new LatLng(location.getLatitude(),
+                location.getLongitude());
+
+        harvester.updateCurrentLocation(currentLocation);
+
+        Log.d("TAG", "Current location = " + location.getLatitude() +
+                ", " + location.getLongitude());
+        Toast.makeText(context, "Current location = " + location.getLatitude() +
+                ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        locationService.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
     }
 
     @Override
@@ -85,7 +114,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         }
 
         try {
-            locationService = new LocationService(context, mGoogleApiClient);
+            locationService = new LocationService(context, mGoogleApiClient, this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,20 +139,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        locationService.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
-    }
-
-    public void startCreatingRoute() {
-        if (locationService != null)
-            locationService.startRecordRoute();
-    }
-
-    public void finishCreatingRoute() {
-        if (locationService != null)
-            locationService.stopRecordRoute();
-        field.initBuildingField();
+    public void finishCreatingRoute(List<LatLng> route) {
+        field.initBuildingField(route);
     }
 
     public Marker showMarker(MarkerOptions options) {
@@ -164,5 +181,24 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
     public void moveCamera(CameraUpdate cameraUpdate) {
         mGoogleMap.moveCamera(cameraUpdate);
+    }
+
+    public View.OnClickListener getOnClickListener(){
+        return onClickListener == null ? onClickListener = new OnClickListener() : onClickListener;
+    }
+
+    class OnClickListener implements View.OnClickListener{
+        boolean firstClick = true;
+
+        @Override
+        public void onClick(View view) {
+            if (firstClick) {
+                firstClick = false;
+                harvester.startFieldRouteBuilding();
+            } else {
+                firstClick = true;
+                harvester.finishFieldRouteBuilding();
+            }
+        }
     }
 }
