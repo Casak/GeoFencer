@@ -37,13 +37,14 @@ import casak.ru.geofencer.model.FieldModel;
 import casak.ru.geofencer.model.HarvesterModel;
 import casak.ru.geofencer.service.LocationService;
 import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
+import casak.ru.geofencer.util.MapsUtils;
 
 /**
  * Created by Casak on 08.12.2016.
  */
 
 public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
     private static final String TAG = MapPresenter.class.getSimpleName();
 
@@ -52,6 +53,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     private static GoogleApiClient mGoogleApiClient;
     private LocationService locationService;
     private View.OnClickListener onClickListener;
+    private LocationListener mapLocationListener;
 
     //TODO Inject
     private FieldModel field;
@@ -68,20 +70,15 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
         this.context = context;
         field = new FieldModel(this);
-        harvester = new HarvesterModel(this);
-    }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        LatLng currentLocation = new LatLng(location.getLatitude(),
-                location.getLongitude());
+        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        LatLng currentLatLng = null;
+        if (currentLocation != null)
+            currentLatLng = new LatLng(currentLocation.getLatitude(),
+                    currentLocation.getLongitude());
 
-        harvester.updateCurrentLocation(currentLocation);
-
-        Log.d("TAG", "Current location = " + location.getLatitude() +
-                ", " + location.getLongitude());
-        Toast.makeText(context, "Current location = " + location.getLatitude() +
-                ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+        harvester = new HarvesterModel(this, currentLatLng);
     }
 
     @Override
@@ -114,7 +111,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         }
 
         try {
-            locationService = new LocationService(context, mGoogleApiClient, this);
+            locationService = new LocationService(context, mGoogleApiClient, getLocationListener());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,11 +180,15 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         mGoogleMap.moveCamera(cameraUpdate);
     }
 
-    public View.OnClickListener getOnClickListener(){
+    public View.OnClickListener getOnClickListener() {
         return onClickListener == null ? onClickListener = new OnClickListener() : onClickListener;
     }
 
-    class OnClickListener implements View.OnClickListener{
+    public LocationListener getLocationListener() {
+        return mapLocationListener == null ? mapLocationListener = new MapLocationListener() : mapLocationListener;
+    }
+
+    private class OnClickListener implements View.OnClickListener {
         boolean firstClick = true;
 
         @Override
@@ -195,10 +196,27 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
             if (firstClick) {
                 firstClick = false;
                 harvester.startFieldRouteBuilding();
+                MapsUtils.startMockingLocations(getLocationListener());
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
             }
+        }
+    }
+
+    private class MapLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            LatLng currentLocation = new LatLng(location.getLatitude(),
+                    location.getLongitude());
+
+            harvester.updateCurrentLocation(currentLocation);
+
+            /*Log.d("TAG", "Current location = " + location.getLatitude() +
+                    ", " + location.getLongitude());
+            Toast.makeText(context, "Current location = " + location.getLatitude() +
+                    ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();*/
         }
     }
 }

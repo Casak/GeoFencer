@@ -68,7 +68,7 @@ public class LocationService extends Service implements ResultCallback<LocationS
         mLocationRequest.setFastestInterval(LOCATION_FASTEST_UPDATE_INTERVAL_SECONDS);
 
         checkGPS(googleApiClient);
-        enableLocationUpdates(googleApiClient);
+        //enableLocationUpdates(googleApiClient);
     }
 
     public void enableLocationUpdates(GoogleApiClient googleApiClient) {

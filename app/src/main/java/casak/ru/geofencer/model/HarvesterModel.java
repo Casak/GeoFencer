@@ -1,5 +1,7 @@
 package casak.ru.geofencer.model;
 
+import android.support.annotation.Nullable;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -29,9 +31,14 @@ public class HarvesterModel {
 
     private boolean isCreatingFieldRoute;
 
-    public HarvesterModel(MapPresenter presenter) {
+    public HarvesterModel(MapPresenter presenter, @Nullable LatLng lastKnownLocation) {
         mapPresenter = presenter;
         isCreatingFieldRoute = false;
+
+        if (lastKnownLocation != null) {
+            currentLocation = lastKnownLocation;
+            updatePositionOnMap();
+        }
 
         sessionRoute = new LinkedList<>();
         fieldBuildRoute = new LinkedList<>();
@@ -49,12 +56,12 @@ public class HarvesterModel {
         return currentLocation;
     }
 
-    public void startFieldRouteBuilding(){
+    public void startFieldRouteBuilding() {
         fieldBuildRoute = new LinkedList<>();
         isCreatingFieldRoute = true;
     }
 
-    public void finishFieldRouteBuilding(){
+    public void finishFieldRouteBuilding() {
         isCreatingFieldRoute = false;
         mapPresenter.finishCreatingRoute(fieldBuildRoute);
     }
@@ -69,13 +76,15 @@ public class HarvesterModel {
 
         sessionRoute.add(currentLocation);
 
-        if(isCreatingFieldRoute)
+        if (isCreatingFieldRoute)
             fieldBuildRoute.add(currentLocation);
 
         updatePositionOnMap();
     }
 
     private void updatePositionOnMap() {
+        if(currentLocation == null)
+            return;
 
         float heading = previousLocation != null ?
                 Float.parseFloat(SphericalUtil.computeHeading(previousLocation, currentLocation) + "") :

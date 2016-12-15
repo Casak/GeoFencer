@@ -1,5 +1,14 @@
 package casak.ru.geofencer.util;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.os.AsyncTask;
+import android.os.SystemClock;
+import android.util.Log;
+
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -162,5 +171,122 @@ public class MapsUtils {
                     .geodesic(true);
         }
         return null;
+    }
+
+
+    public static void startMockingLocations(final LocationListener listener) {
+
+        (new AsyncTask<String, Location, String>(){
+            List<Location> locations = new LinkedList<>();
+
+            private void initLocations(){
+                String locationsString = "50.077209,30.041981;" +
+                        "50.077113,30.041895;" +
+                        "50.077086,30.041724;" +
+                        "50.077044,30.041552;" +
+                        "50.076962,30.041466;" +
+                        "50.076920,30.041295;" +
+                        "50.076893,30.041209;" +
+                        "50.076879,30.041123;" +
+                        "50.076810,30.040951;" +
+                        "50.076810,30.040865;" +
+                        "50.076769,30.040780;" +
+                        "50.076727,30.040694;" +
+                        "50.076727,30.040608;" +
+                        "50.076714,30.040522;" +
+                        "50.076686,30.040436;" +
+                        "50.076659,30.040265;" +
+                        "50.076604,30.040179;" +
+                        "50.076548,30.039943;" +
+                        "50.076521,30.039685;" +
+                        "50.076480,30.039599;" +
+                        "50.076425,30.039363;" +
+                        "50.076383,30.039235;" +
+                        "50.076328,30.039106;" +
+                        "50.076273,30.038977;" +
+                        "50.076163,30.038720;" +
+                        "50.076122,30.038484;" +
+                        "50.076094,30.038291;" +
+                        "50.076053,30.038119;" +
+                        "50.075998,30.037947;" +
+                        "50.075929,30.037776;" +
+                        "50.075901,30.037539;" +
+                        "50.075846,30.037282;" +
+                        "50.075722,30.037089;" +
+                        "50.075667,30.036746;" +
+                        "50.075516,30.036338;" +
+                        "50.075474,30.036016;" +
+                        "50.075439,30.035932;" +
+                        "50.075370,30.035675;" +
+                        "50.075308,30.035525;" +
+                        "50.075273,30.035353;" +
+                        "50.075198,30.035181;" +
+                        "50.075136,30.034935;" +
+                        "50.075067,30.034795;" +
+                        "50.075005,30.034538;" +
+                        "50.074929,30.034291;" +
+                        "50.074874,30.034087;" +
+                        "50.074860,30.033947;" +
+                        "50.074805,30.033765;" +
+                        "50.074771,30.033615;" +
+                        "50.074771,30.033465;" +
+                        "50.074750,30.033336;" +
+                        "50.074674,30.033100;" +
+                        "50.074612,30.032950;" +
+                        "50.074571,30.032778;" +
+                        "50.074516,30.032563;" +
+                        "50.074461,30.032306;" +
+                        "50.074406,30.032156;" +
+                        "50.074364,30.031963;" +
+                        "50.074337,30.031802;" +
+                        "50.074275,30.031684;" +
+                        "50.074192,30.031405;" +
+                        "50.074165,30.031233;" +
+                        "50.074130,30.031051;" +
+                        "50.074068,30.030868;" +
+                        "50.074041,30.030697;" +
+                        "50.074013,30.030546;" +
+                        "50.073993,30.030504;" +
+                        "50.073944,30.030418;" +
+                        "50.073924,30.030310;" +
+                        "50.073903,30.030203;" +
+                        "50.073855,30.029967;" +
+                        "50.073820,30.029881;" +
+                        "50.073738,30.029645;" +
+                        "50.073703,30.029559;" +
+                        "50.073683,30.029420;" +
+                        "50.073641,30.029366";
+                String[] locationArray = locationsString.split(";");
+                for (String aLocationArray : locationArray) {
+                    String[] locationSting = aLocationArray.split(",");
+                    Location location = new Location(LocationManager.GPS_PROVIDER);
+                    location.setLatitude(Double.parseDouble(locationSting[0]));
+                    location.setLongitude(Double.parseDouble(locationSting[1]));
+                    locations.add(location);
+                }
+            }
+
+            @Override
+            protected String doInBackground(String... string) {
+                initLocations();
+                for (Location point : locations) {
+                    point.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+                    point.setTime(System.currentTimeMillis());
+                    point.setAccuracy(1);
+                    publishProgress(point);
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Location... point) {
+                listener.onLocationChanged(point[0]);
+            }
+        }).execute("");
     }
 }

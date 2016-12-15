@@ -38,14 +38,14 @@ public class FieldModel {
     }
 
     public void initBuildingField(List<LatLng> route) {
-        //currentRoute = route;
+        currentRoute = route;
 
-        LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
+/*        LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
         LatLng latLng2 = new LatLng(50.098466d, 30.125510d);
         LatLng latLng3 = new LatLng(50.099563d, 30.127152d);
         currentRoute.add(latLng1);
         currentRoute.add(latLng2);
-        currentRoute.add(latLng3);
+        currentRoute.add(latLng3);*/
 
         leftArrow = mapPresenter.showPolyline(createArrow(currentRoute, true));
         rightArrow = mapPresenter.showPolyline(createArrow(currentRoute, false));
@@ -56,8 +56,6 @@ public class FieldModel {
                 .showPolygon(MapsUtils.harvestedPolygonOptions(harvestedPolyline)
                         .fillColor(Color.BLUE)
                         .strokeColor(Color.BLUE));
-
-        heatMap = mapPresenter.showTileOverlay(createHeatMap(harvestedPolyline));
 
         mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(harvestedPolygon));
     }
