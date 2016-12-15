@@ -66,6 +66,10 @@ public class HarvesterModel {
         return harvestedPolygon;
     }
 
+    public Polyline getHarvestedPolyline(){
+        return harvestedPolyline;
+    }
+
     public void startFieldRouteBuilding() {
         fieldBuildRoute = new LinkedList<>();
         isCreatingFieldRoute = true;
@@ -73,6 +77,8 @@ public class HarvesterModel {
 
     public void finishFieldRouteBuilding() {
         isCreatingFieldRoute = false;
+        //TODO Create alert "Can`t create field from 1 point"
+        if(fieldBuildRoute.size() > 1)
         mapPresenter.finishCreatingRoute(fieldBuildRoute);
     }
 
@@ -101,7 +107,7 @@ public class HarvesterModel {
             harvestedPolyline = mapPresenter.showPolyline(MapsUtils.createPolylineOptions(sessionRoute));
         else
             harvestedPolyline.setPoints(sessionRoute);
-
+//TODO location On path
         if (harvestedPolygon == null)
             harvestedPolygon = mapPresenter
                     .showPolygon(MapsUtils.harvestedPolygonOptions(harvestedPolyline));

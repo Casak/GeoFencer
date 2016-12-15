@@ -25,8 +25,6 @@ public class FieldModel {
     private Polyline leftArrow;
     private Polyline rightArrow;
     private List<Polyline> notHarvestedRoutes;
-    private Polyline harvestedPolyline;
-    private Polygon harvestedPolygon;
     private MapPresenter mapPresenter;
     private PolylineClickListener polylineClickListener;
     private HarvesterModel harvester;
@@ -153,13 +151,13 @@ public class FieldModel {
 
             if (polyline.equals(leftArrow)) {
                 field = createField(start, end, true);
-                notHarvestedRoutes = createComputedPolylines(harvestedPolyline,
+                notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
                         Constants.HEADING_TO_LEFT);
                 mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(field));
             }
             if (polyline.equals(rightArrow)) {
                 field = createField(start, end, false);
-                notHarvestedRoutes = createComputedPolylines(harvestedPolyline,
+                notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
                         Constants.HEADING_TO_RIGHT);
                 mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(field));
             }
