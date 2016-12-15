@@ -27,37 +27,23 @@ public class FieldModel {
     private List<Polyline> notHarvestedRoutes;
     private Polyline harvestedPolyline;
     private Polygon harvestedPolygon;
-    private TileOverlay heatMap;
     private MapPresenter mapPresenter;
     private PolylineClickListener polylineClickListener;
+    private HarvesterModel harvester;
 
 
-    public FieldModel(MapPresenter presenter) {
+    public FieldModel(MapPresenter presenter, HarvesterModel harvesterModel) {
+        harvester = harvesterModel;
         mapPresenter = presenter;
         currentRoute = new LinkedList<>();
     }
 
     public void initBuildingField(List<LatLng> route) {
         currentRoute = route;
-
-/*        LatLng latLng1 = new LatLng(50.097119d, 30.124142d);
-        LatLng latLng2 = new LatLng(50.098466d, 30.125510d);
-        LatLng latLng3 = new LatLng(50.099563d, 30.127152d);
-        currentRoute.add(latLng1);
-        currentRoute.add(latLng2);
-        currentRoute.add(latLng3);*/
-
         leftArrow = mapPresenter.showPolyline(createArrow(currentRoute, true));
         rightArrow = mapPresenter.showPolyline(createArrow(currentRoute, false));
 
-        harvestedPolyline = mapPresenter.showPolyline(MapsUtils.createPolylineOptions(currentRoute));
-
-        harvestedPolygon = mapPresenter
-                .showPolygon(MapsUtils.harvestedPolygonOptions(harvestedPolyline)
-                        .fillColor(Color.BLUE)
-                        .strokeColor(Color.BLUE));
-
-        mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(harvestedPolygon));
+        mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(harvester.getHarvestedPolygon()));
     }
 
     public PolylineClickListener getPolylineClickListener() {

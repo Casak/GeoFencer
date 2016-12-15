@@ -69,7 +69,6 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         }
 
         this.context = context;
-        field = new FieldModel(this);
 
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -79,6 +78,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
                     currentLocation.getLongitude());
 
         harvester = new HarvesterModel(this, currentLatLng);
+        field = new FieldModel(this, harvester);
     }
 
     @Override
@@ -140,20 +140,24 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         field.initBuildingField(route);
     }
 
+    @Nullable
     public Marker showMarker(MarkerOptions options) {
-        return mGoogleMap.addMarker(options);
+        return options == null ? null : mGoogleMap.addMarker(options);
     }
 
+    @Nullable
     public Polyline showPolyline(PolylineOptions options) {
-        return mGoogleMap.addPolyline(options);
+        return options == null ? null : mGoogleMap.addPolyline(options);
     }
 
+    @Nullable
     public Polygon showPolygon(PolygonOptions options) {
-        return mGoogleMap.addPolygon(options);
+        return options == null ? null : mGoogleMap.addPolygon(options);
     }
 
+    @Nullable
     public TileOverlay showTileOverlay(TileOverlayOptions options) {
-        return mGoogleMap.addTileOverlay(options);
+        return options == null ? null : mGoogleMap.addTileOverlay(options);
     }
 
     public void removeMarker(Marker marker) {

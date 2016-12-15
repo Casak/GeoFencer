@@ -8,6 +8,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.LinkedList;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.presenter.MapPresenter;
+import casak.ru.geofencer.util.MapsUtils;
 
 public class HarvesterModel {
     private boolean isMoving;
@@ -28,6 +31,9 @@ public class HarvesterModel {
     private Marker positionMarker;
 
     private MapPresenter mapPresenter;
+    //TODO Getter|setter
+    private Polyline harvestedPolyline;
+    private Polygon harvestedPolygon;
 
     private boolean isCreatingFieldRoute;
 
@@ -56,6 +62,10 @@ public class HarvesterModel {
         return currentLocation;
     }
 
+    public Polygon getHarvestedPolygon(){
+        return harvestedPolygon;
+    }
+
     public void startFieldRouteBuilding() {
         fieldBuildRoute = new LinkedList<>();
         isCreatingFieldRoute = true;
@@ -68,6 +78,9 @@ public class HarvesterModel {
 
     //TODO Check for dups location
     public void updateCurrentLocation(LatLng currentLocation) {
+        if (currentLocation == null)
+            return;
+
         if (this.currentLocation != null)
             previousLocation = this.currentLocation;
         this.currentLocation = currentLocation;
@@ -79,11 +92,28 @@ public class HarvesterModel {
         if (isCreatingFieldRoute)
             fieldBuildRoute.add(currentLocation);
 
+        updateRouteUI();
         updatePositionOnMap();
     }
 
+    private void updateRouteUI() {
+        if (harvestedPolyline == null)
+            harvestedPolyline = mapPresenter.showPolyline(MapsUtils.createPolylineOptions(sessionRoute));
+        else
+            harvestedPolyline.setPoints(sessionRoute);
+
+        if (harvestedPolygon == null)
+            harvestedPolygon = mapPresenter
+                    .showPolygon(MapsUtils.harvestedPolygonOptions(harvestedPolyline));
+        else{
+            List<LatLng> points = MapsUtils.harvestedPolygonOptions(harvestedPolyline).getPoints();
+            if (points != null)
+                harvestedPolygon.setPoints(points);
+        }
+    }
+
     private void updatePositionOnMap() {
-        if(currentLocation == null)
+        if (currentLocation == null)
             return;
 
         float heading = previousLocation != null ?
@@ -110,7 +140,6 @@ public class HarvesterModel {
                     CameraPosition
                             .builder()
                             .target(currentLocation)
-                            .zoom(16)
                             .build()));
         }
     }
