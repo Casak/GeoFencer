@@ -162,6 +162,15 @@ public class FieldModel {
                         Constants.HEADING_TO_RIGHT);
             }
             if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
+                //TODO Delete this mock
+                List<LatLng> points = notHarvestedRoutes.get(1).getPoints();
+                points.remove(0);
+                points.remove(1);
+                points.remove(points.size()-1);
+                points.remove(points.size()-2);
+                MapsUtils.mockLocations(mapPresenter.getLocationListener(),
+                        points.toArray(new LatLng[points.size()]));
+
                 CameraUpdate cameraUpdate = MapsUtils.fieldPolygonToCameraUpdate(field);
                 if (cameraUpdate != null)
                     mapPresenter.animateCamera(cameraUpdate);

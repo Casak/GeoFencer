@@ -207,7 +207,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
             if (firstClick) {
                 firstClick = false;
                 harvester.startFieldRouteBuilding();
-                MapsUtils.startMockingLocations(getLocationListener());
+                MapsUtils.mockLocations(getLocationListener());
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
