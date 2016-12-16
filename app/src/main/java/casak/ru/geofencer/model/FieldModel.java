@@ -67,7 +67,7 @@ public class FieldModel {
         else
             return null;
     }
-
+    //TODO Think about moving to @HarvesterModel
     private List<Polyline> createComputedPolylines(Polyline oldPolyline, double heading) {
         List<Polyline> routes = new LinkedList<>();
         routes.add(oldPolyline);
@@ -81,7 +81,7 @@ public class FieldModel {
         double normalHeading = computedHeading + heading;
         double backwardHeading = computedHeading + 180;
 
-        int transparentColor = 0x9FFF00FF;
+        int transparentColor = Constants.COMPUTED_ROUTE_COLOR;
         boolean first = true;
         for (int i = 0; i < 4; i++) {
             transparentColor = transparentColor - 0x20000000;
@@ -111,6 +111,7 @@ public class FieldModel {
                             .color(transparentColor)
                             .width(5)
                             .geodesic(true)
+                            .zIndex(Constants.ROUTE_INDEX)
                     ));
         }
         return routes;
@@ -120,7 +121,8 @@ public class FieldModel {
         return mapPresenter.showPolygon(MapsUtils.createFieldPolygonOptions(start,
                 end,
                 Constants.WIDTH_METERS,
-                toLeft));
+                toLeft)
+                .zIndex(Constants.FIELD_INDEX));
     }
 
     private TileOverlayOptions createHeatMap(Polyline path) {
@@ -159,7 +161,7 @@ public class FieldModel {
                 notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
                         Constants.HEADING_TO_RIGHT);
             }
-            if(polyline.equals(leftArrow) || polyline.equals(rightArrow)){
+            if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
                 CameraUpdate cameraUpdate = MapsUtils.fieldPolygonToCameraUpdate(field);
                 if (cameraUpdate != null)
                     mapPresenter.animateCamera(cameraUpdate);

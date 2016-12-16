@@ -36,23 +36,18 @@ public class Constants {
     public static final Integer SOUTH_EAST = 2;
     public static final Integer NORTH_EAST = 3;
 
+    //Z-Indexes for map
+    public static final float FIELD_INDEX = 0.0f;
+    public static final float HARVESTED_INDEX = 1.0f;
+    public static final float ROUTE_INDEX = 2.0f;
 
-    //TODO delete this shit
-    public static final double HEADING = SphericalUtil.computeHeading(
-            new LatLng(50.097119d, 30.124142d), new LatLng(50.099563d, 30.127152d)) - 90;
 
+    //UI elements colors
+    public static final int HARVESTED_FILL_COLOR = 0x7f0061ff;
+    public static final int HARVESTED_STROKE_COLOR = 0x8f0061ff;
+    public static final int FIELD_FILL_COLOR = 0x7F00FF00;
+    public static final int FIELD_STROKE_COLOR = 0x7F00F000;
+    public static final int ARROW_COLOR = 0x9FF4F142;
+    public static final int COMPUTED_ROUTE_COLOR = 0x9FFF00FF;
 
-    /**
-     * Map for storing information about airports in the San Francisco bay area.
-     */
-    public static final HashMap<String, LatLng> BAY_AREA_LANDMARKS = new HashMap<String, LatLng>();
-    static {
-        // San Francisco International Airport.
-        BAY_AREA_LANDMARKS.put("SFO", new LatLng(37.621313, -122.378955));
-
-        // Googleplex.
-        BAY_AREA_LANDMARKS.put("GOOGLE", new LatLng(37.422611,-122.0840577));
-
-        BAY_AREA_LANDMARKS.put("HOME", new LatLng(50.430705,30.422127));
-    }
 }
