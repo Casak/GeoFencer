@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
@@ -134,6 +135,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
+        LatLng geoCentrUkraine = new LatLng(48.9592699d, 32.8723257d);
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentrUkraine, 6f));
     }
 
     public void finishCreatingRoute(List<LatLng> route) {
@@ -182,6 +185,10 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
 
     public void moveCamera(CameraUpdate cameraUpdate) {
         mGoogleMap.moveCamera(cameraUpdate);
+    }
+
+    public void animateCamera(CameraUpdate cameraUpdate) {
+        mGoogleMap.animateCamera(cameraUpdate);
     }
 
     public View.OnClickListener getOnClickListener() {

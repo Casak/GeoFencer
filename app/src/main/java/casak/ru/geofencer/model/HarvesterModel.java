@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -133,20 +132,11 @@ public class HarvesterModel {
                     .position(currentLocation)
                     .rotation(heading)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.current_position_moving_icon)));
-            mapPresenter.moveCamera(CameraUpdateFactory.newCameraPosition(
-                    CameraPosition
-                            .builder()
-                            .target(currentLocation)
-                            .zoom(16)
-                            .build()));
+            mapPresenter.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 18));
         } else {
             positionMarker.setPosition(currentLocation);
             positionMarker.setRotation(heading);
-            mapPresenter.moveCamera(CameraUpdateFactory.newCameraPosition(
-                    CameraPosition
-                            .builder()
-                            .target(currentLocation)
-                            .build()));
+            mapPresenter.animateCamera(MapsUtils.latLngToCameraUpdate(currentLocation));
         }
     }
 }

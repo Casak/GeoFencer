@@ -1,13 +1,11 @@
 package casak.ru.geofencer.model;
 
-import android.graphics.Color;
-
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
@@ -41,7 +39,9 @@ public class FieldModel {
         leftArrow = mapPresenter.showPolyline(createArrow(currentRoute, true));
         rightArrow = mapPresenter.showPolyline(createArrow(currentRoute, false));
 
-        mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(harvester.getHarvestedPolygon()));
+        CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(harvester.getHarvestedPolygon());
+        if (cameraUpdate != null)
+            mapPresenter.animateCamera(cameraUpdate);
     }
 
     public PolylineClickListener getPolylineClickListener() {
@@ -153,13 +153,16 @@ public class FieldModel {
                 field = createField(start, end, true);
                 notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
                         Constants.HEADING_TO_LEFT);
-                mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(field));
             }
             if (polyline.equals(rightArrow)) {
                 field = createField(start, end, false);
                 notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
                         Constants.HEADING_TO_RIGHT);
-                mapPresenter.moveCamera(MapsUtils.polygonToCameraUpdate(field));
+            }
+            if(polyline.equals(leftArrow) || polyline.equals(rightArrow)){
+                CameraUpdate cameraUpdate = MapsUtils.fieldPolygonToCameraUpdate(field);
+                if (cameraUpdate != null)
+                    mapPresenter.animateCamera(cameraUpdate);
             }
 
             removeArrow(leftArrow);
