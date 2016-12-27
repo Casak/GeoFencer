@@ -165,11 +165,15 @@ public class MapsUtils {
         List<LatLng> fullArea = new LinkedList<>();
 
         if (points.size() > 1) {
-            LatLng start = points.get(0);
-            LatLng end = points.get(points.size() - 1);
-            double heading = SphericalUtil.computeHeading(start, end);
+            LatLng first = points.get(0);
+            LatLng second = points.get(1);
+            double heading = SphericalUtil.computeHeading(first, second);
+            LatLng prev = null;
 
             for (LatLng point : points) {
+                if(prev != null)
+                    heading = SphericalUtil.computeHeading(prev, point);
+                prev = point;
                 upperBound.add(SphericalUtil.computeOffset(point,
                         Constants.WIDTH_METERS / 2,
                         heading + 90));
@@ -210,7 +214,8 @@ public class MapsUtils {
         }
 
         private void initLocations() {
-        String locationsString = "50.077209,30.041981;" +
+        String locationsString =
+                "50.077209,30.041981;" +
                 "50.077113,30.041895;" +
                 "50.077086,30.041724;" +
                 "50.077044,30.041552;" +
@@ -310,6 +315,15 @@ public class MapsUtils {
         }
     }
 
+    private void fieldLocations(LatLng... locationArray){
+        for (LatLng point : locationArray) {
+            Location location = new Location(LocationManager.GPS_PROVIDER);
+            location.setLatitude(point.latitude);
+            location.setLongitude(point.longitude);
+            locations.add(location);
+        }
+    }
+
     @Override
     protected String doInBackground(LatLng... locationArray) {
         if (locationArray.length == 0)
@@ -323,7 +337,7 @@ public class MapsUtils {
             point.setAccuracy(1);
             publishProgress(point);
             try {
-                Thread.sleep(500);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
