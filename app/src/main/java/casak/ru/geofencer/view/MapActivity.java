@@ -17,6 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -99,7 +100,7 @@ public class MapActivity extends AppCompatActivity {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String deviceHardwareAddress = device.getAddress();
                     ParcelUuid[] uuids = device.getUuids();
-                    for(ParcelUuid uuid : uuids){
+                    for (ParcelUuid uuid : uuids) {
                         Log.d(TAG, "Antenna`s UUID is : " + uuid.getUuid());
                     }
                     if (deviceHardwareAddress.equals(Constants.BLUETOOTH_GPS_ANTENNA_HARDWARE_ADDRESS)) {
@@ -149,13 +150,11 @@ public class MapActivity extends AppCompatActivity {
 
     private class BluetoothDataTransferringThread extends Thread {
         private BluetoothSocket socket;
-        private byte[] buffer;
         private InputStream in;
 
         public BluetoothDataTransferringThread(BluetoothSocket bluetoothSocket) {
             Log.d(TAG, "In BluetoothDataTransferringThread");
             socket = bluetoothSocket;
-            buffer = new byte[1024];
             try {
                 in = socket.getInputStream();
             } catch (IOException e) {
@@ -165,13 +164,17 @@ public class MapActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            while (true) {
-                try {
-                    Log.d(TAG, "Read from GPS antenna: " + in.read(buffer));
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            try {
+                while ((length = in.read(buffer)) != -1) {
+                    result.write(buffer, 0, length);
+                    Log.d(TAG, "Read from GPS antenna: " + result.toString("UTF-8"));
+                    result.reset();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
