@@ -50,4 +50,11 @@ public class Constants {
     public static final int ARROW_COLOR = 0x9FF4F142;
     public static final int COMPUTED_ROUTE_COLOR = 0x9FFF00FF;
 
+
+    //Bluetooth
+    public static final int BLUETOOTH_REQUEST_CODE = 1478;
+    public static final String BLUETOOTH_GPS_ANTENNA_HARDWARE_ADDRESS = "98:D3:31:80:3A:26";
+    public static final String ANTENNA_UUID = "00001101-0000-1000-8000-00805f9b34fb";
+
+
 }
