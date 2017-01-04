@@ -15,8 +15,8 @@ public class Contract {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_COORDS = "coords";
     public static final String PATH_COORD = "coord";
+    public static final String PATH_COORDS = "coords";
 
 
     public static final class CoordEntry implements BaseColumns{
@@ -31,7 +31,6 @@ public class Contract {
 
 
         public static final String TABLE_NAME = "coord";
-
 
         public static final String COLUMN_LAT = "lat";
         public static final String COLUMN_LNG = "lng";

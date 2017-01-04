@@ -22,13 +22,13 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         final String CREATE_COORD_TABLE = "CREATE TABLE " + CoordEntry.TABLE_NAME + " (" +
-                CoordEntry._ID + " INTEGER PRIMARY KEY, " +
+                CoordEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 CoordEntry.COLUMN_LAT + " TEXT, " +
                 CoordEntry.COLUMN_LNG + " TEXT, " +
                 CoordEntry.COLUMN_ALT + " TEXT, " +
                 CoordEntry.COLUMN_SPD + " TEXT, " +
                 CoordEntry.COLUMN_ACCURACY + " TEXT, " +
-                CoordEntry.COLUMN_HEADING + " TEXT, "  + ");";
+                CoordEntry.COLUMN_HEADING + " TEXT "  + ");";
 
         db.beginTransaction();
         db.execSQL(CREATE_COORD_TABLE);

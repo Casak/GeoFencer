@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 
 import java.util.List;
 
+import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.model.FieldModel;
 import casak.ru.geofencer.model.HarvesterModel;
@@ -53,6 +55,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     private GoogleMap mGoogleMap;
     private static GoogleApiClient mGoogleApiClient;
     private LocationService locationService;
+    private LocationSource locationSource;
     private View.OnClickListener onClickListener;
     private LocationListener mapLocationListener;
 
@@ -70,6 +73,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         }
 
         this.context = context;
+
+        locationSource = new BluetoothAntennaLocationSource();
 
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -135,8 +140,11 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
+        //TODO Create a not hardcoded version
         LatLng geoCentrUkraine = new LatLng(48.9592699d, 32.8723257d);
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentrUkraine, 6f));
+        mGoogleMap.setLocationSource(locationSource);
+        mGoogleMap.setMyLocationEnabled(true);
     }
 
     public void finishCreatingRoute(List<LatLng> route) {
@@ -211,6 +219,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
+                harvester.showCount();
             }
         }
     }

@@ -1,6 +1,7 @@
 package casak.ru.geofencer.model;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -9,6 +10,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.LinkedList;
@@ -99,6 +101,10 @@ public class HarvesterModel {
 
         updateRouteUI();
         updatePositionOnMap();
+    }
+
+    public void showCount(){
+        Log.d("TAG", SphericalUtil.computeLength(harvestedPolyline.getPoints())+ "");
     }
 
     private void updateRouteUI() {

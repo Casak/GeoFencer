@@ -25,13 +25,27 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".receiver.BluetoothReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.FOUND"/>
+                <action android:name="android.bluetooth.device.action.DISAPPEARED"/>
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".CoordContentProvider"
+            android:authorities="ru.casak.geofencer"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB12PfSdg3OpEm36-yS63srDuFn3feR-EA"/>
+            android:value="AIzaSyB12PfSdg3OpEm36-yS63srDuFn3feR-EA" />
     </application>
 
 </manifest>
