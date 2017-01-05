@@ -1,4 +1,4 @@
-package casak.ru.geofencer.presenter.interfaces;
+package casak.ru.geofencer.presentation.presenters;
 
 import android.content.Intent;
 import android.location.Location;

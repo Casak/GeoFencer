@@ -1,4 +1,4 @@
-package casak.ru.geofencer.presenter;
+package casak.ru.geofencer.presentation.presenters.impl;
 
 import android.Manifest;
 import android.app.Activity;
@@ -28,7 +28,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.presenter.interfaces.ILocationPresenter;
+import casak.ru.geofencer.presentation.presenters.ILocationPresenter;
 
 /**
  * Created by Casak on 08.12.2016.

@@ -1,23 +1,107 @@
-package casak.ru.geofencer.model;
+package casak.ru.geofencer.domain.model;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
-import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.Constants;
-import casak.ru.geofencer.presenter.MapPresenter;
+import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
 import casak.ru.geofencer.util.MapsUtils;
 
 public class FieldModel {
+
+    private class Point{
+        private double mTime = 0.0d;
+        private double mLatitude = 0.0d;
+        private double mLongitude = 0.0d;
+        private double mAltitude = 0.0d;
+        private float mSpeed = 0.0f;
+        private float mBearing = 0.0f;
+        private float mAccuracy = 0.0f;
+
+        public double getTime() {
+            return mTime;
+        }
+
+        public void setTime(double mTime) {
+            this.mTime = mTime;
+        }
+
+        public double getLatitude() {
+            return mLatitude;
+        }
+
+        public void setLatitude(double mLatitude) {
+            this.mLatitude = mLatitude;
+        }
+
+        public double getLongitude() {
+            return mLongitude;
+        }
+
+        public void setLongitude(double mLongitude) {
+            this.mLongitude = mLongitude;
+        }
+
+        public double getAltitude() {
+            return mAltitude;
+        }
+
+        public void setAltitude(double mAltitude) {
+            this.mAltitude = mAltitude;
+        }
+
+        public float getSpeed() {
+            return mSpeed;
+        }
+
+        public void setSpeed(float mSpeed) {
+            this.mSpeed = mSpeed;
+        }
+
+        public float getBearing() {
+            return mBearing;
+        }
+
+        public void setBearing(float mBearing) {
+            this.mBearing = mBearing;
+        }
+
+        public float getAccuracy() {
+            return mAccuracy;
+        }
+
+        public void setAccuracy(float mAccuracy) {
+            this.mAccuracy = mAccuracy;
+        }
+    }
+
+    private List<Point> field;
+    private List<Point> currentRoute;
+    private List<List<Point>> computedRoutes;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
     private Polygon field;
     private List<LatLng> currentRoute;
     private Polyline leftArrow;
@@ -51,22 +135,6 @@ public class FieldModel {
             return polylineClickListener;
     }
 
-    private PolylineOptions createArrow(List<LatLng> route, boolean toLeft) {
-        if (route.size() > 1) {
-            LatLng start = route.get(0);
-            LatLng end = route.get(route.size() - 1);
-
-            double distanceBetween = SphericalUtil
-                    .computeDistanceBetween(start, end);
-            double heading = SphericalUtil.computeHeading(start, end);
-            LatLng routeCenter = SphericalUtil.computeOffset(start, distanceBetween / 2, heading);
-
-            return MapsUtils.createArrow(routeCenter, distanceBetween, heading, toLeft);
-        }
-        //TODO Normal error handling
-        else
-            return null;
-    }
     //TODO Think about moving to @HarvesterModel
     private List<Polyline> createComputedPolylines(Polyline oldPolyline, double heading) {
         List<Polyline> routes = new LinkedList<>();
@@ -182,4 +250,6 @@ public class FieldModel {
             rightArrow = null;
         }
     }
+
+    */
 }

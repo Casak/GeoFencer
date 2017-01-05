@@ -1,4 +1,4 @@
-package casak.ru.geofencer.model;
+package casak.ru.geofencer.domain.model;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,14 +10,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.presenter.MapPresenter;
+import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
 import casak.ru.geofencer.util.MapsUtils;
 
 public class HarvesterModel {

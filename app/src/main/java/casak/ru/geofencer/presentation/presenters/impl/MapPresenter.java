@@ -1,4 +1,4 @@
-package casak.ru.geofencer.presenter;
+package casak.ru.geofencer.presentation.presenters.impl;
 
 import android.Manifest;
 import android.content.Context;
@@ -36,17 +36,20 @@ import java.util.List;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.model.FieldModel;
-import casak.ru.geofencer.model.HarvesterModel;
+import casak.ru.geofencer.domain.executor.Executor;
+import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.model.FieldModel;
+import casak.ru.geofencer.domain.model.HarvesterModel;
+import casak.ru.geofencer.presentation.presenters.IMapPresenter;
+import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.service.LocationService;
-import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
 import casak.ru.geofencer.util.MapsUtils;
 
 /**
  * Created by Casak on 08.12.2016.
  */
 
-public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
+public class MapPresenter extends AbstractPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
     private static final String TAG = MapPresenter.class.getSimpleName();
@@ -63,7 +66,8 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     private FieldModel field;
     private HarvesterModel harvester;
 
-    public MapPresenter(Context context) {
+    public MapPresenter(Context context, Executor executor, MainThread mainThread) {
+        super(executor, mainThread);
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API)
@@ -84,7 +88,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
                     currentLocation.getLongitude());
 
         harvester = new HarvesterModel(this, currentLatLng);
-        field = new FieldModel(this, harvester);
+        field = new FieldModel();
     }
 
     @Override
@@ -139,7 +143,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
+        //mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
         //TODO Create a not hardcoded version
         LatLng geoCentrUkraine = new LatLng(48.9592699d, 32.8723257d);
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentrUkraine, 6f));
@@ -148,7 +152,7 @@ public class MapPresenter implements IMapPresenter, GoogleApiClient.ConnectionCa
     }
 
     public void finishCreatingRoute(List<LatLng> route) {
-        field.initBuildingField(route);
+        //field.initBuildingField(route);
     }
 
     @Nullable

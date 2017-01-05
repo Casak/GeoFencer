@@ -1,4 +1,4 @@
-package casak.ru.geofencer.view;
+package casak.ru.geofencer.presentation.ui.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -17,10 +17,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.lang.ref.WeakReference;
 import android.os.Handler;
 
-import casak.ru.geofencer.Constants;
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.presenter.MapPresenter;
-import casak.ru.geofencer.presenter.interfaces.IMapPresenter;
+import casak.ru.geofencer.domain.Constants;
+import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
+import casak.ru.geofencer.presentation.presenters.IMapPresenter;
+import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
+import casak.ru.geofencer.threading.MainThreadImpl;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -73,7 +75,7 @@ public class MapActivity extends AppCompatActivity {
         bluetoothAdapter.startDiscovery();
 
 
-        mapPresenter = new MapPresenter(this);
+        mapPresenter = new MapPresenter(this, ThreadExecutor.getInstance(), MainThreadImpl.getInstance());
 
         setContentView(R.layout.activity_map);
 

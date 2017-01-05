@@ -21,12 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.Constants;
-
-
-/**
- * Created by Casak on 06.12.2016.
- */
+import casak.ru.geofencer.domain.Constants;
 
 public class MapsUtils {
 

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "23.0.3"
     defaultConfig {
-        applicationId "casak.ru.geofencer"
+        applicationId 'ru.casak.geofencer'
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 1
@@ -16,6 +16,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
