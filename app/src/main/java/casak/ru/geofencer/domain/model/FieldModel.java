@@ -1,85 +1,53 @@
 package casak.ru.geofencer.domain.model;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
-
-import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
-import casak.ru.geofencer.util.MapsUtils;
-
 public class FieldModel {
+    private List<Point> points;
+    private RouteModel currentRoute;
+    private List<RouteModel> computedRoutes;
+    private List<RouteModel> harvestedRoutes;
 
-    private class Point{
-        private double mTime = 0.0d;
-        private double mLatitude = 0.0d;
-        private double mLongitude = 0.0d;
-        private double mAltitude = 0.0d;
-        private float mSpeed = 0.0f;
-        private float mBearing = 0.0f;
-        private float mAccuracy = 0.0f;
-
-        public double getTime() {
-            return mTime;
-        }
-
-        public void setTime(double mTime) {
-            this.mTime = mTime;
-        }
-
-        public double getLatitude() {
-            return mLatitude;
-        }
-
-        public void setLatitude(double mLatitude) {
-            this.mLatitude = mLatitude;
-        }
-
-        public double getLongitude() {
-            return mLongitude;
-        }
-
-        public void setLongitude(double mLongitude) {
-            this.mLongitude = mLongitude;
-        }
-
-        public double getAltitude() {
-            return mAltitude;
-        }
-
-        public void setAltitude(double mAltitude) {
-            this.mAltitude = mAltitude;
-        }
-
-        public float getSpeed() {
-            return mSpeed;
-        }
-
-        public void setSpeed(float mSpeed) {
-            this.mSpeed = mSpeed;
-        }
-
-        public float getBearing() {
-            return mBearing;
-        }
-
-        public void setBearing(float mBearing) {
-            this.mBearing = mBearing;
-        }
-
-        public float getAccuracy() {
-            return mAccuracy;
-        }
-
-        public void setAccuracy(float mAccuracy) {
-            this.mAccuracy = mAccuracy;
-        }
+    public FieldModel() {
     }
 
-    private List<Point> field;
-    private List<Point> currentRoute;
-    private List<List<Point>> computedRoutes;
+    public FieldModel(List<Point> points) {
+        this.points = points;
+    }
+
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point> points) {
+        this.points = points;
+    }
+
+    public RouteModel getCurrentRoute() {
+        return currentRoute;
+    }
+
+    public void setCurrentRoute(RouteModel currentRoute) {
+        this.currentRoute = currentRoute;
+    }
+
+    public List<RouteModel> getComputedRoutes() {
+        return computedRoutes;
+    }
+
+    public void setComputedRoutes(List<RouteModel> computedRoutes) {
+        this.computedRoutes = computedRoutes;
+    }
+
+    public List<RouteModel> getHarvestedRoutes() {
+        return harvestedRoutes;
+    }
+
+    public void setHarvestedRoutes(List<RouteModel> harvestedRoutes) {
+        this.harvestedRoutes = harvestedRoutes;
+    }
+
+
 
 
 

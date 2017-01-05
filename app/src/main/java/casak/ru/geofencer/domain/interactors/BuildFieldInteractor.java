@@ -2,16 +2,19 @@ package casak.ru.geofencer.domain.interactors;
 
 
 import casak.ru.geofencer.domain.interactors.base.Interactor;
+import casak.ru.geofencer.domain.model.ArrowModel;
 
 
 public interface BuildFieldInteractor extends Interactor {
 
     interface Callback {
-        // TODO: Add interactor callback methods here
+        void onFieldBuildFinish();
 
+        void onFieldBuildFail();
+
+        void removeArrow(ArrowModel model);
     }
 
-    // TODO: Add interactor methods here
 
 
 }

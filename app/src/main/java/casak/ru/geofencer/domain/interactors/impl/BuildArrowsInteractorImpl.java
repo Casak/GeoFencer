@@ -35,6 +35,7 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         RouteModel route = mRepository.getRoute(RouteModel.Type.FIELD_BUILDING);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
+        mCallback.onArrowsBuildFinished();
     }
 
     private ArrowModel createArrow(RouteModel route, boolean toLeft) {
@@ -47,11 +48,16 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
             double heading = MapUtils.computeHeading(start, end);
             Point routeCenter = MapUtils.computeOffset(start, distanceBetween / 2, heading);
 
-            return new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft));
+            return toLeft ?
+                    new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
+                            ArrowModel.Type.LEFT) :
+                    new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
+                            ArrowModel.Type.RIGHT);
         }
         //TODO Normal error handling
         else
-            return null;
+            mCallback.onArrowsBuildFailed();
+        return null;
     }
 
     private List<Point> createArrowPoints(Point routeCenter, double routeDistance, double routeHeading, boolean toLeft) {
