@@ -1,7 +1,5 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,13 +21,14 @@ import static casak.ru.geofencer.domain.Constants.HEADING_TO_LEFT;
 
 public class BuildFieldInteractorImpl extends AbstractInteractor implements BuildFieldInteractor {
 
-    private Callback mCallback;
-    private ArrowRepository mArrowRepository;
+    private BuildFieldInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
+    private ArrowRepository mArrowRepository;
+    private FieldModel mFieldModel;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
-                                    Callback callback, ArrowRepository arrowRepository,
-                                    RouteRepository routeRepository) {
+                                    BuildFieldInteractor.Callback callback, RouteRepository routeRepository,
+                                    ArrowRepository arrowRepository) {
         super(threadExecutor, mainThread);
         mCallback = callback;
         mRouteRepository = routeRepository;
@@ -38,48 +37,45 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
 
     @Override
     public void run() {
-        FieldModel field = new FieldModel();
         RouteModel route = mRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING);
-        Point start;
-        Point end;
+
         ArrowModel leftArrow = mArrowRepository.getArrow(ArrowModel.Type.LEFT);
         ArrowModel rightArrow = mArrowRepository.getArrow(ArrowModel.Type.RIGHT);
-        if (leftArrow == null && rightArrow == null)
+
+        if (!leftArrow.isChosen() && !rightArrow.isChosen()) {
+            mCallback.onFieldBuildFail();
             return;
-        else {
-            start = route.getRoutePoints().get(0);
-            end = route.getRoutePoints().get(route.getRoutePoints().size() - 1);
         }
 
-        if (leftArrow.isChosen()) {
-            field = buildField(start, end, true);
-        }
-        if (rightArrow.isChosen()) {
-            field = buildField(start, end, false);
-        }
+        Point start = route.getRoutePoints().get(0);
+        Point end = route.getRoutePoints().get(route.getRoutePoints().size() - 1);
+        boolean toLeft = leftArrow.isChosen();
 
-        mCallback.removeArrow(leftArrow);
-        mCallback.removeArrow(rightArrow);
+        mFieldModel = buildField(start, end, toLeft);
+        if (mFieldModel.getPoints() != null) {
+            mCallback.removeArrow(leftArrow);
+            mCallback.removeArrow(rightArrow);
+        }
+    }
+
+    FieldModel buildField(Point start, Point end, boolean toLeft) {
+        FieldModel field = new FieldModel(computeCorners(start,
+                end,
+                //TODO Implement different sizes
+                Constants.WIDTH_METERS,
+                toLeft));
+
         if (field.getPoints() != null)
             mCallback.onFieldBuildFinish();
         else
             mCallback.onFieldBuildFail();
+
+        return field;
     }
 
-    private FieldModel buildField(Point start, Point end, boolean toLeft) {
-        return new FieldModel(createFieldPoints(start,
-                end,
-                Constants.WIDTH_METERS,
-                toLeft));
-    }
-
-    private List<Point> createFieldPoints(Point start, Point end, double width, boolean toLeft) {
-        double offset = width == 0 ? 0d : width / 2;
-        return computeCorners(start, end, offset, toLeft);
-    }
-
-    private List<Point> computeCorners(Point start, Point end, double offset, boolean toLeft) {
+    List<Point> computeCorners(Point start, Point end, double width, boolean toLeft) {
         double heading = MapUtils.computeHeading(start, end);
+        double offset = width == 0 ? 0d : width / 2;
 
         List<Point> result = new LinkedList<>();
 
@@ -102,5 +98,9 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         result.add(cornerSouthEast);
         result.add(cornerNorthEast);
         return result;
+    }
+
+    public FieldModel getFieldModel() {
+        return mFieldModel;
     }
 }
