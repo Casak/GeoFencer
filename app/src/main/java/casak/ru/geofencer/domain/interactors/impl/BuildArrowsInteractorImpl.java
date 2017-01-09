@@ -16,7 +16,7 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
 
 public class BuildArrowsInteractorImpl extends AbstractInteractor implements BuildArrowsInteractor {
 
-    private Callback mCallback;
+    private BuildArrowsInteractor.Callback mCallback;
     private RouteRepository mRepository;
 
     private ArrowModel leftArrow;
@@ -24,7 +24,8 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
 
     public BuildArrowsInteractorImpl(Executor threadExecutor,
                                      MainThread mainThread,
-                                     Callback callback, RouteRepository repository) {
+                                     BuildArrowsInteractor.Callback callback,
+                                     RouteRepository repository) {
         super(threadExecutor, mainThread);
         mCallback = callback;
         mRepository = repository;
@@ -38,9 +39,9 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         mCallback.onArrowsBuildFinished();
     }
 
-    private ArrowModel createArrow(RouteModel route, boolean toLeft) {
+    ArrowModel createArrow(RouteModel route, boolean toLeft) {
         List<Point> routePoints = route.getRoutePoints();
-        if (routePoints.size() > 1) {
+        if (routePoints != null && routePoints.size() > 1) {
             Point start = routePoints.get(0);
             Point end = routePoints.get(routePoints.size() - 1);
 
@@ -60,7 +61,7 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         return null;
     }
 
-    private List<Point> createArrowPoints(Point routeCenter, double routeDistance, double routeHeading, boolean toLeft) {
+    List<Point> createArrowPoints(Point routeCenter, double routeDistance, double routeHeading, boolean toLeft) {
         List<Point> result = new LinkedList<>();
 
         result.add(routeCenter);
@@ -89,4 +90,11 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         return result;
     }
 
+    public ArrowModel getLeftArrow() {
+        return leftArrow;
+    }
+
+    public ArrowModel getRightArrow() {
+        return rightArrow;
+    }
 }
