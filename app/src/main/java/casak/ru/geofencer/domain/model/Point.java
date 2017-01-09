@@ -71,4 +71,18 @@ public class Point{
     public void setAccuracy(float mAccuracy) {
         this.mAccuracy = mAccuracy;
     }
+
+    //TODO computeHash
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || obj instanceof Point)
+            return false;
+        Point point = (Point) obj;
+        if (point.mTime != mTime || point.mLatitude != mLatitude ||
+                point.mLongitude != mLongitude || point.mAltitude != mAltitude ||
+                point.mSpeed != mSpeed || point.mBearing != mBearing ||
+                point.mAccuracy != mAccuracy)
+            return false;
+        return true;
+    }
 }
