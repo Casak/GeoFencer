@@ -7,7 +7,7 @@ import casak.ru.geofencer.domain.repository.LocationRepository;
 public class LocationRepositoryImpl implements LocationRepository{
 
     @Override
-    public boolean insert(Point point) {
+    public boolean insert(Point point, Destination destination) {
         return false;
     }
 
@@ -18,6 +18,11 @@ public class LocationRepositoryImpl implements LocationRepository{
 
     @Override
     public Point get(Integer id) {
+        return null;
+    }
+
+    @Override
+    public Point getLastLocation() {
         return null;
     }
 
