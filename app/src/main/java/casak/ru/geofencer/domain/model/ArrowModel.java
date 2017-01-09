@@ -5,7 +5,7 @@ import java.util.List;
 public class ArrowModel {
     public enum Type {
         LEFT,
-        RIGHT;
+        RIGHT
     }
 
     private List<Point> mArrowPoints;
@@ -15,6 +15,7 @@ public class ArrowModel {
     public ArrowModel(List<Point> arrowPoints, Type type) {
         mArrowPoints = arrowPoints;
         this.type = type;
+        isChosen = false;
     }
 
     public List<Point> getArrowPoints() {
