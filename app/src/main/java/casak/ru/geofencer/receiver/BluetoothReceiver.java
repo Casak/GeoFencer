@@ -10,12 +10,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
@@ -47,7 +53,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
             }
         }
         //TODO Implement + take action from BluetoothDevice.ACTION_DISAPPEARED
-        else if("android.bluetooth.device.action.DISAPPEARED".equals(action)){
+        else if ("android.bluetooth.device.action.DISAPPEARED".equals(action)) {
 
         }
     }
@@ -59,11 +65,9 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
     private class ConnectThread extends Thread {
         private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
 
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
-            mmDevice = device;
 
             try {
                 tmp = device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(Constants.ANTENNA_UUID));
@@ -77,15 +81,13 @@ public class BluetoothReceiver extends BroadcastReceiver {
             Log.d(TAG, "In ConnectThread.run()");
             boolean connected = false;
             try {
+                Log.d(TAG, "mmSocket.isConnected() = " + mmSocket.isConnected());
                 mmSocket.connect();
                 connected = true;
             } catch (IOException connectException) {
                 Log.e(TAG, "Could not connect to the client socket", connectException);
                 try {
-                    sleep(500);
                     mmSocket.close();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 } catch (IOException closeException) {
                     Log.e(TAG, "Could not close the client socket", closeException);
                 }
@@ -94,12 +96,19 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 manageMyConnectedSocket(mmSocket);
         }
     }
+
     private class BluetoothDataTransferringThread extends Thread {
+        private ContentResolver resolver;
         private BluetoothSocket socket;
         private InputStream in;
+        private List<Location> lastLocations;
 
         public BluetoothDataTransferringThread(BluetoothSocket bluetoothSocket) {
             Log.d(TAG, "In BluetoothDataTransferringThread");
+            resolver = context.getContentResolver();
+
+            lastLocations = new LinkedList<>();
+
             if (!bluetoothSocket.isConnected())
                 return;
             socket = bluetoothSocket;
@@ -121,8 +130,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 location.setLongitude(30.041981d);
                 BluetoothAntennaLocationSource.getListener().onLocationChanged(location);
 
-                ContentResolver resolver = context.getContentResolver();
-
                 while ((length = in.read(buffer)) != -1) {
                     result.write(buffer, 0, length);
                     Log.d(TAG, "Read from GPS antenna: " + result.toString("UTF-8"));
@@ -130,14 +137,9 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
                     if (newLocation != null) {
                         BluetoothAntennaLocationSource.getListener().onLocationChanged(newLocation);
-                        ContentValues value = new ContentValues();
-                        value.put(Contract.CoordEntry.COLUMN_LAT, newLocation.getLatitude());
-                        value.put(Contract.CoordEntry.COLUMN_LNG, newLocation.getLongitude());
-                        value.put(Contract.CoordEntry.COLUMN_ALT, newLocation.getAltitude());
-                        resolver.insert(Contract.CoordEntry.CONTENT_URI, value);
-                        ((MapActivity)context).showToast("Location with latitude: " + newLocation.getLatitude() +
-                                "; longitude: " + newLocation.getLongitude() +
-                                "; INSERTED");
+                        insertDataToProvider(newLocation, Contract.CoordEntry.CONTENT_URI);
+                        if (haveToInsert(location))
+                            insertDataToProvider(newLocation, Contract.FilteredCoordEntry.CONTENT_URI);
                     }
 
                     result.reset();
@@ -146,6 +148,57 @@ public class BluetoothReceiver extends BroadcastReceiver {
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        //TODO Move this filter somewhere
+        private boolean haveToInsert(Location location) {
+            lastLocations.add(location);
+            if (lastLocations.size() == 1) {
+                return true;
+            }
+
+            Location first = lastLocations.get(0);
+            if (lastLocations.size() == 2) {
+                double bearing = SphericalUtil.computeHeading(
+                        convertLocationToLatLng(first),
+                        convertLocationToLatLng(location));
+                first.setBearing((float)bearing);
+                return true;
+            }
+            if (lastLocations.size() > 2) {
+                Location previousPoint = lastLocations.get(lastLocations.size() - 2);
+
+                double bearing = SphericalUtil.computeHeading(
+                        convertLocationToLatLng(previousPoint),
+                        convertLocationToLatLng(location));
+                previousPoint.setBearing((float)bearing);
+
+                if (isBearingDifferent(first.getBearing(), previousPoint.getBearing())) {
+                    lastLocations.clear();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        private boolean isBearingDifferent(float first, float last) {
+            return Math.abs(first - last) > Constants.FILTER_HEADING_DIFFERENCE;
+        }
+
+        private LatLng convertLocationToLatLng(Location location) {
+            return new LatLng(location.getLatitude(), location.getLongitude());
+        }
+
+        private void insertDataToProvider(Location location, Uri contentUri) {
+            ContentValues value = new ContentValues();
+            value.put(Contract.CoordEntry.COLUMN_LAT, location.getLatitude());
+            value.put(Contract.CoordEntry.COLUMN_LNG, location.getLongitude());
+            value.put(Contract.CoordEntry.COLUMN_ALT, location.getAltitude());
+            resolver.insert(contentUri, value);
+            ((MapActivity) context).showToast("Location with latitude: " + location.getLatitude() +
+                    "; longitude: " + location.getLongitude() +
+                    "; INSERTED");
         }
 
         @Nullable
@@ -166,16 +219,22 @@ public class BluetoothReceiver extends BroadcastReceiver {
                         String time = locationData[1];
 
                         String tmp = locationData[2];
-                        int deg = Integer.parseInt(tmp.substring(0, 2));
-                        double min = Double.parseDouble(tmp.substring(2));
-                        String latitude = (deg + (min / 60)) + "";
+                        String latitude = "".intern();
+                        if (tmp.length() > 5) {
+                            int deg = Integer.parseInt(tmp.substring(0, 2));
+                            double min = Double.parseDouble(tmp.substring(2));
+                            latitude = (deg + (min / 60)) + "";
+                        }
 
                         String latitudeAngle = locationData[3];
 
                         tmp = locationData[4];
-                        deg = Integer.parseInt(tmp.substring(0, 3));
-                        min = Double.parseDouble(tmp.substring(3));
-                        String longitude = (deg + (min / 60)) + "";
+                        String longitude = "".intern();
+                        if (tmp.length() > 5) {
+                            int deg = Integer.parseInt(tmp.substring(0, 3));
+                            double min = Double.parseDouble(tmp.substring(3));
+                            longitude = (deg + (min / 60)) + "";
+                        }
 
                         String longitudeAngle = locationData[5];
                         String fixQuality = locationData[6];
