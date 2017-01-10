@@ -25,11 +25,13 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private FieldModel mFieldModel;
+    private int fieldId;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                     BuildFieldInteractor.Callback callback, RouteRepository routeRepository,
-                                    ArrowRepository arrowRepository) {
+                                    ArrowRepository arrowRepository, int fieldId) {
         super(threadExecutor, mainThread);
+        this.fieldId = fieldId;
         mCallback = callback;
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
@@ -37,7 +39,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
 
     @Override
     public void run() {
-        RouteModel route = mRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING);
+        RouteModel route = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
 
         ArrowModel leftArrow = mArrowRepository.getArrow(ArrowModel.Type.LEFT);
         ArrowModel rightArrow = mArrowRepository.getArrow(ArrowModel.Type.RIGHT);
@@ -52,10 +54,6 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         boolean toLeft = leftArrow.isChosen();
 
         mFieldModel = buildField(start, end, toLeft);
-        if (mFieldModel.getPoints() != null) {
-            mCallback.removeArrow(leftArrow);
-            mCallback.removeArrow(rightArrow);
-        }
     }
 
     FieldModel buildField(Point start, Point end, boolean toLeft) {

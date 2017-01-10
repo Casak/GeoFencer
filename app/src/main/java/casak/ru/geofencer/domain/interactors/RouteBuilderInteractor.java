@@ -11,10 +11,8 @@ import casak.ru.geofencer.domain.model.RouteModel;
 public interface RouteBuilderInteractor extends Interactor{
 
     interface Callback{
-        void positionUpdate(Point point);
+        void finished(RouteModel route);
     }
 
-    void newPoint(Point point);
-    RouteModel startBuildRoute(RouteModel.Type type);
-    void finishBuildRoute(RouteModel routeModel);
+    void finish();
 }

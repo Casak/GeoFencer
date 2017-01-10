@@ -23,62 +23,55 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     private static RouteModel mFieldBuildingRouteModel;
 
     private boolean isBuildingRoute;
-    private boolean isBuildingFieldRoute;
 
     private RouteBuilderInteractor.Callback mCallback;
     private LocationRepository mLocationRepository;
     private RouteRepository mRouteRepository;
+    private int fieldId;
 
     public RouteBuilderInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                       RouteBuilderInteractor.Callback callback, LocationRepository locationRepository,
-                                      RouteRepository routeRepository) {
+                                      RouteRepository routeRepository, int fieldId) {
         super(threadExecutor, mainThread);
+        this.fieldId = fieldId;
+
         mCallback = callback;
         mLocationRepository = locationRepository;
         mRouteRepository = routeRepository;
+    }
 
-        RouteModel tmp = mRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING);
-        if (tmp == null)
-            tmp = mRouteRepository.createRoute(RouteModel.Type.FIELD_BUILDING);
-        mFieldBuildingRouteModel = tmp;
+    @Override
+    public void run() {
+        mFieldBuildingRouteModel = mRouteRepository.createRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
 
         routeDaemon = new LocationChangeListenerDaemon();
         routeDaemon.setDaemon(true);
         //TODO Move to resources; recreate thread if down
         routeDaemon.setName("LocationChangeListenerDaemon");
         routeDaemon.start();
+
+        isBuildingRoute = true;
     }
 
     @Override
-    public void run() {
-
+    public void finish() {
+        ((LocationChangeListenerDaemon)routeDaemon).cancel();
+        isBuildingRoute = false;
+        mRouteRepository.addRouteModel(mFieldBuildingRouteModel);
     }
 
-    @Override
-    public void newPoint(Point point) {
-        if (isBuildingFieldRoute)
-                mFieldBuildingRouteModel.addRoutePoint(point);
-    }
-
-    @Override
-    public RouteModel startBuildRoute(RouteModel.Type type) {
-        if(type == RouteModel.Type.FIELD_BUILDING)
-            isBuildingFieldRoute = true;
-        return mFieldBuildingRouteModel;
-    }
-
-    @Override
-    public void finishBuildRoute(RouteModel routeModel) {
-        if(routeModel.getType() == RouteModel.Type.FIELD_BUILDING)
-            isBuildingFieldRoute = false;
+    private void newPoint(Point point) {
+        if (mFieldBuildingRouteModel != null && isBuildingRoute)
+            mFieldBuildingRouteModel.addRoutePoint(point);
     }
 
     private class LocationChangeListenerDaemon extends Thread {
+        private volatile boolean running = true;
         Point currentPosition;
 
         @Override
         public void run() {
-            while (true) {
+            while (running) {
                 Point retrievedPosition = mLocationRepository.getLastLocation();
                 currentPosition = acceptPoint(retrievedPosition);
                 if (currentPosition != null && !retrievedPosition.equals(currentPosition))
@@ -91,13 +84,13 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
             }
         }
 
+        public void cancel(){
+            running = false;
+        }
+
         //TODO Implement this shit, dude
         private Point acceptPoint(Point newPoint) {
             return newPoint == currentPosition ? currentPosition : newPoint;
-        }
-
-        public Point getCurrentPosition(){
-            return currentPosition;
         }
     }
 }

@@ -11,18 +11,24 @@ public class RouteModel {
         CULTIVATED
     }
     private int id;
+    private int fieldId;
     private Type type;
     private List<Point> routePoints;
     private Type routeType;
 
-    public RouteModel(int id, Type type){
+    public RouteModel(int id, Type type, int fieldId){
         this.id = id;
         this.type = type;
+        this.fieldId = fieldId;
         routePoints = new ArrayList<>();
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getFieldId() {
+        return fieldId;
     }
 
     public Type getType() {

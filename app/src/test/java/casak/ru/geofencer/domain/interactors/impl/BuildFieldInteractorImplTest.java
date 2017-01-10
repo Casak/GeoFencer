@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class BuildFieldInteractorImplTest {
+    static final int FIELD_ID = 1;
 
     @Mock
     static Executor mMockExecutor;
@@ -45,7 +46,7 @@ public class BuildFieldInteractorImplTest {
 
     static BuildFieldInteractorImpl mInteractor;
 
-    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING);
+    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
     static ArrowModel mLeftArrow;
     static ArrowModel mRightArrow;
 
@@ -62,7 +63,7 @@ public class BuildFieldInteractorImplTest {
         mLeftArrow = new ArrowModel(points, ArrowModel.Type.LEFT);
         mRightArrow = new ArrowModel(points, ArrowModel.Type.RIGHT);
 
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
                 .thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getArrow(any(ArrowModel.Type.class)))
                 .thenReturn(mLeftArrow)
@@ -80,11 +81,6 @@ public class BuildFieldInteractorImplTest {
             public void onFieldBuildFail() {
 
             }
-
-            @Override
-            public void removeArrow(ArrowModel model) {
-
-            }
         });
 
         mInteractor = new BuildFieldInteractorImpl(
@@ -92,7 +88,8 @@ public class BuildFieldInteractorImplTest {
                 mMockMainThread,
                 mMockedCallback,
                 mMockRouteRepository,
-                mMockArrowRepository
+                mMockArrowRepository,
+                FIELD_ID
         );
     }
 
@@ -134,17 +131,4 @@ public class BuildFieldInteractorImplTest {
 
         Mockito.verify(mMockedCallback).onFieldBuildFail();
     }
-
-    @Test
-    public void run_withChosenArrow_callRemoveLeftAndRightArrowsCallback() {
-        mLeftArrow.setChosen(true);
-        mRightArrow.setChosen(false);
-
-        mInteractor.run();
-
-        Mockito.verify(mMockedCallback).removeArrow(mLeftArrow);
-        Mockito.verify(mMockedCallback).removeArrow(mRightArrow);
-    }
-
-
 }

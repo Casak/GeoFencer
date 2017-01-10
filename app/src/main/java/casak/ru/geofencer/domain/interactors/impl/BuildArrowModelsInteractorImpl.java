@@ -6,7 +6,7 @@ import java.util.List;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
+import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
@@ -14,29 +14,32 @@ import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 
-public class BuildArrowsInteractorImpl extends AbstractInteractor implements BuildArrowsInteractor {
+public class BuildArrowModelsInteractorImpl extends AbstractInteractor implements BuildArrowModelsInteractor {
 
-    private BuildArrowsInteractor.Callback mCallback;
+    private BuildArrowModelsInteractor.Callback mCallback;
     private RouteRepository mRepository;
 
     private ArrowModel leftArrow;
     private ArrowModel rightArrow;
+    private int fieldId;
 
-    public BuildArrowsInteractorImpl(Executor threadExecutor,
-                                     MainThread mainThread,
-                                     BuildArrowsInteractor.Callback callback,
-                                     RouteRepository repository) {
+    public BuildArrowModelsInteractorImpl(Executor threadExecutor,
+                                          MainThread mainThread,
+                                          BuildArrowModelsInteractor.Callback callback,
+                                          RouteRepository repository,
+                                          int fieldId) {
         super(threadExecutor, mainThread);
+        this.fieldId = fieldId;
         mCallback = callback;
         mRepository = repository;
     }
 
     @Override
     public void run() {
-        RouteModel route = mRepository.getRoute(RouteModel.Type.FIELD_BUILDING);
+        RouteModel route = mRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
-        mCallback.onArrowsBuildFinished();
+        mCallback.onArrowsBuildFinished(fieldId);
     }
 
     ArrowModel createArrow(RouteModel route, boolean toLeft) {
@@ -57,7 +60,7 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         }
         //TODO Normal error handling
         else
-            mCallback.onArrowsBuildFailed();
+            mCallback.onArrowsBuildFailed(fieldId);
         return null;
     }
 

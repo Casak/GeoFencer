@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
+import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
@@ -25,7 +25,9 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
  * Created on 06.01.2017.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class BuildArrowsInteractorImplTest {
+public class BuildArrowModelsInteractorImplTest {
+    static final int FIELD_ID = 1;
+
     @Mock
     RouteModel mMockRoute;
     @Mock
@@ -33,34 +35,36 @@ public class BuildArrowsInteractorImplTest {
     @Mock
     static MainThread mMockMainThread;
     @Mock
-    static BuildArrowsInteractor.Callback mMockedCallback;
+    static BuildArrowModelsInteractor.Callback mMockedCallback;
     @Mock
     static RouteRepository mMockRouteRepository;
 
-    static BuildArrowsInteractor mInteractor;
+    static BuildArrowModelsInteractor mInteractor;
 
-    RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING);
+    RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
 
 
 
     @Before
     public void setUpClass(){
         //MockitoAnnotations.initMocks(this);
-        mMockedCallback = Mockito.spy(new BuildArrowsInteractor.Callback() {
+        mMockedCallback = Mockito.spy(new BuildArrowModelsInteractor.Callback() {
             @Override
-            public void onArrowsBuildFinished() {
+            public void onArrowsBuildFinished(int fieldId) {
 
             }
 
             @Override
-            public void onArrowsBuildFailed() {
+            public void onArrowsBuildFailed(int fieldId) {
+
             }
         });
-        mInteractor = new BuildArrowsInteractorImpl(
+        mInteractor = new BuildArrowModelsInteractorImpl(
                 mMockExecutor,
                 mMockMainThread,
                 mMockedCallback,
-                mMockRouteRepository
+                mMockRouteRepository,
+                FIELD_ID
         );
 
         List<Point> points = new ArrayList<>();
@@ -76,18 +80,20 @@ public class BuildArrowsInteractorImplTest {
 
     @Test
     public void run_from3PointsRoute_FinishedCallbackIsCalled(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
 
-        ((BuildArrowsInteractorImpl)mInteractor).run();
+        ((BuildArrowModelsInteractorImpl)mInteractor).run();
 
-        Mockito.verify(mMockedCallback).onArrowsBuildFinished();
+        Mockito.verify(mMockedCallback).onArrowsBuildFinished(mFieldBuildingRouteModel.getFieldId());
     }
 
     @Test
     public void run_from3PointsRoute_2ArrowsCreated(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
 
-        ((BuildArrowsInteractorImpl)mInteractor).run();
+        ((BuildArrowModelsInteractorImpl)mInteractor).run();
 
         assertNotNull(mInteractor.getLeftArrow());
         assertNotNull(mInteractor.getRightArrow());
@@ -95,40 +101,46 @@ public class BuildArrowsInteractorImplTest {
 
     @Test
     public void createArrow_fromNullRoute_NullReturned(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mMockRoute);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mMockRoute);
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 
-        ArrowModel result = ((BuildArrowsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
+        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
 
         assertNull(result);
     }
 
     @Test
     public void createArrow_from3PointsRoute_ModelReturned(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
 
-        ArrowModel result = ((BuildArrowsInteractorImpl)mInteractor).createArrow(mFieldBuildingRouteModel, true);
+        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor)
+                .createArrow(mFieldBuildingRouteModel, true);
 
         assertNotNull(result);
     }
 
     @Test
     public void createArrow_from3PointsRoute_LeftModelReturned(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
 
-        ArrowModel result = ((BuildArrowsInteractorImpl)mInteractor).createArrow(mFieldBuildingRouteModel, true);
+        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor)
+                .createArrow(mFieldBuildingRouteModel, true);
 
         assertTrue(result.getType() == ArrowModel.Type.LEFT);
     }
 
     @Test
     public void createArrow_fromNullRoute_FailCallbackIsCalled(){
-        when(mMockRouteRepository.getRoute(RouteModel.Type.FIELD_BUILDING)).thenReturn(mMockRoute);
+        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mMockRoute);
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 
-        ((BuildArrowsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
+        ((BuildArrowModelsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
 
-        Mockito.verify(mMockedCallback).onArrowsBuildFailed();
+        Mockito.verify(mMockedCallback).onArrowsBuildFailed(mFieldBuildingRouteModel.getFieldId());
     }
 
 }

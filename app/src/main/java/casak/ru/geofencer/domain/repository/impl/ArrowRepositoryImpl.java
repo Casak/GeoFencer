@@ -13,7 +13,12 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public ArrowModel getArrow(Integer id) {
+    public ArrowModel getLeftArrow(Integer fieldId) {
+        return null;
+    }
+
+    @Override
+    public ArrowModel getRightArrow(Integer fieldId) {
         return null;
     }
 }

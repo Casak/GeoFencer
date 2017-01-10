@@ -8,22 +8,32 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Read/write routes to/from DB
     @Override
-    public RouteModel getRoute(RouteModel.Type type) {
+    public RouteModel getRouteModel(int fieldId, RouteModel.Type type) {
         return null;
     }
 
     @Override
-    public RouteModel getRoute(Integer id) {
+    public RouteModel getRouteModel(Integer id) {
         return null;
     }
 
     @Override
-    public RouteModel createRoute(RouteModel.Type type) {
+    public RouteModel createRouteModel(int fieldId, RouteModel.Type type) {
         return null;
     }
 
     @Override
     public RouteModel addPointToRoute(Integer routeId, Point insertingPoint) {
         return null;
+    }
+
+    @Override
+    public boolean addRouteModel(RouteModel model) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteRouteModel(RouteModel model) {
+        return false;
     }
 }

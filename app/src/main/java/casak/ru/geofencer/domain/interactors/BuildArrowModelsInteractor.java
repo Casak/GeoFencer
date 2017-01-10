@@ -5,12 +5,11 @@ import casak.ru.geofencer.domain.interactors.base.Interactor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 
 
-public interface BuildArrowsInteractor extends Interactor {
+public interface BuildArrowModelsInteractor extends Interactor {
 
     interface Callback {
-        void onArrowsBuildFinished();
-
-        void onArrowsBuildFailed();
+        void onArrowsBuildFinished(int fieldId);
+        void onArrowsBuildFailed(int fieldId);
     }
 
     ArrowModel getLeftArrow();
