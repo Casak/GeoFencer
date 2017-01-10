@@ -4,7 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.File;
+
 import casak.ru.geofencer.db.Contract.*;
+
 /**
  * Created by User on 29.12.2016.
  */
@@ -28,10 +31,20 @@ public class DbHelper extends SQLiteOpenHelper {
                 CoordEntry.COLUMN_ALT + " TEXT, " +
                 CoordEntry.COLUMN_SPD + " TEXT, " +
                 CoordEntry.COLUMN_ACCURACY + " TEXT, " +
-                CoordEntry.COLUMN_HEADING + " TEXT "  + ");";
+                CoordEntry.COLUMN_HEADING + " TEXT " + ");";
+
+        final String CREATE_FILTER_COORD_TABLE = "CREATE TABLE " + FilteredCoordEntry.TABLE_NAME + " (" +
+                FilteredCoordEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FilteredCoordEntry.COLUMN_LAT + " TEXT, " +
+                FilteredCoordEntry.COLUMN_LNG + " TEXT, " +
+                FilteredCoordEntry.COLUMN_ALT + " TEXT, " +
+                FilteredCoordEntry.COLUMN_SPD + " TEXT, " +
+                FilteredCoordEntry.COLUMN_ACCURACY + " TEXT, " +
+                FilteredCoordEntry.COLUMN_HEADING + " TEXT " + ");";
 
         db.beginTransaction();
         db.execSQL(CREATE_COORD_TABLE);
+        db.execSQL(CREATE_FILTER_COORD_TABLE);
         db.setTransactionSuccessful();
         db.endTransaction();
     }
@@ -39,6 +52,9 @@ public class DbHelper extends SQLiteOpenHelper {
     //TODO Implement onUpgrage
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (newVersion > oldVersion) {
+            if (SQLiteDatabase.deleteDatabase(new File(db.getPath() + DATABASE_NAME)))
+                onCreate(db);
+        }
     }
 }

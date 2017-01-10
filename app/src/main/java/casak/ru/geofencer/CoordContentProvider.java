@@ -22,6 +22,8 @@ public class CoordContentProvider extends ContentProvider {
     private static final String TAG = CoordContentProvider.class.getSimpleName();
     static final int COORD = 1;
     static final int COORDS = 2;
+    static final int FILTERED_COORD = 3;
+    static final int FILTERED_COORDS = 4;
 
     private static final SQLiteQueryBuilder coordQuerybuilder;
 
@@ -87,6 +89,13 @@ public class CoordContentProvider extends ContentProvider {
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
+            case FILTERED_COORDS:
+                _id = db.insert(Contract.FilteredCoordEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    result = ContentUris.withAppendedId(uri, _id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -136,6 +145,8 @@ public class CoordContentProvider extends ContentProvider {
 
         result.addURI(Contract.CONTENT_AUTHORITY, Contract.PATH_COORD, COORD);
         result.addURI(Contract.CONTENT_AUTHORITY, Contract.PATH_COORDS, COORDS);
+        result.addURI(Contract.CONTENT_AUTHORITY, Contract.PATH_FILTERED_COORD, FILTERED_COORD);
+        result.addURI(Contract.CONTENT_AUTHORITY, Contract.PATH_FILTERED_COORDS, FILTERED_COORDS);
 
         return result;
     }

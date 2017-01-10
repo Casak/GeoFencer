@@ -37,5 +37,8 @@ public class Constants {
     public static final String BLUETOOTH_GPS_ANTENNA_HARDWARE_ADDRESS = "98:D3:31:80:3A:26";
     public static final String ANTENNA_UUID = "00001101-0000-1000-8000-00805f9b34fb";
 
+    //Filter
+    public static final float FILTER_HEADING_DIFFERENCE = 3f;
+
 
 }
