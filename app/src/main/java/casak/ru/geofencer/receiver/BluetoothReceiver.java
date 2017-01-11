@@ -27,7 +27,6 @@ import java.util.UUID;
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.db.Contract;
 import casak.ru.geofencer.domain.Constants;
-import casak.ru.geofencer.presentation.ui.activities.MapActivity;
 
 public class BluetoothReceiver extends BroadcastReceiver {
     private static final String TAG = BluetoothReceiver.class.getSimpleName();
@@ -81,8 +80,8 @@ public class BluetoothReceiver extends BroadcastReceiver {
             Log.d(TAG, "In ConnectThread.run()");
             boolean connected = false;
             try {
-                Log.d(TAG, "mmSocket.isConnected() = " + mmSocket.isConnected());
                 mmSocket.connect();
+                Log.d(TAG, "mmSocket.isConnected() = " + mmSocket.isConnected());
                 connected = true;
             } catch (IOException connectException) {
                 Log.e(TAG, "Could not connect to the client socket", connectException);
@@ -162,7 +161,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 double bearing = SphericalUtil.computeHeading(
                         convertLocationToLatLng(first),
                         convertLocationToLatLng(location));
-                first.setBearing((float)bearing);
+                first.setBearing((float) bearing);
                 return true;
             }
             if (lastLocations.size() > 2) {
@@ -171,7 +170,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 double bearing = SphericalUtil.computeHeading(
                         convertLocationToLatLng(previousPoint),
                         convertLocationToLatLng(location));
-                previousPoint.setBearing((float)bearing);
+                previousPoint.setBearing((float) bearing);
 
                 if (isBearingDifferent(first.getBearing(), previousPoint.getBearing())) {
                     lastLocations.clear();
@@ -196,9 +195,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
             value.put(Contract.CoordEntry.COLUMN_LNG, location.getLongitude());
             value.put(Contract.CoordEntry.COLUMN_ALT, location.getAltitude());
             resolver.insert(contentUri, value);
-            ((MapActivity) context).showToast("Location with latitude: " + location.getLatitude() +
-                    "; longitude: " + location.getLongitude() +
-                    "; INSERTED");
         }
 
         @Nullable
@@ -215,7 +211,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 }
                 if (line.startsWith("$GPGGA")) {
                     String[] locationData = line.split(",");
-                    if (locationData.length >= 12) {
+                    if (locationData.length > 12) {
                         String time = locationData[1];
 
                         String tmp = locationData[2];
