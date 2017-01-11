@@ -75,7 +75,7 @@ public class Point{
     //TODO computeHash
     @Override
     public boolean equals(Object obj) {
-        if(obj == null || obj instanceof Point)
+        if(obj == null || ! (obj instanceof Point))
             return false;
         Point point = (Point) obj;
         if (point.mTime != mTime || point.mLatitude != mLatitude ||
