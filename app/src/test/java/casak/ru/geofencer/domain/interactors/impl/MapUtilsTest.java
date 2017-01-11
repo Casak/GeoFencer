@@ -24,27 +24,27 @@ public class MapUtilsTest {
     public void computeOffset_withPointDistanceAndHeading_returnPointWithOffset() {
         Point result = MapUtils.computeOffset(from, distanceBetween, 0);
 
-        assertTrue(offsetPoint.equals(result));
+        assertEquals(offsetPoint, result);
     }
 
     @Test
     public void computeHeading_withTwoPoints_returnHeading() {
         double heading = MapUtils.computeHeading(from, to);
 
-        assertTrue(heading == 0);
+        assertEquals(heading, 0, 0.02);
     }
 
     @Test
     public void computeDistanceBetween_withTwoPoint_returnDistanceBetween() {
         double distance = MapUtils.computeDistanceBetween(from, offsetPoint);
 
-        assertTrue(distance == distanceBetween);
+        assertEquals(distance, distanceBetween, 0.02d);
     }
 
     @Test
     public void computeAngleBetween_withTwoPoint_returnAngle() {
         double angle = MapUtils.computeAngleBetween(from, to);
 
-        assertTrue(angle == 0.01745329251994321);
+        assertEquals(angle, 0d, 0.018);
     }
 }
