@@ -80,8 +80,10 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
         List<RouteModel> result = computeRouteModels(fieldBuildingRoute, toLeft);
         if (result != null)
-            for (RouteModel model : result)
+            for (RouteModel model : result) {
                 mRouteRepository.addRouteModel(model);
+                mCallback.routeBuildingFinished(model);
+            }
     }
 
     private List<RouteModel> computeRouteModels(RouteModel fieldBuildingRoute, boolean toLeft) {

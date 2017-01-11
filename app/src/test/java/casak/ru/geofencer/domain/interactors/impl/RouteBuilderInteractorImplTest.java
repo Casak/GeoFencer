@@ -145,4 +145,17 @@ public class RouteBuilderInteractorImplTest {
 
         verify(mMockArrowRepository).getLeftArrow(FIELD_ID);
     }
+
+    @Test
+    public void createComputedRoutes_callCallback(){
+
+        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
+        when(mLeftArrowModel.isChosen()).thenReturn(true);
+
+        mInteractor.createComputedRoutes(FIELD_ID);
+
+        verify(mMockedCallback, times(4)).routeBuildingFinished(any(RouteModel.class));
+    }
 }
