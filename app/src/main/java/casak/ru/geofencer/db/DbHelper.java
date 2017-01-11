@@ -9,7 +9,7 @@ import java.io.File;
 import casak.ru.geofencer.db.Contract.*;
 
 /**
- * Created by User on 29.12.2016.
+ * Created on 29.12.2016.
  */
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -52,6 +52,14 @@ public class DbHelper extends SQLiteOpenHelper {
     //TODO Implement onUpgrage
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (newVersion > oldVersion) {
+            if (SQLiteDatabase.deleteDatabase(new File(db.getPath() + DATABASE_NAME)))
+                onCreate(db);
+        }
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
             if (SQLiteDatabase.deleteDatabase(new File(db.getPath() + DATABASE_NAME)))
                 onCreate(db);
