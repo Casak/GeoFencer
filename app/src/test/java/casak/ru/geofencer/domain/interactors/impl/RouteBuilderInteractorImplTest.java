@@ -53,7 +53,7 @@ public class RouteBuilderInteractorImplTest {
 
         mMockedCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
-            public void finished(RouteModel route) {
+            public void routeBuildingFinished(RouteModel route) {
             }
         });
 
