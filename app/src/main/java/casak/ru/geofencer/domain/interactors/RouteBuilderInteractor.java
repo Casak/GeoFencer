@@ -1,7 +1,7 @@
 package casak.ru.geofencer.domain.interactors;
 
+
 import casak.ru.geofencer.domain.interactors.base.Interactor;
-import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 
 /**
@@ -15,4 +15,5 @@ public interface RouteBuilderInteractor extends Interactor{
     }
 
     void finish();
+    void createComputedRoutes(int fieldId);
 }

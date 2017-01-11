@@ -2,12 +2,21 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.maps.android.SphericalUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
@@ -27,17 +36,20 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     private RouteBuilderInteractor.Callback mCallback;
     private LocationRepository mLocationRepository;
     private RouteRepository mRouteRepository;
+    private ArrowRepository mArrowRepository;
     private int fieldId;
 
     public RouteBuilderInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                       RouteBuilderInteractor.Callback callback, LocationRepository locationRepository,
-                                      RouteRepository routeRepository, int fieldId) {
+                                      RouteRepository routeRepository, ArrowRepository arrowRepository,
+                                      int fieldId) {
         super(threadExecutor, mainThread);
         this.fieldId = fieldId;
 
         mCallback = callback;
         mLocationRepository = locationRepository;
         mRouteRepository = routeRepository;
+        mArrowRepository = arrowRepository;
     }
 
     @Override
@@ -59,6 +71,66 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
             ((LocationChangeListenerDaemon) routeDaemon).cancel();
         isBuildingRoute = false;
         mRouteRepository.addRouteModel(mFieldBuildingRouteModel);
+    }
+
+    @Override
+    public void createComputedRoutes(int fieldId) {
+        RouteModel fieldBuildingRoute = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        boolean toLeft = mArrowRepository.getLeftArrow(fieldId).isChosen();
+
+        List<RouteModel> result = computeRouteModels(fieldBuildingRoute, toLeft);
+        if (result != null)
+            for (RouteModel model : result)
+                mRouteRepository.addRouteModel(model);
+    }
+
+    private List<RouteModel> computeRouteModels(RouteModel fieldBuildingRoute, boolean toLeft) {
+        //TODO Normal check
+        if (fieldBuildingRoute == null)
+            return null;
+
+        List<RouteModel> result = new ArrayList<>();
+
+        List<Point> fieldBuildingPoints = fieldBuildingRoute.getRoutePoints();
+        Point start = fieldBuildingPoints.get(0);
+        Point end = fieldBuildingPoints.get(fieldBuildingPoints.size() - 1);
+
+        double arrowHeading = toLeft ? Constants.HEADING_TO_LEFT : Constants.HEADING_TO_RIGHT;
+
+        double computedHeading = MapUtils.computeHeading(start, end);
+        double normalHeading = computedHeading + arrowHeading;
+
+        for (int i = 0; i < 4; i++) {
+            List<Point> routePoints = computeNewPath(fieldBuildingPoints,
+                    Constants.WIDTH_METERS,
+                    normalHeading);
+
+            RouteModel route = new RouteModel(createRouteModelId(),
+                    RouteModel.Type.COMPUTED,
+                    fieldId,
+                    routePoints);
+
+            result.add(route);
+        }
+        return result;
+    }
+
+    //Move to repository
+    int routeId = 0;
+
+    private int createRouteModelId() {
+        return routeId++;
+    }
+
+    List<Point> computeNewPath(List<Point> route, double width, double heading) {
+        List<Point> result = new ArrayList<>(route.size());
+
+        for (Point point : route) {
+            Point newPoint = MapUtils.computeOffset(point, width, heading);
+            result.add(newPoint);
+        }
+
+        return result;
     }
 
     private void newPoint(Point point) {

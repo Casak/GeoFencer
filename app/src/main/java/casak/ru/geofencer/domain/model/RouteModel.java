@@ -23,6 +23,11 @@ public class RouteModel {
         routePoints = new ArrayList<>();
     }
 
+    public RouteModel(int id, Type type, int fieldId, List<Point> routePoints){
+        this(id, type, fieldId);
+        this.routePoints = routePoints;
+    }
+
     public int getId() {
         return id;
     }

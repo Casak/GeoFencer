@@ -8,13 +8,19 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
+import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
+import casak.ru.geofencer.domain.repository.impl.ArrowRepositoryImpl;
 import casak.ru.geofencer.domain.repository.impl.LocationRepositoryImpl;
 import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
 
@@ -32,24 +38,35 @@ public class RouteBuilderInteractorImplTest {
     static Executor mMockExecutor;
     @Mock
     static MainThread mMockMainThread;
+    @Mock
+    static ArrowModel mLeftArrowModel;
 
     static RouteBuilderInteractor.Callback mMockedCallback;
     @Spy
     static LocationRepository mMockLocationRepository = Mockito.spy(LocationRepositoryImpl.class);
     @Spy
     static RouteRepository mMockRouteRepository = Mockito.spy(RouteRepositoryImpl.class);
+    @Spy
+    private ArrowRepository mMockArrowRepository = Mockito.spy(ArrowRepositoryImpl.class);
+
 
     static RouteBuilderInteractor mInteractor;
 
     static Point point = new Point(50.4236835, 30.4266010);
 
-    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
+    static RouteModel mFieldBuildingRouteModel;
 
 
     @Before
     public void setUp() {
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
-                .thenReturn(null);
+        List<Point> points = new ArrayList<>();
+        Point point2 = new Point(50.4236812,30.4266095);
+        Point point3 = new Point(50.4236714,30.4266477);
+        points.add(point);
+        points.add(point2);
+        points.add(point3);
+
+        mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID, points);
 
         mMockedCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
@@ -63,6 +80,7 @@ public class RouteBuilderInteractorImplTest {
                 mMockedCallback,
                 mMockLocationRepository,
                 mMockRouteRepository,
+                mMockArrowRepository,
                 FIELD_ID
         );
     }
@@ -96,4 +114,35 @@ public class RouteBuilderInteractorImplTest {
         Mockito.verify(mMockRouteRepository).addRouteModel(null);
     }
 
+    @Test
+    public void createComputedRoutes_askForFieldBuildingRoute() {
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
+        when(mLeftArrowModel.isChosen()).thenReturn(true);
+
+        mInteractor.createComputedRoutes(FIELD_ID);
+
+        verify(mMockRouteRepository).getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING);
+    }
+
+    @Test
+    public void createComputedRoutes_shouldAddRouteModelsToRepo() {
+        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+                .thenReturn(mFieldBuildingRouteModel);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
+        when(mLeftArrowModel.isChosen()).thenReturn(true);
+
+        mInteractor.createComputedRoutes(FIELD_ID);
+
+        verify(mMockRouteRepository, times(4)).addRouteModel(any(RouteModel.class));
+    }
+
+    @Test
+    public void createComputedRoutes_askForLeftArrow() {
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
+        when(mLeftArrowModel.isChosen()).thenReturn(true);
+
+        mInteractor.createComputedRoutes(FIELD_ID);
+
+        verify(mMockArrowRepository).getLeftArrow(FIELD_ID);
+    }
 }
