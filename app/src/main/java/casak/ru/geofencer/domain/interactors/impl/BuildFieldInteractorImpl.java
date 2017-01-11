@@ -13,6 +13,7 @@ import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
+import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 import static casak.ru.geofencer.domain.Constants.FIELD_HEIGHT_METERS;
@@ -24,17 +25,20 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     private BuildFieldInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
+    private FieldRepository mFieldRepository;
     private FieldModel mFieldModel;
     private int fieldId;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                     BuildFieldInteractor.Callback callback, RouteRepository routeRepository,
-                                    ArrowRepository arrowRepository, int fieldId) {
+                                    ArrowRepository arrowRepository, FieldRepository fieldRepository,
+                                    int fieldId) {
         super(threadExecutor, mainThread);
         this.fieldId = fieldId;
         mCallback = callback;
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
+        mFieldRepository = fieldRepository;
     }
 
     @Override
@@ -54,6 +58,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         boolean toLeft = leftArrow.isChosen();
 
         mFieldModel = buildField(start, end, toLeft);
+        mFieldRepository.addField(mFieldModel);
     }
 
     FieldModel buildField(Point start, Point end, boolean toLeft) {

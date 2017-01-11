@@ -20,8 +20,10 @@ import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
+import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.domain.repository.impl.ArrowRepositoryImpl;
+import casak.ru.geofencer.domain.repository.impl.FieldRepositoryImpl;
 import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
 
 import static org.junit.Assert.*;
@@ -44,6 +46,8 @@ public class BuildFieldInteractorImplTest {
     static ArrowRepository mMockArrowRepository = Mockito.spy(ArrowRepositoryImpl.class);
     @Mock
     static RouteRepository mMockRouteRepository = Mockito.spy(RouteRepositoryImpl.class);
+    @Mock
+    static FieldRepository mMockFieldRepository = Mockito.spy(FieldRepositoryImpl.class);
 
     static BuildFieldInteractorImpl mInteractor;
 
@@ -90,8 +94,19 @@ public class BuildFieldInteractorImplTest {
                 mMockedCallback,
                 mMockRouteRepository,
                 mMockArrowRepository,
+                mMockFieldRepository,
                 FIELD_ID
         );
+    }
+
+    @Test
+    public void run_withChosenArrow_shouldAddFieldToRepo(){
+        mLeftArrow.setChosen(true);
+        mRightArrow.setChosen(false);
+
+        mInteractor.run();
+
+        verify(mMockFieldRepository).addField(any(FieldModel.class));
     }
 
     @Test
