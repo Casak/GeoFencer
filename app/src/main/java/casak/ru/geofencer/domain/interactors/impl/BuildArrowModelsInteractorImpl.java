@@ -39,10 +39,15 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
         RouteModel route = mRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
-        mCallback.onArrowsBuildFinished(fieldId);
+        if (leftArrow != null && rightArrow != null)
+            mCallback.onArrowsBuildFinished(fieldId);
+        else mCallback.onArrowsBuildFailed(fieldId);
     }
 
     ArrowModel createArrow(RouteModel route, boolean toLeft) {
+        if (route == null)
+            return null;
+
         List<Point> routePoints = route.getRoutePoints();
         if (routePoints != null && routePoints.size() > 1) {
             Point start = routePoints.get(0);
@@ -58,9 +63,6 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
                     new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
                             ArrowModel.Type.RIGHT);
         }
-        //TODO Normal error handling
-        else
-            mCallback.onArrowsBuildFailed(fieldId);
         return null;
     }
 
