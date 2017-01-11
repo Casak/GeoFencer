@@ -44,18 +44,19 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     public void run() {
         mFieldBuildingRouteModel = mRouteRepository.createRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
 
+        isBuildingRoute = true;
+
         routeDaemon = new LocationChangeListenerDaemon();
         routeDaemon.setDaemon(true);
         //TODO Move to resources; recreate thread if down
         routeDaemon.setName("LocationChangeListenerDaemon");
         routeDaemon.start();
-
-        isBuildingRoute = true;
     }
 
     @Override
     public void finish() {
-        ((LocationChangeListenerDaemon)routeDaemon).cancel();
+        if (routeDaemon != null && routeDaemon.isAlive())
+            ((LocationChangeListenerDaemon) routeDaemon).cancel();
         isBuildingRoute = false;
         mRouteRepository.addRouteModel(mFieldBuildingRouteModel);
     }
@@ -84,7 +85,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
             }
         }
 
-        public void cancel(){
+        public void cancel() {
             running = false;
         }
 
