@@ -72,6 +72,8 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     }
 
     List<Point> computeCorners(Point start, Point end, double width, boolean toLeft) {
+        if(start == null || end == null || width == 0.0)
+            return null;
         double heading = MapUtils.computeHeading(start, end);
         double offset = width == 0 ? 0d : width / 2;
 

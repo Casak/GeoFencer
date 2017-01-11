@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
@@ -128,6 +129,13 @@ public class BuildFieldInteractorImplTest {
         mRightArrow.setChosen(false);
 
         mInteractor.run();
+
+        Mockito.verify(mMockedCallback).onFieldBuildFail();
+    }
+
+    @Test
+    public void buildField_withoutPoints_callsFailCallback(){
+        mInteractor.buildField(null, null, true);
 
         Mockito.verify(mMockedCallback).onFieldBuildFail();
     }
