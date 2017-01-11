@@ -12,6 +12,7 @@ import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
@@ -23,6 +24,7 @@ import casak.ru.geofencer.domain.repository.impl.FieldRepositoryImpl;
 import casak.ru.geofencer.domain.repository.impl.LocationRepositoryImpl;
 import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
 
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 /**
@@ -30,6 +32,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CreateFieldInteractorImplTest {
+    static final int FIELD_ID = 1;
 
     @Mock
     static Executor mMockExecutor;
@@ -48,60 +51,63 @@ public class CreateFieldInteractorImplTest {
     @Mock
     static LocationRepository mMockLocationRepository = Mockito.spy(LocationRepositoryImpl.class);
     @Mock
-    static RouteBuilderInteractor mRouteBuilderInteractor;
+    static ArrowModel mMockArrowModel;
 
     static CreateFieldInteractorImpl mInteractor;
 
+    static RouteModel mRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
 
 
     @Before
     public void setUp() throws Exception {
         mMockedCreateFieldCallback = Mockito.spy(new CreateFieldInteractor.Callback() {
             @Override
-            public void removeArrow(ArrowModel model) {
+            public void showArrow(ArrowModel model) {
 
             }
-        });
 
-        mMockedRouteBuilderCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
-            public void positionUpdate(Point point) {
+            public void hideArrow(ArrowModel model) {
+
+            }
+
+            @Override
+            public void showField(FieldModel model) {
 
             }
         });
 
-       mRouteBuilderInteractor = Mockito.spy(new RouteBuilderInteractorImpl(
-                mMockExecutor,
-                mMockMainThread,
-                mMockedRouteBuilderCallback,
-                mMockLocationRepository,
-                mMockRouteRepository
-        ));
+        mMockedRouteBuilderCallback = Mockito.spy(RouteBuilderInteractor.Callback.class);
 
-        mInteractor = new CreateFieldInteractorImpl(
+        mInteractor = Mockito.spy(new CreateFieldInteractorImpl(
                 mMockExecutor,
                 mMockMainThread,
                 mMockedCreateFieldCallback,
                 mMockRouteRepository,
                 mMockArrowRepository,
                 mMockFieldRepository,
-                mRouteBuilderInteractor
-        );
+                mMockLocationRepository
+        ));
+    }
+
+
+    @Test
+    public void run_shouldGetRouteModel(){
+        mInteractor.run();
+        verify(mMockRouteRepository).getRouteModel(anyInt(), any(RouteModel.Type.class));
     }
 
     @Test
-    public void whenStarts_shouldRunRouteBuilderInteractor_callsExecuteMethod(){
-        mInteractor.run();
+    public void onArrowsBuildFinished_shouldAskToShowArrows(){
+        mInteractor.onArrowsBuildFinished(FIELD_ID);
 
-        Mockito.verify(mRouteBuilderInteractor).execute();
+        verify(mMockedCreateFieldCallback, times(2)).showArrow(any(ArrowModel.class));
     }
 
     @Test
-    public void whenStartBuildingRoute_shouldStartBuildRoute(){
-        mInteractor.run();
-        mInteractor.onStartCreatingRouteClick();
+    public void onArrowClick_shouldSetChosen(){
+        mInteractor.onArrowClick(mMockArrowModel);
 
-        Mockito.verify(mRouteBuilderInteractor).startBuildRoute(RouteModel.Type.FIELD_BUILDING);
+        verify(mMockArrowModel).setChosen(true);
     }
-
 }
