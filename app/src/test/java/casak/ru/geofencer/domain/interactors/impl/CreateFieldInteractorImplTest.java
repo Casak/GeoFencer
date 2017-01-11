@@ -75,6 +75,21 @@ public class CreateFieldInteractorImplTest {
             public void showField(FieldModel model) {
 
             }
+
+            @Override
+            public void hideField(FieldModel model) {
+
+            }
+
+            @Override
+            public void showRoute(RouteModel model) {
+
+            }
+
+            @Override
+            public void hideRoute(RouteModel model) {
+
+            }
         });
 
         mMockedRouteBuilderCallback = Mockito.spy(RouteBuilderInteractor.Callback.class);
@@ -109,5 +124,13 @@ public class CreateFieldInteractorImplTest {
         mInteractor.onArrowClick(mMockArrowModel);
 
         verify(mMockArrowModel).setChosen(true);
+    }
+
+    @Test
+    public void onStartCreatingRouteClick_shouldExecuteRouteBuilderInteractor(){
+        //TODO Find who to test it
+        mInteractor.onStartCreatingRouteClick();
+
+        //verify(ROUTE_INTERACTOR).execute();
     }
 }

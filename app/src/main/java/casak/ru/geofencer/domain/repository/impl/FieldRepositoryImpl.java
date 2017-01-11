@@ -16,4 +16,9 @@ public class FieldRepositoryImpl implements FieldRepository {
     public FieldModel getField(Integer id) {
         return null;
     }
+
+    @Override
+    public boolean updateField(FieldModel field) {
+        return false;
+    }
 }

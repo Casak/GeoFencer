@@ -15,6 +15,8 @@ import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
+import static casak.ru.geofencer.domain.model.RouteModel.Type.FIELD_BUILDING;
+
 /**
  * Created on 05.01.2017.
  */
@@ -32,6 +34,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private BuildFieldInteractor mBuildFieldInteractor;
     private RouteModel mBuildingRouteModel;
     private int fieldId;
+    private FieldModel field;
 
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                      CreateFieldInteractor.Callback callback,
@@ -52,6 +55,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 this,
                 mLocationRepository,
                 mRouteRepository,
+                mArrowRepository,
                 fieldId);
 
         mArrowsInteractor = new BuildArrowModelsInteractorImpl(
@@ -73,9 +77,9 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void run() {
-        mBuildingRouteModel = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        mBuildingRouteModel = mRouteRepository.getRouteModel(fieldId, FIELD_BUILDING);
 
-        if(mBuildingRouteModel != null){
+        if (mBuildingRouteModel != null) {
             //TODO Alert
         }
     }
@@ -90,12 +94,18 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void routeBuildingFinished(RouteModel route) {
-        mBuildingRouteModel = route;
-        createArrows();
-    }
-
-    private void createArrows(){
-        mArrowsInteractor.execute();
+        RouteModel.Type routeType = route.getType();
+        switch (routeType) {
+            case FIELD_BUILDING:
+                mBuildingRouteModel = route;
+                createArrows();
+                break;
+            case COMPUTED:
+                field.addComputedRoute(route);
+                mFieldRepository.updateField(field);
+                mCallback.showRoute(route);
+                break;
+        }
     }
 
     @Override
@@ -117,10 +127,12 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void onFieldBuildFinish() {
-        FieldModel field = mFieldRepository.getField(fieldId);
+        field = mFieldRepository.getField(fieldId);
         mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
         mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
         mCallback.showField(field);
+
+        createComputedRoutes();
     }
 
     @Override
@@ -128,8 +140,17 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         //TODO Error handling
     }
 
+
+    private void createArrows() {
+        mArrowsInteractor.execute();
+    }
+
+    private void createComputedRoutes(){
+        mRouteBuilderInteractor.createComputedRoutes(fieldId);
+    }
+
     //TODO implement method
-    private int computeFieldId(){
+    private int computeFieldId() {
         return 1;
     }
 }

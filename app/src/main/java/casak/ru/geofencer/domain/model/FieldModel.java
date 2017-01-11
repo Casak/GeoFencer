@@ -47,6 +47,10 @@ public class FieldModel {
         this.harvestedRoutes = harvestedRoutes;
     }
 
+    public void addComputedRoute(RouteModel model){
+        computedRoutes.add(model);
+    }
+
 
 
 
