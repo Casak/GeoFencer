@@ -52,10 +52,12 @@ public class CreateFieldInteractorImplTest {
     static LocationRepository mMockLocationRepository = Mockito.spy(LocationRepositoryImpl.class);
     @Mock
     static ArrowModel mMockArrowModel;
+    @Mock
+    static FieldModel mMockFieldModel;
 
     static CreateFieldInteractorImpl mInteractor;
 
-    static RouteModel mRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
+    static RouteModel mComputedRouteModel = new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID);
 
 
     @Before
@@ -107,30 +109,50 @@ public class CreateFieldInteractorImplTest {
 
 
     @Test
-    public void run_shouldGetRouteModel(){
+    public void run_shouldGetRouteModel() {
         mInteractor.run();
         verify(mMockRouteRepository).getRouteModel(anyInt(), any(RouteModel.Type.class));
     }
 
     @Test
-    public void onArrowsBuildFinished_shouldAskToShowArrows(){
+    public void onArrowsBuildFinished_shouldAskToShowArrows() {
         mInteractor.onArrowsBuildFinished(FIELD_ID);
 
         verify(mMockedCreateFieldCallback, times(2)).showArrow(any(ArrowModel.class));
     }
 
     @Test
-    public void onArrowClick_shouldSetChosen(){
+    public void onArrowClick_shouldSetChosen() {
         mInteractor.onArrowClick(mMockArrowModel);
 
         verify(mMockArrowModel).setChosen(true);
     }
 
     @Test
-    public void onStartCreatingRouteClick_shouldExecuteRouteBuilderInteractor(){
-        //TODO Find who to test it
-        mInteractor.onStartCreatingRouteClick();
+    public void routeBuildingFinished_withComputedRouteModel_shouldAskForFieldFromRepo() {
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
 
-        //verify(ROUTE_INTERACTOR).execute();
+        mInteractor.routeBuildingFinished(mComputedRouteModel);
+
+        verify(mMockFieldRepository).getField(anyInt());
+    }
+
+    @Test
+    public void routeBuildingFinished_withComputedRouteModel_shouldUpdateFieldInRepo() {
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
+
+        mInteractor.routeBuildingFinished(mComputedRouteModel);
+
+        verify(mMockFieldRepository).updateField(any(FieldModel.class));
+    }
+
+
+    @Test
+    public void routeBuildingFinished_withComputedRouteModel_shouldShowComputedRoutesViaCallback() {
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
+
+        mInteractor.routeBuildingFinished(mComputedRouteModel);
+
+        verify(mMockedCreateFieldCallback).showRoute(mComputedRouteModel);
     }
 }

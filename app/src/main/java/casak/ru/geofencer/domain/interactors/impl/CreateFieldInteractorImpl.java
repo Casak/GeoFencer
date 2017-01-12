@@ -101,6 +101,8 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 createArrows();
                 break;
             case COMPUTED:
+                if (field == null)
+                    field = mFieldRepository.getField(fieldId);
                 field.addComputedRoute(route);
                 mFieldRepository.updateField(field);
                 mCallback.showRoute(route);
@@ -145,7 +147,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         mArrowsInteractor.execute();
     }
 
-    private void createComputedRoutes(){
+    private void createComputedRoutes() {
         mRouteBuilderInteractor.createComputedRoutes(fieldId);
     }
 
