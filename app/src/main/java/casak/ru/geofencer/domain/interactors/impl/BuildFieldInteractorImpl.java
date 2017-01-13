@@ -62,7 +62,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     }
 
     FieldModel buildField(Point start, Point end, boolean toLeft) {
-        FieldModel field = new FieldModel(computeCorners(start,
+        FieldModel field = new FieldModel(1, computeCorners(start,
                 end,
                 //TODO Implement different sizes
                 Constants.WIDTH_METERS,
