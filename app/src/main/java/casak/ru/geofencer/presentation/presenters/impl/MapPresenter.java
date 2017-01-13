@@ -1,10 +1,13 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,22 +34,31 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.SphericalUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.interactors.impl.MapUtils;
 import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.model.HarvesterModel;
+import casak.ru.geofencer.domain.model.Point;
+import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.repository.db.Contract;
+import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
 import casak.ru.geofencer.presentation.presenters.IMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
+import casak.ru.geofencer.presentation.ui.activities.MapActivity;
 import casak.ru.geofencer.service.LocationService;
 import casak.ru.geofencer.util.MapsUtils;
 
 /**
- * Created by Casak on 08.12.2016.
+ * Created on 08.12.2016.
  */
 
 public class MapPresenter extends AbstractPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
@@ -88,11 +100,12 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                     currentLocation.getLongitude());
 
         harvester = new HarvesterModel(this, currentLatLng);
-        field = new FieldModel();
+        field = new FieldModel(1);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //TODO Possible NullPointer
         locationService.onActivityResult(requestCode, resultCode, data, mGoogleApiClient);
     }
 
@@ -211,6 +224,56 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return mapLocationListener == null ? mapLocationListener = new MapLocationListener() : mapLocationListener;
     }
 
+    public double computePointer(Location location) {
+        if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
+            return 0;
+
+        RouteModel nearestRoute = getNearestRoute(location);
+
+
+        return 1;
+    }
+
+    public RouteModel getNearestRoute(Location location) {
+        if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
+            return null;
+
+        List<RouteModel> computedRoutes = getComputedRoutes(0); //fieldID
+
+        if (computedRoutes == null || computedRoutes.size() == 0)
+            return null;
+
+        double[] distances = new double[computedRoutes.size()];
+        for (int i = 0; i < computedRoutes.size(); i++){
+            List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
+            if(routePoints == null || routePoints.size() < 2)
+                return null;
+
+            Point from = new Point(location.getLatitude(), location.getLongitude());
+            Point to1 = routePoints.get(0);
+            Point to2 = routePoints.get(routePoints.size()-1);
+
+            double distance1 = MapUtils.computeDistanceBetween(from, to1);
+            double distance2 = MapUtils.computeDistanceBetween(from, to2);
+            double distance = distance1 < distance2 ? distance1 : distance2;
+            distances[i] = distance;
+        }
+
+        RouteModel result = null;
+        double previous = Double.MAX_VALUE;
+        for (int i = 0; i < distances.length; i++){
+            if(distances[i] < previous)
+                result = computedRoutes.get(i);
+            previous = distances[i];
+        }
+
+        return result != null ? result : null;
+    }
+
+    public List<RouteModel> getComputedRoutes(int fieldId) {
+        return new RouteRepositoryImpl().getAllRoutes(fieldId);
+    }
+
     private class OnClickListener implements View.OnClickListener {
         boolean firstClick = true;
 
@@ -223,24 +286,88 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
-                harvester.showCount();
             }
         }
     }
 
     private class MapLocationListener implements LocationListener {
+        private List<Location> lastLocations = new LinkedList<>();
+        private Location previous = new Location(LocationManager.GPS_PROVIDER);
 
         @Override
         public void onLocationChanged(Location location) {
+            if (location.equals(previous))
+                return;
+            else
+                previous = location;
+
             LatLng currentLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
 
+            computePointer(location);
+
             harvester.updateCurrentLocation(currentLocation);
 
-            /*Log.d("TAG", "Current location = " + location.getLatitude() +
+            BluetoothAntennaLocationSource.getListener().onLocationChanged(location);
+            Log.d("TAG", "Current location = " + location.getLatitude() +
+                    ", " + location.getLongitude());
+            /*insertDataToProvider(location, Contract.CoordEntry.CONTENT_URI);
+            if (haveToInsert(location))
+                insertDataToProvider(location, Contract.FilteredCoordEntry.CONTENT_URI);
+
+            Log.d("TAG", "Current location = " + location.getLatitude() +
                     ", " + location.getLongitude());
             Toast.makeText(context, "Current location = " + location.getLatitude() +
                     ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();*/
+        }
+
+        private boolean haveToInsert(Location location) {
+            lastLocations.add(location);
+            if (lastLocations.size() == 1) {
+                return true;
+            }
+
+            Location first = lastLocations.get(0);
+            if (lastLocations.size() == 2) {
+                double bearing = SphericalUtil.computeHeading(
+                        convertLocationToLatLng(first),
+                        convertLocationToLatLng(location));
+                first.setBearing((float) bearing);
+                return true;
+            }
+            if (lastLocations.size() > 2) {
+                Location previousPoint = lastLocations.get(lastLocations.size() - 2);
+
+                double bearing = SphericalUtil.computeHeading(
+                        convertLocationToLatLng(previousPoint),
+                        convertLocationToLatLng(location));
+                previousPoint.setBearing((float) bearing);
+
+                if (isBearingDifferent(first.getBearing(), previousPoint.getBearing())) {
+                    lastLocations.clear();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void insertDataToProvider(Location location, Uri contentUri) {
+            ContentValues value = new ContentValues();
+            value.put(Contract.CoordEntry.COLUMN_LAT, location.getLatitude());
+            value.put(Contract.CoordEntry.COLUMN_LNG, location.getLongitude());
+            value.put(Contract.CoordEntry.COLUMN_ALT, location.getAltitude());
+            context.getContentResolver().insert(contentUri, value);
+            ((MapActivity) context).showToast("Location with latitude: " + location.getLatitude() +
+                    "; longitude: " + location.getLongitude() +
+                    "; INSERTED");
+        }
+
+        private boolean isBearingDifferent(float first, float last) {
+            return Math.abs(first - last) > Constants.FILTER_HEADING_DIFFERENCE;
+        }
+
+        private LatLng convertLocationToLatLng(Location location) {
+            return new LatLng(location.getLatitude(), location.getLongitude());
         }
     }
 }
