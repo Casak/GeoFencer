@@ -3,15 +3,16 @@ package casak.ru.geofencer.domain.model;
 import java.util.List;
 
 public class FieldModel {
+    private int id;
     private List<Point> points;
     private RouteModel currentRoute;
     private List<RouteModel> computedRoutes;
     private List<RouteModel> harvestedRoutes;
 
-    public FieldModel() {
+    public FieldModel(int id) {
     }
 
-    public FieldModel(List<Point> points) {
+    public FieldModel(int id, List<Point> points) {
         this.points = points;
     }
 
@@ -49,6 +50,10 @@ public class FieldModel {
 
     public void addComputedRoute(RouteModel model){
         computedRoutes.add(model);
+    }
+
+    public int getId() {
+        return id;
     }
 
 
