@@ -16,12 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
-import casak.ru.geofencer.domain.interactors.base.Interactor;
-import casak.ru.geofencer.domain.interactors.impl.MapUtils;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
-import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 import static org.mockito.Mockito.*;
@@ -88,6 +84,8 @@ public class MapPresenterTest {
 
     @Test
     public void computePointer_fromRealLocation_callsGetNearestRoute() {
+        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
+
         mMapPresenter.computePointer(mMockRealLocation);
 
         verify(mMapPresenter).getNearestRoute(any(Location.class));

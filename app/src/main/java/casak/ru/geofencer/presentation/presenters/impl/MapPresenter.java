@@ -232,6 +232,13 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         List<Point> routePoints = nearestRoute.getRoutePoints();
 
         Point current = new Point(location.getLatitude(), location.getLongitude());
+
+        double poiterFromFirstApproach = computingFirstApproach(routePoints, current);
+
+        return poiterFromFirstApproach;
+    }
+
+    public double computingFirstApproach(List<Point> routePoints, Point current){
         Point start = routePoints.get(0);
         Point end = routePoints.get(routePoints.size()-1);
 
