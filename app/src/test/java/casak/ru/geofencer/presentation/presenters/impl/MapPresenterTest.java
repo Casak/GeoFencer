@@ -44,6 +44,10 @@ public class MapPresenterTest {
 
     public static List<RouteModel> routeModels;
 
+    public Point currentPoint = new Point(50.4236812,30.4266095);
+    public Point nearPoint = new Point(50.0d, 30.0d);
+    public Point farPoint = new Point(60.0d, 10.0d);
+
     @BeforeClass
     public static void setUpClass() {
         routeModels = new ArrayList<>();
@@ -66,6 +70,9 @@ public class MapPresenterTest {
         when(mMockRealLocation.getLongitude()).thenReturn(30.0d);
         when(mMapPresenter.computePointer(any(Location.class))).thenCallRealMethod();
         when(mMapPresenter.getNearestRoute(any(Location.class))).thenCallRealMethod();
+        when(mMapPresenter.getNearestPoint(anyList(), any(Point.class))).thenCallRealMethod();
+        when(mMapPresenter.getNearestPoints(anyList(), any(Point.class), anyInt())).thenCallRealMethod();
+        when(mMapPresenter.computingSecondApproach(anyList(), any(Point.class))).thenCallRealMethod();
     }
 
     @Test
@@ -155,5 +162,94 @@ public class MapPresenterTest {
         RouteModel result = mMapPresenter.getNearestRoute(mMockRealLocation);
 
         assertEquals(result, routeModels.get(0));
+    }
+
+    @Test
+    public void computingSecondApproach_FromValidInput_callGetNearestPoints() {
+        double result = mMapPresenter.computingSecondApproach(routeModels.get(0).getRoutePoints(), currentPoint);
+
+        verify(mMapPresenter).getNearestPoints(anyList(), any(Point.class), anyInt());
+    }
+
+    @Test
+    public void getNearestPoint_fromOneRoutePointAndCurrentPoint_returnThisPoint() {
+        List<Point> listWithPoint = new ArrayList<>();
+        listWithPoint.add(nearPoint);
+
+        Point result = mMapPresenter.getNearestPoint(listWithPoint, currentPoint);
+
+        assertEquals(result, nearPoint);
+    }
+
+    @Test
+    public void getNearestPoint_fromTwoRoutePointAndCurrentPoint_returnNearestPoint() {
+        List<Point> listWithPoint = new ArrayList<>();
+        listWithPoint.add(nearPoint);
+        listWithPoint.add(farPoint);
+
+        Point result = mMapPresenter.getNearestPoint(listWithPoint, currentPoint);
+
+        assertEquals(result, nearPoint);
+    }
+
+    @Test
+    public void getNearestPoint_fromManyRoutePointAndCurrentPoint_returnNearestPoint() {
+        List<Point> listWithPoint = new ArrayList<>();
+        listWithPoint.add(nearPoint);
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(farPoint);
+
+        Point resultFromOddList = mMapPresenter.getNearestPoint(listWithPoint, currentPoint);
+
+        assertEquals(resultFromOddList, nearPoint);
+
+        listWithPoint.remove(5);
+
+        Point resultFromEvenList = mMapPresenter.getNearestPoint(listWithPoint, currentPoint);
+
+        assertEquals(resultFromEvenList, nearPoint);
+
+
+        Point resultWithFarPoint = mMapPresenter.getNearestPoint(listWithPoint, farPoint);
+
+        assertEquals(resultWithFarPoint, farPoint);
+
+        Point point = new Point(49d,32d);
+        for(RouteModel model : routeModels) {
+            List<Point> points = model.getRoutePoints();
+            Point result = mMapPresenter.getNearestPoint(points, point);
+
+            assertEquals(result, points.get(0));
+        }
+    }
+
+    @Test
+    public void getNearestPoints_FromValidData_returnExactlyCountOfPoints(){
+        List<Point> listWithPoint = new ArrayList<>();
+        listWithPoint.add(nearPoint);
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(new Point(51.0d,31.0d));
+        listWithPoint.add(farPoint);
+
+        for (int count = 0; count < 5; count++) {
+            List<Point> result = mMapPresenter.getNearestPoints(listWithPoint, currentPoint, count);
+            assertEquals(result.size(), count);
+        }
+    }
+
+    @Test
+    public void getNearestPoints_FromValidData_returnNearestPoints(){
+
     }
 }

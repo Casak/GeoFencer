@@ -36,8 +36,10 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
@@ -234,13 +236,14 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         Point current = new Point(location.getLatitude(), location.getLongitude());
 
         double poiterFromFirstApproach = computingFirstApproach(routePoints, current);
+        double poiterFromSecondtApproach = computingSecondApproach(routePoints, current);
 
         return poiterFromFirstApproach;
     }
 
-    public double computingFirstApproach(List<Point> routePoints, Point current){
+    public double computingFirstApproach(List<Point> routePoints, Point current) {
         Point start = routePoints.get(0);
-        Point end = routePoints.get(routePoints.size()-1);
+        Point end = routePoints.get(routePoints.size() - 1);
 
         double distance1 = MapUtils.computeDistanceBetween(current, start);
         double distance2 = MapUtils.computeDistanceBetween(current, end);
@@ -250,6 +253,57 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         double routeHeading = MapUtils.computeHeading(start, end);
         double currentHeading = MapUtils.computeHeading(current, to);
         return currentHeading - routeHeading;
+    }
+
+    int currentPoint = 0;
+    int previousPoint = 0;
+    Set<Point> harvestedPoints = new HashSet<>();
+
+    public double computingSecondApproach(List<Point> routePoints, Point current) {
+        List<Point> nearest = getNearestPoints(routePoints, current, 2);
+
+
+
+        return 0;
+    }
+
+    public List<Point> getNearestPoints(List<Point> routePoints, Point current, int count) {
+        int nearestIndex = routePoints.indexOf(getNearestPoint(routePoints, current));
+
+        return nearestIndex - count < 0 ?
+                routePoints.subList(0, count) :
+                routePoints.subList(nearestIndex - count / 2, nearestIndex + count / 2);
+    }
+
+    public Point getNearestPoint(List<Point> routePoints, Point current) {
+        int routeSize = routePoints.size();
+
+        if (routeSize == 1) {
+            return routePoints.get(0);
+        }
+
+        if (routeSize == 2) {
+            Point start = routePoints.get(0);
+            Point end = routePoints.get(1);
+
+            double distanceToStart = MapUtils.computeDistanceBetween(current, start);
+            double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
+
+            return distanceToStart < distanceToEnd ? start : end;
+        }
+
+        if (routeSize > 2) {
+            Point start = routePoints.get(0);
+            Point end = routePoints.get(routeSize - 1);
+
+
+            double distanceToStart = MapUtils.computeDistanceBetween(current, start);
+            double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
+
+            routePoints = distanceToStart < distanceToEnd ?
+                    routePoints.subList(0, routeSize / 2) : routePoints.subList(routeSize / 2, routeSize);
+        }
+        return getNearestPoint(routePoints, current);
     }
 
     public RouteModel getNearestRoute(Location location) {
@@ -262,14 +316,14 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             return null;
 
         double[] distances = new double[computedRoutes.size()];
-        for (int i = 0; i < computedRoutes.size(); i++){
+        for (int i = 0; i < computedRoutes.size(); i++) {
             List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
-            if(routePoints == null || routePoints.size() < 2)
+            if (routePoints == null || routePoints.size() < 2)
                 return null;
 
             Point from = new Point(location.getLatitude(), location.getLongitude());
             Point to1 = routePoints.get(0);
-            Point to2 = routePoints.get(routePoints.size()-1);
+            Point to2 = routePoints.get(routePoints.size() - 1);
 
             double distance1 = MapUtils.computeDistanceBetween(from, to1);
             double distance2 = MapUtils.computeDistanceBetween(from, to2);
@@ -279,8 +333,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
         RouteModel result = null;
         double previous = Double.MAX_VALUE;
-        for (int i = 0; i < distances.length; i++){
-            if(distances[i] < previous)
+        for (int i = 0; i < distances.length; i++) {
+            if (distances[i] < previous)
                 result = computedRoutes.get(i);
             previous = distances[i];
         }
