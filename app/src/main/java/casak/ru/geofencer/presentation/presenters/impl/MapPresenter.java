@@ -266,10 +266,27 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         if (nearest.size() == 3 || pointPrev != pointNear) {
             Point pointNext = nearest.get(2);
             routeHeading = MapUtils.computeHeading(pointNear, pointNext);
-        }
-        else
+        } else
             routeHeading = MapUtils.computeHeading(pointPrev, pointNear);
         return currentHeading - routeHeading;
+    }
+
+    public double computingThirdApproach(List<Point> routePoints, Point current) {
+        if (routePoints.size() > 2) {
+            Point prevPoint = routePoints.get(0);
+            for (Point point : routePoints.subList(1, routePoints.size())) {
+                double angle = computeAngleBetweenPointAndLine(prevPoint, point, current);
+                if (angle < 90)
+                    return angle;
+            }
+        }
+        return 0;
+    }
+
+    public double computeAngleBetweenPointAndLine(Point lineStart, Point lineEnd, Point point) {
+        double lineAngle = Math.abs(MapUtils.computeHeading(lineStart, lineEnd));
+        double pointToLineAngle = Math.abs(MapUtils.computeHeading(point, lineEnd));
+        return Math.abs(lineAngle - pointToLineAngle);
     }
 
     //TODO Test list`s top bound

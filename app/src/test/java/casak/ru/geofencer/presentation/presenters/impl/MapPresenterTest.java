@@ -90,6 +90,8 @@ public class MapPresenterTest {
         when(mMapPresenter.getNearestPoints(anyList(), any(Point.class))).thenCallRealMethod();
         when(mMapPresenter.computingFirstApproach(anyList(), any(Point.class))).thenCallRealMethod();
         when(mMapPresenter.computingSecondApproach(anyList(), any(Point.class))).thenCallRealMethod();
+        when(mMapPresenter.computeAngleBetweenPointAndLine(any(Point.class), any(Point.class), any(Point.class)))
+                .thenCallRealMethod();
     }
 
     @Test
@@ -277,6 +279,34 @@ public class MapPresenterTest {
         assertEquals(result, expected, 0);
     }
 
+
+    @Test
+    public void computeAngleBetweenTwoSegments_FromTwoSegments_return90(){
+        Point current = new Point(51d, 31d);
+        Point start = new Point(50d, 30d);
+        Point end = new Point(51d, 30d);
+
+        double result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
+
+        assertEquals(90, result, 1);
+
+
+        current =  new Point(49d, 31d);
+
+        result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
+
+        assertEquals(17, result, 1);
+
+
+
+        current =  new Point(52d, 31d);
+
+        result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
+
+        assertEquals(147, result, 1);
+
+
+    }
 
 
 }
