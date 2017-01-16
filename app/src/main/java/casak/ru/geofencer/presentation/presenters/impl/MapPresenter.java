@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -245,34 +246,81 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         Point start = routePoints.get(0);
         Point end = routePoints.get(routePoints.size() - 1);
 
-        double distance1 = MapUtils.computeDistanceBetween(current, start);
-        double distance2 = MapUtils.computeDistanceBetween(current, end);
+        double distanceToStart = MapUtils.computeDistanceBetween(current, start);
+        double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
 
-        Point to = distance1 > distance2 ? start : end;
+        Point to = distanceToStart > distanceToEnd ? start : end;
 
         double routeHeading = MapUtils.computeHeading(start, end);
         double currentHeading = MapUtils.computeHeading(current, to);
         return currentHeading - routeHeading;
     }
 
-    int currentPoint = 0;
-    int previousPoint = 0;
-    Set<Point> harvestedPoints = new HashSet<>();
+    double distanceToCurrent;
+    Point previousPoint;
+    Set<Point> harvestedPoints;
+    List<Point> prevCurrNext;
 
     public double computingSecondApproach(List<Point> routePoints, Point current) {
-        List<Point> nearest = getNearestPoints(routePoints, current, 2);
+        List<Point> nearest = getNearestPoints(routePoints, current);
+        Point nearestPoint = getNearestPoint(routePoints, current);
+        if (prevCurrNext == null) {
+            prevCurrNext = new ArrayList<>();
+            prevCurrNext.addAll(nearest);
+        }
+
+        if (harvestedPoints == null)
+            harvestedPoints = new HashSet<>();
+        harvestedPoints.addAll(routePoints.subList(0, routePoints.indexOf(nearestPoint)));
+
+        if (previousPoint == null) {
+            distanceToCurrent = MapUtils.computeDistanceBetween(nearestPoint, current);
+            previousPoint = nearestPoint;
+            return computingFirstApproach(nearest.subList(0, 1), current);
+        }
+
+        if (previousPoint.equals(nearestPoint)) {
 
 
+            return computingFirstApproach(nearest.subList(2, 3), current);
+        }
 
         return 0;
     }
 
-    public List<Point> getNearestPoints(List<Point> routePoints, Point current, int count) {
-        int nearestIndex = routePoints.indexOf(getNearestPoint(routePoints, current));
+    //TODO Test list`s top bound
+    public List<Point> getNearestPoints(List<Point> routePoints, Point current) {
+        Point nearestPoint = getNearestPoint(routePoints, current);
+        int indexNearest = routePoints.indexOf(nearestPoint);
+        int indexPrevious = indexNearest - 1;
+        int indexNext = indexNearest + 1;
+        int routeSize = routePoints.size();
 
-        return nearestIndex - count < 0 ?
-                routePoints.subList(0, count) :
-                routePoints.subList(nearestIndex - count / 2, nearestIndex + count / 2);
+        List<Point> result = new ArrayList<>();
+
+        if (indexPrevious >= 0) {
+            if (routeSize < 3) {
+                result.add(nearestPoint);
+                result.add(nearestPoint);
+
+                if (routeSize > 1)
+                    result.add(routePoints.get(routeSize - 1));
+                return result;
+            }
+            if (indexNext == routeSize) {
+                result.addAll(routePoints.subList(indexPrevious, routeSize));
+                result.add(routePoints.get(routeSize - 1));
+                return result;
+            }
+            if (indexNext < routeSize)
+                return routePoints.subList(indexPrevious, ++indexNext);
+            return routePoints.subList(indexPrevious, routeSize);
+        }
+        result.add(nearestPoint);
+        result.add(nearestPoint);
+        result.add(routePoints.get(indexNext));
+        return result;
+
     }
 
     public Point getNearestPoint(List<Point> routePoints, Point current) {
