@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.interactors.impl.MapUtils;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -46,7 +47,7 @@ public class MapPresenterTest {
     public static List<Point> listWithPoint;
 
     public static Point currentPoint = new Point(50.42, 30.42);
-    public static Point nearPoint = new Point(50.0d, 31.0d);
+    public static Point nearPoint = new Point(51.0d, 31.0d);
     public static Point farPoint = new Point(51.8d, 31.0d);
 
     @BeforeClass
@@ -87,6 +88,7 @@ public class MapPresenterTest {
         when(mMapPresenter.getNearestRoute(any(Location.class))).thenCallRealMethod();
         when(mMapPresenter.getNearestPoint(anyList(), any(Point.class))).thenCallRealMethod();
         when(mMapPresenter.getNearestPoints(anyList(), any(Point.class))).thenCallRealMethod();
+        when(mMapPresenter.computingFirstApproach(anyList(), any(Point.class))).thenCallRealMethod();
         when(mMapPresenter.computingSecondApproach(anyList(), any(Point.class))).thenCallRealMethod();
     }
 
@@ -249,18 +251,30 @@ public class MapPresenterTest {
 
     }
 
-    @Test
-    public void computingSecondApproach_forTheFirstTime_callComputingFirstApproach() {
-        mMapPresenter.computingSecondApproach(routeModels.get(0).getRoutePoints(), currentPoint);
-
-        verify(mMapPresenter).computingFirstApproach(anyList(), any(Point.class));
-    }
-
+//TODO Refactor
     @Test
     public void computingSecondApproach_withValidData() {
-        mMapPresenter.computingSecondApproach(routeModels.get(0).getRoutePoints(), currentPoint);
+        double routeHeading = MapUtils.computeHeading(listWithPoint.get(0), listWithPoint.get(1));
+        double currentHeading = MapUtils.computeHeading(currentPoint, listWithPoint.get(0));
+        double expected = currentHeading - routeHeading;
+        double result = mMapPresenter.computingSecondApproach(listWithPoint, currentPoint);
 
-        verify(mMapPresenter).computingFirstApproach(anyList(), any(Point.class));
+        assertEquals(result, expected, 0);
+
+        Point newCurrent = new Point(51.4d,31.4d);
+        routeHeading = MapUtils.computeHeading(listWithPoint.get(3), listWithPoint.get(4));
+        currentHeading = MapUtils.computeHeading(newCurrent, listWithPoint.get(4));
+        expected = currentHeading - routeHeading;
+        result = mMapPresenter.computingSecondApproach(listWithPoint, newCurrent);
+
+        assertEquals(result, expected, 0);
+
+        routeHeading = MapUtils.computeHeading(listWithPoint.get(7), listWithPoint.get(8));
+        currentHeading = MapUtils.computeHeading(farPoint, listWithPoint.get(8));
+        expected = currentHeading - routeHeading;
+        result = mMapPresenter.computingSecondApproach(listWithPoint, farPoint);
+
+        assertEquals(result, expected, 0);
     }
 
 

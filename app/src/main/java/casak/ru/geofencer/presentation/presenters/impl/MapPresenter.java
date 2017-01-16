@@ -256,36 +256,20 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return currentHeading - routeHeading;
     }
 
-    double distanceToCurrent;
-    Point previousPoint;
-    Set<Point> harvestedPoints;
-    List<Point> prevCurrNext;
-
     public double computingSecondApproach(List<Point> routePoints, Point current) {
         List<Point> nearest = getNearestPoints(routePoints, current);
-        Point nearestPoint = getNearestPoint(routePoints, current);
-        if (prevCurrNext == null) {
-            prevCurrNext = new ArrayList<>();
-            prevCurrNext.addAll(nearest);
+        Point pointPrev = nearest.get(0);
+        Point pointNear = nearest.get(1);
+
+        double currentHeading = MapUtils.computeHeading(current, pointNear);
+        double routeHeading;
+        if (nearest.size() == 3 || pointPrev != pointNear) {
+            Point pointNext = nearest.get(2);
+            routeHeading = MapUtils.computeHeading(pointNear, pointNext);
         }
-
-        if (harvestedPoints == null)
-            harvestedPoints = new HashSet<>();
-        harvestedPoints.addAll(routePoints.subList(0, routePoints.indexOf(nearestPoint)));
-
-        if (previousPoint == null) {
-            distanceToCurrent = MapUtils.computeDistanceBetween(nearestPoint, current);
-            previousPoint = nearestPoint;
-            return computingFirstApproach(nearest.subList(0, 1), current);
-        }
-
-        if (previousPoint.equals(nearestPoint)) {
-
-
-            return computingFirstApproach(nearest.subList(2, 3), current);
-        }
-
-        return 0;
+        else
+            routeHeading = MapUtils.computeHeading(pointPrev, pointNear);
+        return currentHeading - routeHeading;
     }
 
     //TODO Test list`s top bound
