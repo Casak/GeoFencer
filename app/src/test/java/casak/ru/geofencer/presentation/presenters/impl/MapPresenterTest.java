@@ -93,6 +93,17 @@ public class MapPresenterTest {
         verify(mMapPresenter).getNearestRoute(any(Location.class));
     }
 
+    //TODO Rename
+    @Test
+    public void computePointer_fromRealLocationAndRouteModels_returnComputedValues() {
+        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
+
+        double pointer = mMapPresenter.computePointer(mMockRealLocation);
+
+        assertEquals(0, pointer, 0);
+    }
+
+
     @Test
     public void getNearestRoute_fromNullOrEmpty_returnsNull() {
         RouteModel result = mMapPresenter.getNearestRoute(null);
@@ -125,7 +136,7 @@ public class MapPresenterTest {
 
 
     @Test
-    public void getNearestRoute_withoutRoutesInRepo_returnsNull(){
+    public void getNearestRoute_withoutRoutesInRepo_returnsNull() {
         when(mMapPresenter.getComputedRoutes(anyInt()))
                 .thenReturn(null)
                 .thenReturn(new ArrayList<RouteModel>());
@@ -140,7 +151,7 @@ public class MapPresenterTest {
     }
 
     @Test
-    public void getNearestRoute_fromRealLocation_returnsNearestRouteModel() throws NoSuchMethodException {
+    public void getNearestRoute_fromRealLocation_returnsNearestRouteModel() {
         when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
 
         RouteModel result = mMapPresenter.getNearestRoute(mMockRealLocation);

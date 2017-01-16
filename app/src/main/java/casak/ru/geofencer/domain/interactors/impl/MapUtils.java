@@ -2,6 +2,8 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import casak.ru.geofencer.domain.model.Point;
 
+import static java.lang.Math.*;
+
 public class MapUtils {
     public static Point computeOffset(Point from, double distance, double heading) {
         distance /= 6371009.0D;
@@ -29,6 +31,35 @@ public class MapUtils {
 
     public static double computeDistanceBetween(Point from, Point to) {
         return computeAngleBetween(from, to) * 6371009.0D;
+    }
+
+    public static double distanceToLine(final Point p, final Point start, final Point end) {
+        if (start.equals(end)) {
+            computeDistanceBetween(end, p);
+        }
+
+        final double s0lat = toRadians(p.getLatitude());
+        final double s0lng = toRadians(p.getLongitude());
+        final double s1lat = toRadians(start.getLatitude());
+        final double s1lng = toRadians(start.getLongitude());
+        final double s2lat = toRadians(end.getLatitude());
+        final double s2lng = toRadians(end.getLongitude());
+
+        double s2s1lat = s2lat - s1lat;
+        double s2s1lng = s2lng - s1lng;
+        final double u = ((s0lat - s1lat) * s2s1lat + (s0lng - s1lng) * s2s1lng)
+                / (s2s1lat * s2s1lat + s2s1lng * s2s1lng);
+        if (u <= 0) {
+            return computeDistanceBetween(p, start);
+        }
+        if (u >= 1) {
+            return computeDistanceBetween(p, end);
+        }
+        Point sa = new Point(p.getLatitude() - start.getLatitude(),
+                p.getLongitude() - start.getLongitude());
+        Point sb = new Point(u * (end.getLatitude() - start.getLatitude()),
+                u * (end.getLongitude() - start.getLongitude()));
+        return computeDistanceBetween(sa, sb);
     }
 
     static double computeAngleBetween(Point from, Point to) {

@@ -229,9 +229,20 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             return 0;
 
         RouteModel nearestRoute = getNearestRoute(location);
+        List<Point> routePoints = nearestRoute.getRoutePoints();
 
+        Point current = new Point(location.getLatitude(), location.getLongitude());
+        Point start = routePoints.get(0);
+        Point end = routePoints.get(routePoints.size()-1);
 
-        return 1;
+        double distance1 = MapUtils.computeDistanceBetween(current, start);
+        double distance2 = MapUtils.computeDistanceBetween(current, end);
+
+        Point to = distance1 > distance2 ? start : end;
+
+        double routeHeading = MapUtils.computeHeading(start, end);
+        double currentHeading = MapUtils.computeHeading(current, to);
+        return currentHeading - routeHeading;
     }
 
     public RouteModel getNearestRoute(Location location) {
