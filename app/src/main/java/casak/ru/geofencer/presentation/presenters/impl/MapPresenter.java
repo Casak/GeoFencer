@@ -65,7 +65,7 @@ import casak.ru.geofencer.util.MapsUtils;
  */
 
 public class MapPresenter extends AbstractPresenter implements IMapPresenter, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
+        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, GoogleMap.OnPolylineClickListener {
 
     private static final String TAG = MapPresenter.class.getSimpleName();
 
@@ -159,7 +159,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        //mGoogleMap.setOnPolylineClickListener(field.getPolylineClickListener());
+        mGoogleMap.setOnPolylineClickListener(this);
         //TODO Create a not hardcoded version
         LatLng geoCentrUkraine = new LatLng(48.9592699d, 32.8723257d);
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentrUkraine, 6f));
@@ -168,7 +168,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
     public void finishCreatingRoute(List<LatLng> route) {
-        //field.initBuildingField(route);
+        initBuildingField(route);
     }
 
     @Nullable
@@ -227,32 +227,45 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return mapLocationListener == null ? mapLocationListener = new MapLocationListener() : mapLocationListener;
     }
 
-    public double computePointer(Location location) {
+    public double[] computePointer(Location location) {
         if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
-            return 0;
+            return null;
 
         RouteModel nearestRoute = getNearestRoute(location);
+        if (nearestRoute == null)
+            return null;
         List<Point> routePoints = nearestRoute.getRoutePoints();
 
         Point current = new Point(location.getLatitude(), location.getLongitude());
 
-        double poiterFromFirstApproach = computingFirstApproach(routePoints, current);
-        double poiterFromSecondtApproach = computingSecondApproach(routePoints, current);
+        double pointerFromFirstApproach = computingFirstApproach(routePoints.get(0),
+                routePoints.get(routePoints.size() - 1),
+                current);
+        double pointerFromSecondApproach = computingSecondApproach(routePoints, current);
+        double pointerFromThirdApproach = computingThirdApproach(routePoints, current);
+        double pointerFromForthApproach = computingForthApproach(routePoints, current);
 
-        return poiterFromFirstApproach;
+        return new double[]{
+                pointerFromFirstApproach,
+                pointerFromSecondApproach,
+                pointerFromThirdApproach,
+                pointerFromForthApproach
+        };
     }
 
-    public double computingFirstApproach(List<Point> routePoints, Point current) {
-        Point start = routePoints.get(0);
-        Point end = routePoints.get(routePoints.size() - 1);
-
+    public double computingFirstApproach(Point start, Point end, Point current) {
         double distanceToStart = MapUtils.computeDistanceBetween(current, start);
         double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
 
-        Point to = distanceToStart > distanceToEnd ? start : end;
+        if (distanceToStart < distanceToEnd)
+            return computeDelta(start, end, current);
+        else
+            return computeDelta(end, start, current);
+    }
 
+    public double computeDelta(Point start, Point end, Point current) {
         double routeHeading = MapUtils.computeHeading(start, end);
-        double currentHeading = MapUtils.computeHeading(current, to);
+        double currentHeading = MapUtils.computeHeading(current, end);
         return currentHeading - routeHeading;
     }
 
@@ -277,8 +290,21 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             for (Point point : routePoints.subList(1, routePoints.size())) {
                 double angle = computeAngleBetweenPointAndLine(prevPoint, point, current);
                 if (angle < 90)
-                    return angle;
+                    return computeDelta(prevPoint, point, current);
             }
+        }
+        return 0;
+    }
+
+    public double computingForthApproach(List<Point> routePoints, Point current) {
+        List<Point> nearest = getNearestPoints(routePoints, current);
+        Point pointPrev = nearest.get(0);
+        Point pointNear = nearest.get(1);
+
+        if (nearest.size() == 3 || pointPrev != pointNear) {
+            double angle = computeAngleBetweenPointAndLine(pointPrev, pointNear, current);
+            if (angle < 90)
+                return computeDelta(pointPrev, pointNear, current);
         }
         return 0;
     }
@@ -286,7 +312,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     public double computeAngleBetweenPointAndLine(Point lineStart, Point lineEnd, Point point) {
         double lineAngle = Math.abs(MapUtils.computeHeading(lineStart, lineEnd));
         double pointToLineAngle = Math.abs(MapUtils.computeHeading(point, lineEnd));
-        return Math.abs(lineAngle - pointToLineAngle);
+        return lineAngle - pointToLineAngle;
     }
 
     //TODO Test list`s top bound
@@ -395,6 +421,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return new RouteRepositoryImpl().getAllRoutes(fieldId);
     }
 
+
     private class OnClickListener implements View.OnClickListener {
         boolean firstClick = true;
 
@@ -425,7 +452,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             LatLng currentLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
 
-            computePointer(location);
+            double[] deltas = computePointer(location);
+
 
             harvester.updateCurrentLocation(currentLocation);
 
@@ -440,36 +468,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                     ", " + location.getLongitude());
             Toast.makeText(context, "Current location = " + location.getLatitude() +
                     ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();*/
-        }
-
-        private boolean haveToInsert(Location location) {
-            lastLocations.add(location);
-            if (lastLocations.size() == 1) {
-                return true;
-            }
-
-            Location first = lastLocations.get(0);
-            if (lastLocations.size() == 2) {
-                double bearing = SphericalUtil.computeHeading(
-                        convertLocationToLatLng(first),
-                        convertLocationToLatLng(location));
-                first.setBearing((float) bearing);
-                return true;
-            }
-            if (lastLocations.size() > 2) {
-                Location previousPoint = lastLocations.get(lastLocations.size() - 2);
-
-                double bearing = SphericalUtil.computeHeading(
-                        convertLocationToLatLng(previousPoint),
-                        convertLocationToLatLng(location));
-                previousPoint.setBearing((float) bearing);
-
-                if (isBearingDifferent(first.getBearing(), previousPoint.getBearing())) {
-                    lastLocations.clear();
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void insertDataToProvider(Location location, Uri contentUri) {
@@ -490,5 +488,145 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         private LatLng convertLocationToLatLng(Location location) {
             return new LatLng(location.getLatitude(), location.getLongitude());
         }
+
+    }
+
+
+    //FieldBuilding
+    private List<LatLng> currentRoute;
+    private Polyline leftArrow;
+    private Polyline rightArrow;
+    private List<Polyline> notHarvestedRoutes;
+    private Polygon field1;
+
+    //TODO delete this shit
+    public void initBuildingField(List<LatLng> route) {
+        currentRoute = route;
+        leftArrow = showPolyline(createArrow(currentRoute, true));
+        rightArrow = showPolyline(createArrow(currentRoute, false));
+
+        CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(route);
+        if (cameraUpdate != null)
+            animateCamera(cameraUpdate);
+    }
+
+    private PolylineOptions createArrow(List<LatLng> route, boolean toLeft) {
+        if (route.size() > 1) {
+            LatLng start = route.get(0);
+            LatLng end = route.get(route.size() - 1);
+
+            double distanceBetween = SphericalUtil
+                    .computeDistanceBetween(start, end);
+            double heading = SphericalUtil.computeHeading(start, end);
+            LatLng routeCenter = SphericalUtil.computeOffset(start, distanceBetween / 2, heading);
+
+            return MapsUtils.createArrow(routeCenter, distanceBetween, heading, toLeft);
+        }
+        //TODO Normal error handling
+        else
+            return null;
+    }
+
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+        LatLng start;
+        LatLng end;
+        if (leftArrow == null && rightArrow == null)
+            return;
+        else {
+            start = currentRoute.get(0);
+            end = currentRoute.get(currentRoute.size() - 1);
+        }
+
+        if (polyline.equals(leftArrow)) {
+            field1 = createField(start, end, true);
+            notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
+                    Constants.HEADING_TO_LEFT);
+        }
+        if (polyline.equals(rightArrow)) {
+            field1 = createField(start, end, false);
+            notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
+                    Constants.HEADING_TO_RIGHT);
+        }
+        if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
+            //TODO Delete this mock
+//            List<LatLng> points = notHarvestedRoutes.get(1).getPoints();
+//            points.remove(0);
+//            points.remove(1);
+//            points.remove(points.size() - 1);
+//            points.remove(points.size() - 2);
+//            MapsUtils.mockLocations(getLocationListener(),
+//                    points.toArray(new LatLng[points.size()]));
+
+            CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(notHarvestedRoutes.get(0).getPoints());
+            if (cameraUpdate != null)
+                animateCamera(cameraUpdate);
+        }
+
+        removeArrow(leftArrow);
+        removeArrow(rightArrow);
+        leftArrow = null;
+        rightArrow = null;
+    }
+
+    private void removeArrow(Polyline arrow) {
+        removePolyline(arrow);
+    }
+
+    private List<Polyline> createComputedPolylines(Polyline oldPolyline, double heading) {
+        List<Polyline> routes = new LinkedList<>();
+        routes.add(oldPolyline);
+
+        List<LatLng> oldPolylineList = oldPolyline.getPoints();
+        //TODO Normal check
+        LatLng start = oldPolylineList.get(0);
+        LatLng end = oldPolylineList.get(oldPolylineList.size() - 1);
+
+        double computedHeading = SphericalUtil.computeHeading(start, end);
+        double normalHeading = computedHeading + heading;
+        double backwardHeading = computedHeading + 180;
+
+        int transparentColor = Constants.COMPUTED_ROUTE_COLOR;
+        boolean first = true;
+        for (int i = 0; i < 4; i++) {
+            transparentColor = transparentColor - 0x20000000;
+
+            Polyline path = routes.get(i);
+
+            List<LatLng> resultPoints = MapsUtils.computeNewPath(path,
+                    Constants.WIDTH_METERS,
+                    normalHeading);
+
+            List<LatLng> points = new LinkedList<>();
+            if (first)
+                points.add(SphericalUtil.computeOffset(resultPoints.get(0),
+                        Constants.WIDTH_METERS * 2,
+                        backwardHeading));
+
+            points.addAll(resultPoints);
+            if (first) {
+                first = false;
+                points.add(SphericalUtil.computeOffset(resultPoints.get(resultPoints.size() - 1),
+                        Constants.WIDTH_METERS * 2,
+                        computedHeading));
+            }
+
+            routes.add(
+                    showPolyline(MapsUtils.createPolylineOptions(points)
+                            .color(transparentColor)
+                            .width(5)
+                            .geodesic(true)
+                            .zIndex(Constants.ROUTE_INDEX)
+                    ));
+        }
+        return routes;
+    }
+
+    private Polygon createField(LatLng start, LatLng end, boolean toLeft) {
+        return showPolygon(MapsUtils.createFieldPolygonOptions(start,
+                end,
+                Constants.WIDTH_METERS,
+                toLeft)
+                .zIndex(Constants.FIELD_INDEX));
     }
 }

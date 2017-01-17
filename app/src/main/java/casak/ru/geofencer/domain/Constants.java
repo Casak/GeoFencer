@@ -6,7 +6,7 @@ public class Constants {
 
     public static final double FIELD_HEIGHT_METERS = 100;
 
-    public static final Integer WIDTH_METERS = 20;
+    public static final Integer WIDTH_METERS = 10;
     public static final double HEADING_TO_LEFT = -90;
     public static final double HEADING_TO_RIGHT = 90;
 
