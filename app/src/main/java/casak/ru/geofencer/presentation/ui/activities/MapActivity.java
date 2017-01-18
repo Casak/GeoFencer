@@ -74,10 +74,9 @@ public class MapActivity extends FragmentActivity {
         }
         bluetoothAdapter.startDiscovery();
 
+        setContentView(R.layout.activity_map);
 
         mapPresenter = new MapPresenter(this, ThreadExecutor.getInstance(), MainThreadImpl.getInstance());
-
-        setContentView(R.layout.activity_map);
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
         myFab.setOnClickListener(mapPresenter.getOnClickListener());
