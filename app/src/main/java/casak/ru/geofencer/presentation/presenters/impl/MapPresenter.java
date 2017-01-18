@@ -37,10 +37,8 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
@@ -57,6 +55,7 @@ import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
 import casak.ru.geofencer.presentation.presenters.IMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.presentation.ui.activities.MapActivity;
+import casak.ru.geofencer.presentation.ui.fragment.DeltaFragment;
 import casak.ru.geofencer.service.LocationService;
 import casak.ru.geofencer.util.MapsUtils;
 
@@ -77,6 +76,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     private View.OnClickListener onClickListener;
     private LocationListener mapLocationListener;
 
+    private DeltaFragment deltaFragment;
+
     //TODO Inject
     private FieldModel field;
     private HarvesterModel harvester;
@@ -92,6 +93,10 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         }
 
         this.context = context;
+
+        deltaFragment = (DeltaFragment) ((MapActivity) context)
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.delta_fragment);
 
         locationSource = new BluetoothAntennaLocationSource();
 
@@ -309,6 +314,25 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return 0;
     }
 
+    public List<Point> getHeadedRoutePoints(List<Point> route, Point position) {
+        if (route == null || position == null || route.size() < 2 ||
+                position.getLongitude() == 0 || position.getLatitude() == 0)
+            return null;
+
+        Point start = route.get(0);
+        Point end = route.get(route.size() - 1);
+
+        double distanceToStart = MapUtils.computeDistanceBetween(position, start);
+        double distanceToEnd = MapUtils.computeDistanceBetween(position, end);
+        if (distanceToEnd < distanceToStart) {
+            List<Point> result = new ArrayList<>();
+            for (int i = route.size()-1; i > 0; i--)
+                result.add(route.get(i));
+            return result;
+        }
+        return route;
+    }
+
     public double computeAngleBetweenPointAndLine(Point lineStart, Point lineEnd, Point point) {
         double lineAngle = Math.abs(MapUtils.computeHeading(lineStart, lineEnd));
         double pointToLineAngle = Math.abs(MapUtils.computeHeading(point, lineEnd));
@@ -391,17 +415,17 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             return null;
 
         double[] distances = new double[computedRoutes.size()];
+        Point from = new Point(location.getLatitude(), location.getLongitude());
         for (int i = 0; i < computedRoutes.size(); i++) {
             List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
             if (routePoints == null || routePoints.size() < 2)
                 return null;
 
-            Point from = new Point(location.getLatitude(), location.getLongitude());
-            Point to1 = routePoints.get(0);
-            Point to2 = routePoints.get(routePoints.size() - 1);
+            Point start = routePoints.get(0);
+            Point end = routePoints.get(routePoints.size() - 1);
 
-            double distance1 = MapUtils.computeDistanceBetween(from, to1);
-            double distance2 = MapUtils.computeDistanceBetween(from, to2);
+            double distance1 = MapUtils.computeDistanceBetween(from, start);
+            double distance2 = MapUtils.computeDistanceBetween(from, end);
             double distance = distance1 < distance2 ? distance1 : distance2;
             distances[i] = distance;
         }
@@ -417,8 +441,28 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return result != null ? result : null;
     }
 
+    //TODO When moved - normal implementation
     public List<RouteModel> getComputedRoutes(int fieldId) {
+        List<RouteModel> result = new ArrayList<>();
+        if (notHarvestedRoutes != null && notHarvestedRoutes.size() > 0) {
+            for (int i = 0; i < notHarvestedRoutes.size(); i++) {
+                result.add(new RouteModel(i,
+                        RouteModel.Type.COMPUTED,
+                        fieldId,
+                        latLngToPoint(notHarvestedRoutes.get(i).getPoints())));
+            }
+            return result;
+        }
+
         return new RouteRepositoryImpl().getAllRoutes(fieldId);
+    }
+
+    private List<Point> latLngToPoint(List<LatLng> latLngs) {
+        List<Point> result = new ArrayList<>();
+        for (LatLng point : latLngs) {
+            result.add(new Point(point.latitude, point.longitude));
+        }
+        return result;
     }
 
 
@@ -454,6 +498,12 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
             double[] deltas = computePointer(location);
 
+            if (deltas != null) {
+                deltaFragment.delta1.setText(deltas[0] + "");
+                deltaFragment.delta2.setText(deltas[1] + "");
+                deltaFragment.delta3.setText(deltas[2] + "");
+                deltaFragment.delta4.setText(deltas[3] + "");
+            }
 
             harvester.updateCurrentLocation(currentLocation);
 
@@ -550,14 +600,58 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         }
         if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
             //TODO Delete this mock
-//            List<LatLng> points = notHarvestedRoutes.get(1).getPoints();
-//            points.remove(0);
-//            points.remove(1);
-//            points.remove(points.size() - 1);
-//            points.remove(points.size() - 2);
-//            MapsUtils.mockLocations(getLocationListener(),
-//                    points.toArray(new LatLng[points.size()]));
+            List<LatLng> list = new ArrayList<>();
 
+            list.add(new LatLng(50.421403047796304, 30.425471959874532));
+            list.add(new LatLng(50.421492947796295, 30.425563359499005));
+            list.add(new LatLng(50.4215796477963, 30.425650459136847));
+            list.add(new LatLng(50.4216630477963, 30.42568115878848));
+            list.add(new LatLng(50.4217475477963, 30.42573765843551));
+            list.add(new LatLng(50.42183264779631, 30.42579085808003));
+            list.add(new LatLng(50.421915947796315, 30.425823957732078));
+            list.add(new LatLng(50.42199704779629, 30.4258847573933));
+            list.add(new LatLng(50.422077147796294, 30.425945157058703));
+            list.add(new LatLng(50.42215504779629, 30.42599855673329));
+            list.add(new LatLng(50.42242494779629, 30.42616205560584));
+            list.add(new LatLng(50.422517047796305, 30.426176555221105));
+            list.add(new LatLng(50.4226024477963, 30.42622365486436));
+            list.add(new LatLng(50.422682847796295, 30.42625355452849));
+            list.add(new LatLng(50.4227546477963, 30.426359654228563));
+            list.add(new LatLng(50.4228218477963, 30.426372253947832));
+            list.add(new LatLng(50.4228876477963, 30.426372153672965));
+            list.add(new LatLng(50.422950947796274, 30.426433853408525));
+            list.add(new LatLng(50.423012447796296, 30.42652715315161));
+            list.add(new LatLng(50.42306504779629, 30.426528752931883));
+            list.add(new LatLng(50.42311024779629, 30.426541052743065));
+            list.add(new LatLng(50.42315084779628, 30.426602752573455));
+            list.add(new LatLng(50.423222247796296, 30.42662315227518));
+            list.add(new LatLng(50.42324924779629, 30.42659715216239));
+            list.add(new LatLng(50.42326574779629, 30.42663665209346));
+            list.add(new LatLng(50.42327484779629, 30.42663695205544));
+            list.add(new LatLng(50.423281180329916, 30.426680696850383));
+
+
+            MapsUtils.mockLocations(getLocationListener(),
+                    list.toArray(new LatLng[list.size()]));
+
+            /*List<LatLng> points = notHarvestedRoutes.get(3).getPoints();
+            List<LatLng> reverse = new LinkedList<>();
+            for (LatLng point : notHarvestedRoutes.get(2).getPoints())
+                reverse.add(new LatLng(point.latitude, point.longitude));
+
+            for (int i = reverse.size() - 1; i > 0; i--)
+                points.add(reverse.get(i));
+
+            points.addAll(notHarvestedRoutes.get(1).getPoints());
+
+            StringBuilder sb = new StringBuilder();
+            for(LatLng point : reverse)
+                sb.append(point.latitude + "," + point.longitude + "\r\n");
+            //Log.d(TAG, sb.toString());
+
+            MapsUtils.mockLocations(getLocationListener(),
+                    points.toArray(new LatLng[points.size()]));
+*/
             CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(notHarvestedRoutes.get(0).getPoints());
             if (cameraUpdate != null)
                 animateCamera(cameraUpdate);
@@ -629,4 +723,32 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 toLeft)
                 .zIndex(Constants.FIELD_INDEX));
     }
+
+
+
+
+    //Pointer
+
+    private RouteModel currentRouteModel;
+    public boolean isStillCurrentRoute(Point location){
+        return MapUtils.isLocationOnPath(
+                location,
+                getCurrentRoute().getRoutePoints(),
+                true,
+                Constants.WIDTH_METERS/2
+        );
+    }
+
+    public RouteModel getCurrentRoute(){
+        return currentRouteModel;
+    }
+
+    public void setCurrentRoute(RouteModel route){
+        currentRouteModel = route;
+    }
+
+
+
+
+
 }
