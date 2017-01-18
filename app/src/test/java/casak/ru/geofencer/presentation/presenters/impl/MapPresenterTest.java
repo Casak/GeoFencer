@@ -153,6 +153,8 @@ public class MapPresenterTest {
 
         when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(computedRouteModels);
         when(mMapPresenter.isStillCurrentRoute(any(Point.class))).thenCallRealMethod();
+        when(mMapPresenter.getNearestPoint(any(Point.class), any(Point.class), any(Point.class)))
+                .thenCallRealMethod();
         when(mMapPresenter.computePointer(any(Location.class))).thenCallRealMethod();
         when(mMapPresenter.getNearestRoute(any(Location.class))).thenCallRealMethod();
         when(mMapPresenter.getNearestPoint(anyList(), any(Point.class))).thenCallRealMethod();
@@ -303,45 +305,6 @@ public class MapPresenterTest {
         assertFalse(result);
     }
 
-
-
-    @Ignore
-    @Test
-    public void computePointer_fromNull_returnZero() {
-        double[] result = mMapPresenter.computePointer(null);
-
-        //assertEquals(result, 0, 0);
-    }
-
-    @Ignore
-    @Test
-    public void computePointer_fromMockLocation_returnZero() {
-        double[] result = mMapPresenter.computePointer(mMockLocation);
-
-        //assertEquals(result, 0, 0);
-    }
-
-    @Test
-    public void computePointer_fromRealLocation_callsGetNearestRoute() {
-        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
-
-        mMapPresenter.computePointer(mMockRealLocation);
-
-        verify(mMapPresenter).getNearestRoute(any(Location.class));
-    }
-
-    @Ignore
-    //TODO Rename
-    @Test
-    public void computePointer_fromRealLocationAndRouteModels_returnComputedValues() {
-        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
-
-        double[] pointer = mMapPresenter.computePointer(mMockRealLocation);
-
-        //assertEquals(0, pointer, 0);
-    }
-
-
     @Test
     public void getNearestPoint_fromOneRoutePointAndCurrentPoint_returnThisPoint() {
         List<Point> listWithPoint = new ArrayList<>();
@@ -383,34 +346,135 @@ public class MapPresenterTest {
 
             assertEquals(result, points.get(0));
         }
+
+        List<Point> computedPoints = computedRouteModels.get(0).getRoutePoints();
+        Point resultFromRealData = mMapPresenter.getNearestPoint(
+                computedPoints,
+                harvestingRoute.get(harvestingRoute.size()-1));
+
+        assertEquals(resultFromRealData, computedPoints.get(computedPoints.size() - 1));
+
     }
 
     @Test
-    public void getNearestPoints_FromValidData_returnListOfSurroundingPoints() {
+    public void getNearestPoints_FromEmptyRoute_returnEmptyList() {
+        List<Point> result = mMapPresenter.getNearestPoints(new ArrayList<Point>(), nearPoint);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void getNearestPoints_FromOnePointRoute_returnThisPoint() {
+        List<Point> onePointList = new ArrayList<>();
+        onePointList.add(nearPoint);
+        List<Point> result = mMapPresenter.getNearestPoints(onePointList, nearPoint);
+
+        assertNotNull(result);
+
+        assertEquals(result.get(0), nearPoint);
+    }
+
+    @Test
+    public void getNearestPoints_FromRouteAndPointAtStartOfTheRoute_returnThisPointAndTheNextOne() {
         List<Point> result = mMapPresenter.getNearestPoints(listWithPoint, nearPoint);
 
         assertNotNull(result);
 
         assertEquals(result.get(0), nearPoint);
-        assertEquals(result.get(1), nearPoint);
-        assertEquals(result.get(2), listWithPoint.get(1));
+        assertEquals(result.get(1), listWithPoint.get(listWithPoint.indexOf(nearPoint)+1));
 
-        result = mMapPresenter.getNearestPoints(listWithPoint, farPoint);
+        List<Point> computedRoutePoints = computedRouteModels.get(0).getRoutePoints();
+        result = mMapPresenter.getNearestPoints(
+                computedRoutePoints,
+                harvestingRoute.get(0));
 
-        assertEquals(result.get(0), listWithPoint.get(7));
-        assertEquals(result.get(1), farPoint);
-
-        result = mMapPresenter.getNearestPoints(listWithPoint, listWithPoint.get(5));
-
-        assertEquals(result.get(0), listWithPoint.get(4));
-        assertEquals(result.get(1), listWithPoint.get(5));
-        assertEquals(result.get(2), listWithPoint.get(6));
+        assertEquals(result.get(0), computedRoutePoints.get(0));
+        assertEquals(result.get(1), computedRoutePoints.get(1));
     }
 
     @Test
-    public void getNearestPoints_FromValidData_returnNearestPoints() {
+    public void getNearestPoints_FromRouteAndPointAtEndOfTheRoute_returnThisPoint() {
+        List<Point> result = mMapPresenter.getNearestPoints(listWithPoint, farPoint);
 
+        assertNotNull(result);
+
+        assertEquals(result.get(0), farPoint);
+
+        List<Point> computedRoutePoints = computedRouteModels.get(0).getRoutePoints();
+        result = mMapPresenter.getNearestPoints(
+                computedRoutePoints,
+                harvestingRoute.get(harvestingRoute.size()-1));
+
+        assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size()-1));
     }
+
+    @Test
+    public void getNearestPoints_FromRouteAndPointAtCenterOfTheRoute_returnThisPointAndTheNextOne() {
+        List<Point> result = mMapPresenter.getNearestPoints(listWithPoint, listWithPoint.get(5));
+
+        assertEquals(result.get(0), listWithPoint.get(5));
+        assertEquals(result.get(1), listWithPoint.get(6));
+
+        List<Point> computedRoutePoints = computedRouteModels.get(0).getRoutePoints();
+        result = mMapPresenter.getNearestPoints(
+                computedRoutePoints,
+                harvestingRoute.get(harvestingRoute.size()/2));
+
+        assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size()/2));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Ignore
+    @Test
+    public void computePointer_fromNull_returnZero() {
+        double[] result = mMapPresenter.computePointer(null);
+
+        //assertEquals(result, 0, 0);
+    }
+
+    @Ignore
+    @Test
+    public void computePointer_fromMockLocation_returnZero() {
+        double[] result = mMapPresenter.computePointer(mMockLocation);
+
+        //assertEquals(result, 0, 0);
+    }
+
+    @Ignore
+    @Test
+    public void computePointer_fromRealLocation_callsGetNearestRoute() {
+        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
+
+        mMapPresenter.computePointer(mMockRealLocation);
+
+        verify(mMapPresenter).getNearestRoute(any(Location.class));
+    }
+
+    @Ignore
+    //TODO Rename
+    @Test
+    public void computePointer_fromRealLocationAndRouteModels_returnComputedValues() {
+        when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(routeModels);
+
+        double[] pointer = mMapPresenter.computePointer(mMockRealLocation);
+
+        //assertEquals(0, pointer, 0);
+    }
+
+
+
 
     //TODO Refactor
     @Test
@@ -447,21 +511,21 @@ public class MapPresenterTest {
 
         double result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
 
-        assertEquals(90, result, 1);
+        assertEquals(-90, result, 1);
 
 
         current = new Point(49d, 31d);
 
         result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
 
-        assertEquals(17, result, 1);
+        assertEquals(-17, result, 1);
 
 
         current = new Point(52d, 31d);
 
         result = mMapPresenter.computeAngleBetweenPointAndLine(start, end, current);
 
-        assertEquals(147, result, 1);
+        assertEquals(-147, result, 1);
 
 
     }

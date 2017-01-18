@@ -258,22 +258,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         };
     }
 
-    public double computingFirstApproach(Point start, Point end, Point current) {
-        double distanceToStart = MapUtils.computeDistanceBetween(current, start);
-        double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
-
-        if (distanceToStart < distanceToEnd)
-            return computeDelta(start, end, current);
-        else
-            return computeDelta(end, start, current);
-    }
-
-    public double computeDelta(Point start, Point end, Point current) {
-        double routeHeading = MapUtils.computeHeading(start, end);
-        double currentHeading = MapUtils.computeHeading(current, end);
-        return currentHeading - routeHeading;
-    }
-
     public double computingSecondApproach(List<Point> routePoints, Point current) {
         List<Point> nearest = getNearestPoints(routePoints, current);
         Point pointPrev = nearest.get(0);
@@ -326,7 +310,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         double distanceToEnd = MapUtils.computeDistanceBetween(position, end);
         if (distanceToEnd < distanceToStart) {
             List<Point> result = new ArrayList<>();
-            for (int i = route.size()-1; i > 0; i--)
+            for (int i = route.size() - 1; i > 0; i--)
                 result.add(route.get(i));
             return result;
         }
@@ -337,108 +321,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         double lineAngle = Math.abs(MapUtils.computeHeading(lineStart, lineEnd));
         double pointToLineAngle = Math.abs(MapUtils.computeHeading(point, lineEnd));
         return lineAngle - pointToLineAngle;
-    }
-
-    //TODO Test list`s top bound
-    public List<Point> getNearestPoints(List<Point> routePoints, Point current) {
-        Point nearestPoint = getNearestPoint(routePoints, current);
-        int indexNearest = routePoints.indexOf(nearestPoint);
-        int indexPrevious = indexNearest - 1;
-        int indexNext = indexNearest + 1;
-        int routeSize = routePoints.size();
-
-        List<Point> result = new ArrayList<>();
-
-        if (indexPrevious >= 0) {
-            if (routeSize < 3) {
-                result.add(nearestPoint);
-                result.add(nearestPoint);
-
-                if (routeSize > 1)
-                    result.add(routePoints.get(routeSize - 1));
-                return result;
-            }
-            if (indexNext == routeSize) {
-                result.addAll(routePoints.subList(indexPrevious, routeSize));
-                result.add(routePoints.get(routeSize - 1));
-                return result;
-            }
-            if (indexNext < routeSize)
-                return routePoints.subList(indexPrevious, ++indexNext);
-            return routePoints.subList(indexPrevious, routeSize);
-        }
-        result.add(nearestPoint);
-        result.add(nearestPoint);
-        result.add(routePoints.get(indexNext));
-        return result;
-
-    }
-
-    public Point getNearestPoint(List<Point> routePoints, Point current) {
-        int routeSize = routePoints.size();
-
-        if (routeSize == 1) {
-            return routePoints.get(0);
-        }
-
-        if (routeSize == 2) {
-            Point start = routePoints.get(0);
-            Point end = routePoints.get(1);
-
-            double distanceToStart = MapUtils.computeDistanceBetween(current, start);
-            double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
-
-            return distanceToStart < distanceToEnd ? start : end;
-        }
-
-        if (routeSize > 2) {
-            Point start = routePoints.get(0);
-            Point end = routePoints.get(routeSize - 1);
-
-
-            double distanceToStart = MapUtils.computeDistanceBetween(current, start);
-            double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
-
-            routePoints = distanceToStart < distanceToEnd ?
-                    routePoints.subList(0, routeSize / 2) : routePoints.subList(routeSize / 2, routeSize);
-        }
-        return getNearestPoint(routePoints, current);
-    }
-
-    public RouteModel getNearestRoute(Location location) {
-        if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
-            return null;
-
-        List<RouteModel> computedRoutes = getComputedRoutes(0); //fieldID
-
-        if (computedRoutes == null || computedRoutes.size() == 0)
-            return null;
-
-        double[] distances = new double[computedRoutes.size()];
-        Point from = new Point(location.getLatitude(), location.getLongitude());
-        for (int i = 0; i < computedRoutes.size(); i++) {
-            List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
-            if (routePoints == null || routePoints.size() < 2)
-                return null;
-
-            Point start = routePoints.get(0);
-            Point end = routePoints.get(routePoints.size() - 1);
-
-            double distance1 = MapUtils.computeDistanceBetween(from, start);
-            double distance2 = MapUtils.computeDistanceBetween(from, end);
-            double distance = distance1 < distance2 ? distance1 : distance2;
-            distances[i] = distance;
-        }
-
-        RouteModel result = null;
-        double previous = Double.MAX_VALUE;
-        for (int i = 0; i < distances.length; i++) {
-            if (distances[i] < previous)
-                result = computedRoutes.get(i);
-            previous = distances[i];
-        }
-
-        return result != null ? result : null;
     }
 
     //TODO When moved - normal implementation
@@ -725,30 +607,126 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
 
-
-
     //Pointer
 
     private RouteModel currentRouteModel;
-    public boolean isStillCurrentRoute(Point location){
+
+    public RouteModel getCurrentRoute() {
+        return currentRouteModel;
+    }
+
+    public void setCurrentRoute(RouteModel route) {
+        currentRouteModel = route;
+    }
+
+    public boolean isStillCurrentRoute(Point location) {
         return MapUtils.isLocationOnPath(
                 location,
                 getCurrentRoute().getRoutePoints(),
                 true,
-                Constants.WIDTH_METERS/2
+                Constants.WIDTH_METERS / 2
         );
     }
 
-    public RouteModel getCurrentRoute(){
-        return currentRouteModel;
+    public Point getNearestPoint(List<Point> routePoints, Point current) {
+        int routeSize = routePoints.size();
+
+        if (routeSize == 1) {
+            return routePoints.get(0);
+        }
+
+        if (routeSize == 2) {
+            Point start = routePoints.get(0);
+            Point end = routePoints.get(1);
+            return getNearestPoint(start, end, current);
+        }
+
+        if (routeSize > 2)
+            for (int i = 0; i < routePoints.size() - 1; i++) {
+                Point start = routePoints.get(i);
+                Point end = routePoints.get(i + 1);
+                if (getNearestPoint(start, end, current) == start)
+                    return start;
+            }
+        return routePoints.get(routeSize - 1);
     }
 
-    public void setCurrentRoute(RouteModel route){
-        currentRouteModel = route;
+    public Point getNearestPoint(Point start, Point end, Point current) {
+        double distanceToStart = MapUtils.computeDistanceBetween(current, start);
+        double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
+
+        return distanceToStart < distanceToEnd ? start : end;
     }
 
+    //TODO Test list`s top bound
+    public List<Point> getNearestPoints(List<Point> routePoints, Point current) {
+        int routeSize = routePoints.size();
+        if (routeSize == 0 || routeSize == 1)
+            return routePoints;
 
+        Point nearestPoint = getNearestPoint(routePoints, current);
+        int indexNearest = routePoints.indexOf(nearestPoint);
+        int indexNext = indexNearest + 1;
 
+        List<Point> result = new ArrayList<>();
+        result.add(nearestPoint);
 
+        if (indexNext != routeSize)
+            result.add(routePoints.get(indexNext));
+        return result;
+    }
+
+    //TODO Check it
+    public RouteModel getNearestRoute(Location location) {
+        if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
+            return null;
+
+        List<RouteModel> computedRoutes = getComputedRoutes(0); //fieldID
+
+        if (computedRoutes == null || computedRoutes.size() == 0)
+            return null;
+
+        double[] distances = new double[computedRoutes.size()];
+        Point from = new Point(location.getLatitude(), location.getLongitude());
+        for (int i = 0; i < computedRoutes.size(); i++) {
+            List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
+            if (routePoints == null || routePoints.size() < 2)
+                return null;
+
+            Point start = routePoints.get(0);
+            Point end = routePoints.get(routePoints.size() - 1);
+
+            double distance1 = MapUtils.computeDistanceBetween(from, start);
+            double distance2 = MapUtils.computeDistanceBetween(from, end);
+            double distance = distance1 < distance2 ? distance1 : distance2;
+            distances[i] = distance;
+        }
+
+        RouteModel result = null;
+        double previous = Double.MAX_VALUE;
+        for (int i = 0; i < distances.length; i++) {
+            if (distances[i] < previous)
+                result = computedRoutes.get(i);
+            previous = distances[i];
+        }
+
+        return result != null ? result : null;
+    }
+
+    public double computingFirstApproach(Point start, Point end, Point current) {
+        double distanceToStart = MapUtils.computeDistanceBetween(current, start);
+        double distanceToEnd = MapUtils.computeDistanceBetween(current, end);
+
+        if (distanceToStart < distanceToEnd)
+            return computeDelta(start, end, current);
+        else
+            return computeDelta(end, start, current);
+    }
+
+    public double computeDelta(Point start, Point end, Point current) {
+        double routeHeading = MapUtils.computeHeading(start, end);
+        double currentHeading = MapUtils.computeHeading(current, end);
+        return currentHeading - routeHeading;
+    }
 
 }
