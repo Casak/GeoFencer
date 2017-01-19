@@ -19,6 +19,7 @@ public class DeltaFragment extends Fragment {
     public TextView delta2;
     public TextView delta3;
     public TextView delta4;
+    public TextView delta5;
 
     @Nullable
     @Override
@@ -29,6 +30,7 @@ public class DeltaFragment extends Fragment {
         delta2 = (TextView) view.findViewById(R.id.delta2);
         delta3 = (TextView) view.findViewById(R.id.delta3);
         delta4 = (TextView) view.findViewById(R.id.delta4);
+        delta5 = (TextView) view.findViewById(R.id.delta5);
 
         return view;
     }
