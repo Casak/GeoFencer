@@ -99,7 +99,6 @@ public class MapPresenterTest {
         listWithPoint.add(new Point(51.6d, 31.0d));
         listWithPoint.add(new Point(51.7d, 31.0d));
         listWithPoint.add(farPoint);
-        routeModels.add(new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID, listWithPoint));
 
         routeBuildingRoutePoints.add(new Point(50.421355, 30.4256428));
         routeBuildingRoutePoints.add(new Point(50.4214449, 30.4256972));
@@ -131,6 +130,7 @@ public class MapPresenterTest {
 
         double lat = 50.0d;
         double lng = 30.0d;
+        routeModels.add(new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID, listWithPoint));
         for (int i = 0; i < 5; i++) {
             List<Point> points = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
@@ -153,6 +153,10 @@ public class MapPresenterTest {
 
         when(mMapPresenter.getComputedRoutes(anyInt())).thenReturn(computedRouteModels);
         when(mMapPresenter.isStillCurrentRoute(any(Point.class))).thenCallRealMethod();
+        when(mMapPresenter.computeDelta(any(Point.class), any(Point.class), any(Point.class)))
+                .thenCallRealMethod();
+        when(mMapPresenter.computeDeltaTriangle(any(Point.class), any(Point.class), any(Point.class)))
+                .thenCallRealMethod();
         when(mMapPresenter.getNearestPoint(any(Point.class), any(Point.class), any(Point.class)))
                 .thenCallRealMethod();
         when(mMapPresenter.computePointer(any(Location.class))).thenCallRealMethod();
@@ -421,7 +425,50 @@ public class MapPresenterTest {
                 harvestingRoute.get(harvestingRoute.size()/2));
 
         assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size()/2));
+        assertEquals(result.get(1), computedRoutePoints.get(computedRoutePoints.size()/2+1));
     }
+
+    @Test
+    public void computeDeltaTriangle_fromPointsOnOneLine_returnZero () {
+        Point position = nearPoint;
+        Point current = listWithPoint.get(1);
+        Point next = listWithPoint.get(2);
+
+        double result = mMapPresenter.computeDeltaTriangle(position, current, next);
+
+        assertEquals(0, result, 1);
+    }
+
+
+    @Test
+    public void computeDeltaTriangle_fromPointsOnOneLine_returnZero1 () {
+        Point position = new Point(49.9999,29.99999);
+        Point current = new Point(50.0002,30);
+        Point next = new Point(50.0003,30);
+
+        double result = mMapPresenter.computeDeltaTriangle(current, position, next);
+
+        assertEquals(0, result, 1);
+    }
+
+
+
+
+
+    @Test
+    public void computeDelta_fromRealData_returnsDefinedValues () {
+        Point start = nearPoint;
+        Point end = farPoint;
+        Point current = farPoint;
+
+        double result = mMapPresenter.computeDelta(nearPoint, farPoint, listWithPoint.get(listWithPoint.size()/2));
+
+        assertEquals(90, result, 1);
+    }
+
+
+
+
 
 
 

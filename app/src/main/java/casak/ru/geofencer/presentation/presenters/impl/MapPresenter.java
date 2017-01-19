@@ -259,7 +259,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
     public double computingSecondApproach(List<Point> routePoints, Point current) {
-        List<Point> nearest = getNearestPoints(routePoints, current);
+        return 404;
+        /*List<Point> nearest = getNearestPoints(routePoints, current);
         Point pointPrev = nearest.get(0);
         Point pointNear = nearest.get(1);
 
@@ -270,7 +271,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             routeHeading = MapUtils.computeHeading(pointNear, pointNext);
         } else
             routeHeading = MapUtils.computeHeading(pointPrev, pointNear);
-        return currentHeading - routeHeading;
+        return currentHeading - routeHeading;*/
     }
 
     public double computingThirdApproach(List<Point> routePoints, Point current) {
@@ -286,7 +287,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
     public double computingForthApproach(List<Point> routePoints, Point current) {
-        List<Point> nearest = getNearestPoints(routePoints, current);
+        return 404;
+/*        List<Point> nearest = getNearestPoints(routePoints, current);
         Point pointPrev = nearest.get(0);
         Point pointNear = nearest.get(1);
 
@@ -295,7 +297,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             if (angle < 90)
                 return computeDelta(pointPrev, pointNear, current);
         }
-        return 0;
+        return 0;*/
     }
 
     public List<Point> getHeadedRoutePoints(List<Point> route, Point position) {
@@ -378,6 +380,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             LatLng currentLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
 
+            //TODO Move to pointer interactor
             double[] deltas = computePointer(location);
 
             if (deltas != null) {
@@ -386,6 +389,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 deltaFragment.delta3.setText(deltas[2] + "");
                 deltaFragment.delta4.setText(deltas[3] + "");
             }
+
+            deltaFragment.delta5.setText(computePointerNew(location) + "");
 
             harvester.updateCurrentLocation(currentLocation);
 
@@ -606,7 +611,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 .zIndex(Constants.FIELD_INDEX));
     }
 
-
+    //TODO Move to interactor
     //Pointer
 
     private RouteModel currentRouteModel;
@@ -620,12 +625,13 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
     public boolean isStillCurrentRoute(Point location) {
-        return MapUtils.isLocationOnPath(
-                location,
-                getCurrentRoute().getRoutePoints(),
-                true,
-                Constants.WIDTH_METERS / 2
-        );
+        return getCurrentRoute() != null &&
+                MapUtils.isLocationOnPath(
+                        location,
+                        getCurrentRoute().getRoutePoints(),
+                        true,
+                        Constants.WIDTH_METERS / 2
+                );
     }
 
     public Point getNearestPoint(List<Point> routePoints, Point current) {
@@ -729,4 +735,121 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return currentHeading - routeHeading;
     }
 
+    public double computeDeltaTriangle(Point position, Point routeCurrent, Point routeNext) {
+        double distanceCurrentAndNext = MapUtils.computeDistanceBetween(routeCurrent, routeNext);
+        double distancePositionAndNext = MapUtils.computeDistanceBetween(position, routeNext);
+        double distancePositionAndCurrent = MapUtils.computeDistanceBetween(position, routeCurrent);
+
+        double result = (distanceCurrentAndNext + distancePositionAndCurrent) - distancePositionAndNext;
+
+        return result;
+    }
+
+
+    public double computePointerNew(Location position) {
+        Point pointPosition = convertLocationToPoint(position);
+
+        RouteModel nearestRoute;
+        if (!isStillCurrentRoute(pointPosition)) {
+            nearestRoute = getNearestRoute(position);
+            if (nearestRoute == null)
+                return 0;
+            double distanceToStart = MapUtils.computeDistanceBetween(pointPosition, nearestRoute.getRoutePoints().get(0));
+            double distanceToEnd = MapUtils.computeDistanceBetween(
+                    pointPosition,
+                    nearestRoute.getRoutePoints().get(nearestRoute.getRoutePoints().size() - 1)
+            );
+            if (distanceToEnd < distanceToStart)
+                nearestRoute.setRoutePoints(reverseList(nearestRoute.getRoutePoints()));
+            setCurrentRoute(nearestRoute);
+        }
+        nearestRoute = getCurrentRoute();
+
+        if(nearestRoute == null)
+            return 0;
+        int index = nearestRoute.getRoutePoints().indexOf(getNearestPoint(nearestRoute.getRoutePoints(), pointPosition));
+
+        nearestRoute.setRoutePoints(nearestRoute.getRoutePoints().subList(index, nearestRoute.getRoutePoints().size()));
+
+        List<Point> nearestPoints = getNearestPoints(nearestRoute.getRoutePoints(), pointPosition);
+
+        int nearestPointsSize = nearestPoints.size();
+
+        Log.d(TAG, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        Log.d(TAG, "Position point: " + pointPosition.getLatitude() + ", " + pointPosition.getLongitude());
+
+        double result = 0;
+        switch (nearestPointsSize) {
+            case 0:
+                break;
+            case 1:
+
+                Log.d(TAG, "routeCurrent point: " + nearestPoints.get(0).getLatitude()
+                        + ", " + nearestPoints.get(0).getLongitude());
+                nearestWithAngles(nearestPoints.get(0), nearestPoints.get(0), pointPosition);
+                result = crossTrackError(nearestPoints.get(0), nearestPoints.get(0), pointPosition);
+                break;
+            case 2:
+                Log.d(TAG, "routeCurrent point: " + nearestPoints.get(0).getLatitude()
+                        + ", " + nearestPoints.get(0).getLongitude());
+                Log.d(TAG, "routeNext point: " + nearestPoints.get(1).getLatitude()
+                        + ", " + nearestPoints.get(1).getLongitude());
+                nearestWithAngles(nearestPoints.get(0), nearestPoints.get(1), pointPosition);
+                result = crossTrackError(nearestPoints.get(0), nearestPoints.get(1), pointPosition);
+        }
+        Log.d(TAG, "CTE: " + result);
+        return result;
+    }
+
+
+    public double crossTrackError(Point routeCurrent, Point routeNext, Point position) {
+        double brng13 = MapUtils.computeHeading(routeCurrent, position); // in degrees
+        double brng12 = MapUtils.computeHeading(routeCurrent, routeNext); //  in degrees
+        double dist13 = MapUtils.computeDistanceBetween(routeCurrent, position); // in kilometers
+        return Math.asin(Math.sin(dist13 / 6371009.0D) * Math.sin(Math.toRadians(brng13 - brng12))) * 6371009.0D;
+    }
+
+    public List<Point> getNearestPoints2(List<Point> routePoints, Point position) {
+        int routeSize = routePoints.size();
+        if (routeSize == 0 || routeSize == 1)
+            return routePoints;
+
+        Point nearestPoint = getNearestPoint(routePoints, position);
+        int indexNearest = routePoints.indexOf(nearestPoint);
+        int indexNext = indexNearest + 1;
+
+        List<Point> result = new ArrayList<>();
+        result.add(nearestPoint);
+
+        if (indexNext != routeSize) {
+            result.add(routePoints.get(indexNext));
+
+            double headingCurrentToNext = MapUtils.computeHeading(result.get(0), result.get(1));
+            double headingPositionToCurrent = MapUtils.computeHeading(position, result.get(0));
+            //if(headingPositionToCurrent + 90 > headingCurrentToNext)
+
+        }
+        return result;
+    }
+
+    public void nearestWithAngles(Point routeCurrent, Point routeNext, Point position) {
+        double angle = computeAngleBetweenPointAndLine(routeCurrent, routeNext, position);
+        if (angle < 90)
+            Log.d(TAG, "NEAREST_ANGLE point to trace: " + routeCurrent.getLatitude()
+                    + ", " + routeCurrent.getLongitude());
+        Log.d(TAG, "NEAREST_ANGLE  point to trace: " + routeNext.getLatitude()
+                + ", " + routeNext.getLongitude());
+    }
+
+    private Point convertLocationToPoint(Location location) {
+        return new Point(location.getLatitude(), location.getLongitude());
+    }
+
+    private List<Point> reverseList(List<Point> list) {
+        List<Point> result = new LinkedList<>();
+        for (int i = list.size() - 1; i > 0; i--)
+            result.add(list.get(i));
+
+        return result;
+    }
 }
