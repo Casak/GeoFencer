@@ -99,7 +99,7 @@ public class HarvesterModel {
             fieldBuildRoute.add(currentLocation);
 
         updateRouteUI();
-        updatePositionOnMap();
+        //updatePositionOnMap();
     }
 
     public void showCount(){
@@ -112,14 +112,14 @@ public class HarvesterModel {
         else
             harvestedPolyline.setPoints(sessionRoute);
 //TODO location On path
-        if (harvestedPolygon == null)
+        /*if (harvestedPolygon == null)
             harvestedPolygon = mapPresenter
                     .showPolygon(MapsUtils.harvestedPolygonOptions(harvestedPolyline));
         else{
             List<LatLng> points = MapsUtils.harvestedPolygonOptions(harvestedPolyline).getPoints();
             if (points != null)
                 harvestedPolygon.setPoints(points);
-        }
+        }*/
     }
 
     private void updatePositionOnMap() {

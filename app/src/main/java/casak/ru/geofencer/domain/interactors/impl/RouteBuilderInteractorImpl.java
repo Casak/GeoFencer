@@ -86,6 +86,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
             }
     }
 
+    //TODO Pass to computeNewPath() normal values, now returns similar routes
     private List<RouteModel> computeRouteModels(RouteModel fieldBuildingRoute, boolean toLeft) {
         //TODO Normal check
         if (fieldBuildingRoute == null)

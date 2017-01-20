@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.UUID;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
-import casak.ru.geofencer.db.Contract;
 import casak.ru.geofencer.domain.Constants;
+import casak.ru.geofencer.domain.repository.db.Contract;
 
 public class BluetoothReceiver extends BroadcastReceiver {
     private static final String TAG = BluetoothReceiver.class.getSimpleName();

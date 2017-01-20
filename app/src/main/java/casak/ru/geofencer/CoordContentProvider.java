@@ -11,8 +11,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import casak.ru.geofencer.db.Contract;
-import casak.ru.geofencer.db.DbHelper;
+import casak.ru.geofencer.domain.repository.db.Contract;
+import casak.ru.geofencer.domain.repository.db.DbHelper;
+
 
 /**
  * Created by User on 30.12.2016.
