@@ -6,33 +6,20 @@
     android:background="#ffffff">
 
     <TextView
-        android:id="@+id/delta1"
+        android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="CHANGE:" />
+
+<!--TODO STRING RESOURCES, bastard-->
+    <TextView
+        android:id="@+id/cross_track_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:digits="4"
         android:text="0.0" />
 
-    <TextView
-        android:id="@+id/delta2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0.0" />
-
-    <TextView
-        android:id="@+id/delta3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0.0" />
-
-    <TextView
-        android:id="@+id/delta4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0.0" />
-
-    <TextView
-        android:id="@+id/delta5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0.0" />
 
 </LinearLayout>
