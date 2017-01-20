@@ -1,11 +1,11 @@
-package casak.ru.geofencer.db;
+package casak.ru.geofencer.domain.repository.db;
 
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * Created by User on 29.12.2016.
+ * Created on 29.12.2016.
  */
 
 public class Contract {
@@ -19,6 +19,8 @@ public class Contract {
     public static final String PATH_COORDS = "coords";
     public static final String PATH_FILTERED_COORD = "filter_coord";
     public static final String PATH_FILTERED_COORDS = "filter_coords";
+    public static final String PATH_ARROW = "filter_coord";
+    public static final String PATH_ARROWS = "filter_coords";
 
 
     public static final class CoordEntry implements BaseColumns{
@@ -62,5 +64,24 @@ public class Contract {
         public static final String COLUMN_HEADING = "heading";
         public static final String COLUMN_ACCURACY = "accuracy";
     }
+
+    public static final class ArrowEntry implements BaseColumns{
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_ARROWS).build();
+
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARROWS;
+
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ARROW;
+
+
+        public static final String TABLE_NAME = "arrow";
+
+        public static final String COLUMN_IS_LEFT_ARROW = "is_left";
+        public static final String COLUMN_LEFT_POINT = "left";
+        public static final String COLUMN_FIELD_ID = "field_id";
+    }
+
 
 }
