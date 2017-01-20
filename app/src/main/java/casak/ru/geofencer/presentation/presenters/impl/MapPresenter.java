@@ -366,16 +366,19 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         }
     }
 
+    private List<Location> locations = new LinkedList<>();
+
     private class MapLocationListener implements LocationListener {
-        private List<Location> lastLocations = new LinkedList<>();
         private Location previous = new Location(LocationManager.GPS_PROVIDER);
 
         @Override
         public void onLocationChanged(Location location) {
             if (location.equals(previous))
                 return;
-            else
+            else {
+                locations.add(location);
                 previous = location;
+            }
 
             LatLng currentLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
@@ -616,19 +619,15 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
     private RouteModel currentRouteModel;
 
-    public RouteModel getCurrentRoute() {
-        return currentRouteModel;
-    }
-
     public void setCurrentRoute(RouteModel route) {
         currentRouteModel = route;
     }
 
     public boolean isStillCurrentRoute(Point location) {
-        return getCurrentRoute() != null &&
+        return currentRouteModel != null &&
                 MapUtils.isLocationOnPath(
                         location,
-                        getCurrentRoute().getRoutePoints(),
+                        currentRouteModel.getRoutePoints(),
                         true,
                         Constants.WIDTH_METERS / 2
                 );
@@ -650,11 +649,18 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         if (routeSize > 2)
             for (int i = 0; i < routePoints.size() - 1; i++) {
                 Point start = routePoints.get(i);
-                Point end = routePoints.get(i + 1);
-                if (getNearestPoint(start, end, current) == start)
+                Point next = routePoints.get(i + 1);
+                if (getNearestPoint(start, next, current) == start) {
+                    double distanceCurrentAndNext = MapUtils.computeDistanceBetween(start, next);
+                    double distancePositionAndNext = MapUtils.computeDistanceBetween(current, next);
+                    double distancePositionAndCurrent = MapUtils.computeDistanceBetween(current, start);
+                    double delta = distancePositionAndNext - (distanceCurrentAndNext + distancePositionAndCurrent);
+                    if (delta < 0)
+                        return next;
                     return start;
+                }
             }
-        return routePoints.get(routeSize - 1);
+        return routePoints.get(0);
     }
 
     public Point getNearestPoint(Point start, Point end, Point current) {
@@ -692,7 +698,17 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         if (computedRoutes == null || computedRoutes.size() == 0)
             return null;
 
-        double[] distances = new double[computedRoutes.size()];
+        Point position = convertLocationToPoint(location);
+        for (RouteModel model : computedRoutes)
+            if (MapUtils.isLocationOnPath(
+                    position,
+                    model.getRoutePoints(),
+                    true,
+                    Constants.WIDTH_METERS / 2
+            ))
+                return model;
+
+        /*double[] distances = new double[computedRoutes.size()];
         Point from = new Point(location.getLatitude(), location.getLongitude());
         for (int i = 0; i < computedRoutes.size(); i++) {
             List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
@@ -716,7 +732,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             previous = distances[i];
         }
 
-        return result != null ? result : null;
+        return result != null ? result : null;*/
+        return null;
     }
 
     public double computingFirstApproach(Point start, Point end, Point current) {
@@ -745,28 +762,37 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return result;
     }
 
+    public RouteModel getCurrentRoute(Location position) {
+        Point pointPosition = convertLocationToPoint(position);
+
+        if (!isStillCurrentRoute(pointPosition)) {
+            RouteModel result = getNearestRoute(position);
+            if (result == null)
+                return null;
+            double distanceToStart = MapUtils.computeDistanceBetween(
+                    pointPosition,
+                    result.getRoutePoints().get(0)
+            );
+            double distanceToEnd = MapUtils.computeDistanceBetween(
+                    pointPosition,
+                    result.getRoutePoints().get(result.getRoutePoints().size() - 1)
+            );
+            if (distanceToEnd < distanceToStart)
+                result.setRoutePoints(reverseList(result.getRoutePoints()));
+            setCurrentRoute(result);
+            return result;
+        }
+        return currentRouteModel;
+    }
 
     public double computePointerNew(Location position) {
         Point pointPosition = convertLocationToPoint(position);
 
-        RouteModel nearestRoute;
-        if (!isStillCurrentRoute(pointPosition)) {
-            nearestRoute = getNearestRoute(position);
-            if (nearestRoute == null)
-                return 0;
-            double distanceToStart = MapUtils.computeDistanceBetween(pointPosition, nearestRoute.getRoutePoints().get(0));
-            double distanceToEnd = MapUtils.computeDistanceBetween(
-                    pointPosition,
-                    nearestRoute.getRoutePoints().get(nearestRoute.getRoutePoints().size() - 1)
-            );
-            if (distanceToEnd < distanceToStart)
-                nearestRoute.setRoutePoints(reverseList(nearestRoute.getRoutePoints()));
-            setCurrentRoute(nearestRoute);
-        }
-        nearestRoute = getCurrentRoute();
+        RouteModel nearestRoute = getCurrentRoute(position);
 
-        if(nearestRoute == null)
+        if (nearestRoute == null)
             return 0;
+
         int index = nearestRoute.getRoutePoints().indexOf(getNearestPoint(nearestRoute.getRoutePoints(), pointPosition));
 
         nearestRoute.setRoutePoints(nearestRoute.getRoutePoints().subList(index, nearestRoute.getRoutePoints().size()));
@@ -847,7 +873,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
     private List<Point> reverseList(List<Point> list) {
         List<Point> result = new LinkedList<>();
-        for (int i = list.size() - 1; i > 0; i--)
+        for (int i = list.size() - 1; i >= 0; i--)
             result.add(list.get(i));
 
         return result;
