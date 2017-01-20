@@ -1,5 +1,7 @@
 package casak.ru.geofencer.domain.repository.impl;
 
+import java.util.List;
+
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -14,6 +16,16 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
     public RouteModel getRouteModel(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<RouteModel> getAllRoutes(int fieldId) {
+        return null;
+    }
+
+    @Override
+    public List<RouteModel> getAllRoutes(int fieldId, RouteModel.Type type) {
         return null;
     }
 

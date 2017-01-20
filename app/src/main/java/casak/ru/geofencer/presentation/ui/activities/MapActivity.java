@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,6 +15,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import java.lang.ref.WeakReference;
+
 import android.os.Handler;
 
 import casak.ru.geofencer.R;
@@ -22,13 +23,10 @@ import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
 import casak.ru.geofencer.presentation.presenters.IMapPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
+import casak.ru.geofencer.presentation.ui.fragment.DeltaFragment;
 import casak.ru.geofencer.threading.MainThreadImpl;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends FragmentActivity {
 
     private static final String TAG = MapActivity.class.getSimpleName();
 
@@ -38,9 +36,11 @@ public class MapActivity extends AppCompatActivity {
     //TODO Inject
     private IMapPresenter mapPresenter;
 
+    private DeltaFragment deltaFragment;
+
     private Handler h;
 
-    public void showToast(String string){
+    public void showToast(String string) {
         Message msg = new Message();
         Bundle b = new Bundle();
         b.putString("key", string);
@@ -74,16 +74,18 @@ public class MapActivity extends AppCompatActivity {
         }
         bluetoothAdapter.startDiscovery();
 
+        setContentView(R.layout.activity_map);
 
         mapPresenter = new MapPresenter(this, ThreadExecutor.getInstance(), MainThreadImpl.getInstance());
-
-        setContentView(R.layout.activity_map);
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
         myFab.setOnClickListener(mapPresenter.getOnClickListener());
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment =  (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_fragment);
+
+        deltaFragment = (DeltaFragment) getSupportFragmentManager().findFragmentById(R.id.delta_fragment);
+
         mapFragment.getMapAsync(mapPresenter);
     }
 

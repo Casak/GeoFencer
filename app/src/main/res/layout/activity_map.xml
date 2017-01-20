@@ -1,22 +1,34 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:mContext=".view.MapActivity">
+    tools:context=".presentation.ui.activities.MapActivity">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <fragment
+        android:id="@+id/map_fragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
+        <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/myFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/amu_bubble_mask"
-            app:elevation="4dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/myFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/common_full_open_on_phone"
+                app:elevation="4dp" />
 
-    </RelativeLayout>
-</fragment>
+        </RelativeLayout>
+    </fragment>
+
+    <fragment
+        android:id="@+id/delta_fragment"
+        android:name="casak.ru.geofencer.presentation.ui.fragment.DeltaFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        tools:layout="@layout/fragment_delta" />
+</FrameLayout>

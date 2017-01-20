@@ -124,14 +124,13 @@ public class MapsUtils {
     }
 
     //TODO implement
-    public static CameraUpdate harvestedPolygonToCameraUpdate(Polygon polygon) {
-        List<LatLng> points = polygon.getPoints();
+    public static CameraUpdate harvestedPolygonToCameraUpdate(List<LatLng> points) {
         if (points == null || points.size() < 1)
             return null;
 
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boundsBuilder.include(points.get(0));
-        boundsBuilder.include(points.get(points.size() / 2 - 1));
+        boundsBuilder.include(points.get(points.size() - 1));
         LatLngBounds bounds = boundsBuilder.build();
 
         return CameraUpdateFactory.newLatLngBounds(bounds, 1);
