@@ -33,14 +33,14 @@ public class MapActivity extends FragmentActivity {
     //TODO
     private WeakReference<Context> contextWeakReference;
 
-    //TODO Inject
-    private IMapPresenter mapPresenter;
+    //TODO Inject; delete static
+    public static MapPresenter mapPresenter;
 
     private DeltaFragment deltaFragment;
 
-    private Handler h;
+    private static Handler h;
 
-    public void showToast(String string) {
+    public static void updateCTE(String string) {
         Message msg = new Message();
         Bundle b = new Bundle();
         b.putString("key", string);
@@ -53,9 +53,10 @@ public class MapActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         h = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                Toast.makeText(getApplicationContext(), msg.getData().getString("key"), Toast.LENGTH_SHORT)
-                        .show();
-            };
+                deltaFragment.mTextViewCrossTrackError.setText(msg.getData().getString("key"));
+            }
+
+            ;
         };
         //TODO alert "NO GPlay Services". Cases too
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getApplicationContext())
@@ -81,7 +82,7 @@ public class MapActivity extends FragmentActivity {
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
         myFab.setOnClickListener(mapPresenter.getOnClickListener());
 
-        SupportMapFragment mapFragment =  (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
 
         deltaFragment = (DeltaFragment) getSupportFragmentManager().findFragmentById(R.id.delta_fragment);

@@ -33,6 +33,8 @@ public class HarvesterModel {
     private MapPresenter mapPresenter;
     //TODO Getter|setter
     private Polyline harvestedPolyline;
+    //TODO !!!! Check interactor with it
+    private Polyline fieldBuildingPolyline;
     private Polygon harvestedPolygon;
 
     private boolean isCreatingFieldRoute;
@@ -70,6 +72,10 @@ public class HarvesterModel {
         return harvestedPolyline;
     }
 
+    public Polyline getFieldBuildingPolyline(){
+        return fieldBuildingPolyline;
+    }
+
     public void startFieldRouteBuilding() {
         fieldBuildRoute = new LinkedList<>();
         isCreatingFieldRoute = true;
@@ -95,15 +101,20 @@ public class HarvesterModel {
 
         sessionRoute.add(currentLocation);
 
-        if (isCreatingFieldRoute)
+        if (isCreatingFieldRoute) {
             fieldBuildRoute.add(currentLocation);
+            updateFieldBuilding();
+        }
 
         updateRouteUI();
-        //updatePositionOnMap();
+        updatePositionOnMap();
     }
 
-    public void showCount(){
-        Log.d("TAG", SphericalUtil.computeLength(harvestedPolyline.getPoints())+ "");
+    private void updateFieldBuilding(){
+        if (fieldBuildingPolyline == null)
+            fieldBuildingPolyline = mapPresenter.showPolyline(MapsUtils.createPolylineOptions(fieldBuildRoute));
+        else
+            fieldBuildingPolyline.setPoints(fieldBuildRoute);
     }
 
     private void updateRouteUI() {

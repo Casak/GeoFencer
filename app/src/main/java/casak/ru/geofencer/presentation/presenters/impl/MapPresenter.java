@@ -237,7 +237,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             if (firstClick) {
                 firstClick = false;
                 harvester.startFieldRouteBuilding();
-                MapsUtils.mockLocations(getLocationListener());
+                //MapsUtils.mockLocations(getLocationListener());
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
@@ -263,7 +263,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                     location.getLongitude());
 
             //TODO Move to pointer interactor
-            deltaFragment.mTextViewCrossTrackError.setText(computePointerNew(location) + "");
+            MapActivity.updateCTE(computePointerNew(location)+"");
 
             harvester.updateCurrentLocation(currentLocation);
 
@@ -330,7 +330,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             double heading = SphericalUtil.computeHeading(start, end);
             LatLng routeCenter = SphericalUtil.computeOffset(start, distanceBetween / 2, heading);
 
-            return MapsUtils.createArrow(routeCenter, distanceBetween, heading, toLeft);
+            return MapsUtils.createArrow(routeCenter, distanceBetween + 10, heading, toLeft);
         }
         //TODO Normal error handling
         else
@@ -350,12 +350,12 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
         if (polyline.equals(leftArrow)) {
             field1 = createField(start, end, true);
-            notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
+            notHarvestedRoutes = createComputedPolylines(harvester.getFieldBuildingPolyline(),
                     Constants.HEADING_TO_LEFT);
         }
         if (polyline.equals(rightArrow)) {
             field1 = createField(start, end, false);
-            notHarvestedRoutes = createComputedPolylines(harvester.getHarvestedPolyline(),
+            notHarvestedRoutes = createComputedPolylines(harvester.getFieldBuildingPolyline(),
                     Constants.HEADING_TO_RIGHT);
         }
         if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
@@ -391,8 +391,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             list.add(new LatLng(50.423281180329916, 30.426680696850383));
 
 
-            MapsUtils.mockLocations(getLocationListener(),
-                    list.toArray(new LatLng[list.size()]));
+            //MapsUtils.mockLocations(getLocationListener(),
+            //        list.toArray(new LatLng[list.size()]));
 
             CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(notHarvestedRoutes.get(0).getPoints());
             if (cameraUpdate != null)

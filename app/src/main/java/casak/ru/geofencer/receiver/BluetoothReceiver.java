@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -26,7 +27,11 @@ import java.util.UUID;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.Constants;
+import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.repository.db.Contract;
+import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
+import casak.ru.geofencer.presentation.ui.activities.MapActivity;
+import casak.ru.geofencer.threading.MainThreadImpl;
 
 public class BluetoothReceiver extends BroadcastReceiver {
     private static final String TAG = BluetoothReceiver.class.getSimpleName();
@@ -129,12 +134,31 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 location.setLongitude(30.041981d);
                 BluetoothAntennaLocationSource.getListener().onLocationChanged(location);
 
+
+                MainThread mainThread = MainThreadImpl.getInstance();
+                MapPresenter presenter = MapActivity.mapPresenter;
+                final LocationListener listener;
+                LocationListener tmpListener = null;
+
+                if (presenter != null)
+                    tmpListener = presenter.getLocationListener();
+                if(tmpListener != null)
+                    listener = tmpListener;
+                else listener = null;
+
                 while ((length = in.read(buffer)) != -1) {
                     result.write(buffer, 0, length);
                     Log.d(TAG, "Read from GPS antenna: " + result.toString("UTF-8"));
-                    Location newLocation = parse(result.toString("UTF-8"));
+                    final Location newLocation = parse(result.toString("UTF-8"));
 
                     if (newLocation != null) {
+                        if(tmpListener != null)
+                            mainThread.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.onLocationChanged(newLocation);
+                                }
+                            });
                         BluetoothAntennaLocationSource.getListener().onLocationChanged(newLocation);
                         insertDataToProvider(newLocation, Contract.CoordEntry.CONTENT_URI);
                         if (haveToInsert(location))
