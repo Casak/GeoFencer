@@ -14,7 +14,6 @@ public class RouteModel {
     private int fieldId;
     private Type type;
     private List<Point> routePoints;
-    private Type routeType;
 
     public RouteModel(int id, Type type, int fieldId){
         this.id = id;
