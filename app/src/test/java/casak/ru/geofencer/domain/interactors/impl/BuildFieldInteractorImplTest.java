@@ -70,8 +70,9 @@ public class BuildFieldInteractorImplTest {
 
         when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
                 .thenReturn(mFieldBuildingRouteModel);
-        when(mMockArrowRepository.getArrow(any(ArrowModel.Type.class)))
-                .thenReturn(mLeftArrow)
+        when(mMockArrowRepository.getLeftArrow(anyInt()))
+                .thenReturn(mLeftArrow);
+        when(mMockArrowRepository.getRightArrow(anyInt()))
                 .thenReturn(mRightArrow);
 
         mFieldBuildingRouteModel.setRoutePoints(points);

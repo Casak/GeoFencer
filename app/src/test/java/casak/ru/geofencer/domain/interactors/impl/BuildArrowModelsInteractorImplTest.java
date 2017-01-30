@@ -19,6 +19,7 @@ import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 /**
@@ -38,6 +39,8 @@ public class BuildArrowModelsInteractorImplTest {
     static BuildArrowModelsInteractor.Callback mMockedCallback;
     @Mock
     static RouteRepository mMockRouteRepository;
+    @Mock
+    static ArrowRepository mMockArrowRepository;
 
     static BuildArrowModelsInteractor mInteractor;
 
@@ -74,6 +77,7 @@ public class BuildArrowModelsInteractorImplTest {
                 mMockMainThread,
                 mMockedCallback,
                 mMockRouteRepository,
+                mMockArrowRepository,
                 FIELD_ID
         );
     }

@@ -11,13 +11,15 @@ import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 
 public class BuildArrowModelsInteractorImpl extends AbstractInteractor implements BuildArrowModelsInteractor {
 
     private BuildArrowModelsInteractor.Callback mCallback;
-    private RouteRepository mRepository;
+    private RouteRepository mRouteRepository;
+    private ArrowRepository mArrowRepository;
 
     private ArrowModel leftArrow;
     private ArrowModel rightArrow;
@@ -26,21 +28,26 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
     public BuildArrowModelsInteractorImpl(Executor threadExecutor,
                                           MainThread mainThread,
                                           BuildArrowModelsInteractor.Callback callback,
-                                          RouteRepository repository,
+                                          RouteRepository routeRepository,
+                                          ArrowRepository arrowRepository,
                                           int fieldId) {
         super(threadExecutor, mainThread);
         this.fieldId = fieldId;
         mCallback = callback;
-        mRepository = repository;
+        mRouteRepository = routeRepository;
+        mArrowRepository = arrowRepository;
     }
 
     @Override
     public void run() {
-        RouteModel route = mRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        RouteModel route = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
-        if (leftArrow != null && rightArrow != null)
+        if (leftArrow != null && rightArrow != null) {
+            mArrowRepository.addArrow(leftArrow, fieldId);
+            mArrowRepository.addArrow(rightArrow, fieldId);
             mCallback.onArrowsBuildFinished(fieldId);
+        }
         else mCallback.onArrowsBuildFailed(fieldId);
     }
 

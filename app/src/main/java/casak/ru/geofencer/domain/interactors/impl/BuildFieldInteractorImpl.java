@@ -45,8 +45,8 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     public void run() {
         RouteModel route = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
 
-        ArrowModel leftArrow = mArrowRepository.getArrow(ArrowModel.Type.LEFT);
-        ArrowModel rightArrow = mArrowRepository.getArrow(ArrowModel.Type.RIGHT);
+        ArrowModel leftArrow = mArrowRepository.getLeftArrow(fieldId);
+        ArrowModel rightArrow = mArrowRepository.getRightArrow(fieldId);
 
         if (!leftArrow.isChosen() && !rightArrow.isChosen()) {
             mCallback.onFieldBuildFail();

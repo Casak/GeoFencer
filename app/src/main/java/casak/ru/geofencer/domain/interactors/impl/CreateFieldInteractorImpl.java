@@ -63,6 +63,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 mMainThread,
                 this,
                 mRouteRepository,
+                mArrowRepository,
                 fieldId);
 
         mBuildFieldInteractor = new BuildFieldInteractorImpl(
@@ -132,6 +133,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         field = mFieldRepository.getField(fieldId);
         mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
         mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
+        mArrowRepository.deleteArrows(fieldId);
         mCallback.showField(field);
 
         createComputedRoutes();
