@@ -28,7 +28,7 @@ import java.util.UUID;
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.repository.db.Contract;
+import casak.ru.geofencer.storage.db.Contract;
 import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
 import casak.ru.geofencer.presentation.ui.activities.MapActivity;
 import casak.ru.geofencer.threading.MainThreadImpl;

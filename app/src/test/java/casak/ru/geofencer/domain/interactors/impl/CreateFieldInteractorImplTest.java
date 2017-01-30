@@ -13,19 +13,17 @@ import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.FieldModel;
-import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
-import casak.ru.geofencer.domain.repository.impl.ArrowRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.FieldRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.LocationRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
+import casak.ru.geofencer.storage.ArrowRepositoryImpl;
+import casak.ru.geofencer.storage.FieldRepositoryImpl;
+import casak.ru.geofencer.storage.LocationRepositoryImpl;
+import casak.ru.geofencer.storage.RouteRepositoryImpl;
 
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 /**
  * Created on 10.01.2017.

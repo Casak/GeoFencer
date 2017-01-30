@@ -1,7 +1,6 @@
 package casak.ru.geofencer;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -11,8 +10,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import casak.ru.geofencer.domain.repository.db.Contract;
-import casak.ru.geofencer.domain.repository.db.DbHelper;
+import casak.ru.geofencer.storage.db.Contract;
+import casak.ru.geofencer.storage.db.DbHelper;
 
 
 /**

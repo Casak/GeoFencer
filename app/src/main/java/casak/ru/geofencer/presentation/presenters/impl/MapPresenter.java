@@ -48,7 +48,7 @@ import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.model.HarvesterModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
-import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
+import casak.ru.geofencer.storage.RouteRepositoryImpl;
 import casak.ru.geofencer.presentation.presenters.IMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.presentation.ui.activities.MapActivity;

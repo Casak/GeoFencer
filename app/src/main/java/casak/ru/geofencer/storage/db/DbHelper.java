@@ -1,4 +1,4 @@
-package casak.ru.geofencer.domain.repository.db;
+package casak.ru.geofencer.storage.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.File;
 
-import casak.ru.geofencer.domain.repository.db.Contract.*;
+import casak.ru.geofencer.storage.db.Contract.*;
 
 /**
  * Created on 29.12.2016.

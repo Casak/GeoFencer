@@ -13,8 +13,8 @@ import java.util.List;
 import casak.ru.geofencer.domain.model.ArrowModel;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
+import casak.ru.geofencer.storage.ArrowRepositoryImpl;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 /**

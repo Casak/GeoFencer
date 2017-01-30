@@ -1,7 +1,6 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
@@ -22,9 +20,9 @@ import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
-import casak.ru.geofencer.domain.repository.impl.ArrowRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.FieldRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
+import casak.ru.geofencer.storage.ArrowRepositoryImpl;
+import casak.ru.geofencer.storage.FieldRepositoryImpl;
+import casak.ru.geofencer.storage.RouteRepositoryImpl;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

@@ -1,4 +1,4 @@
-package casak.ru.geofencer.domain.repository.impl;
+package casak.ru.geofencer.storage;
 
 import casak.ru.geofencer.domain.model.FieldModel;
 import casak.ru.geofencer.domain.repository.FieldRepository;

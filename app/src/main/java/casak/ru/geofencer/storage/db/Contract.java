@@ -1,4 +1,4 @@
-package casak.ru.geofencer.domain.repository.db;
+package casak.ru.geofencer.storage.db;
 
 import android.content.ContentResolver;
 import android.net.Uri;

@@ -20,9 +20,9 @@ import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
-import casak.ru.geofencer.domain.repository.impl.ArrowRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.LocationRepositoryImpl;
-import casak.ru.geofencer.domain.repository.impl.RouteRepositoryImpl;
+import casak.ru.geofencer.storage.ArrowRepositoryImpl;
+import casak.ru.geofencer.storage.LocationRepositoryImpl;
+import casak.ru.geofencer.storage.RouteRepositoryImpl;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
