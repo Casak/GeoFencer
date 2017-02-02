@@ -16,6 +16,7 @@ public class RouteConverter {
         Route result = new Route();
         result.id = model.getId();
         result.fieldId = model.getFieldId();
+        result.points = Util.pointsToString(model.getRoutePoints());
         result.type = RouteTypeConverter.convertToStorageModel(model.getType()).id;
 
         return result;
@@ -30,7 +31,8 @@ public class RouteConverter {
         RouteModel result = new RouteModel(
                 model.id,
                 RouteTypeConverter.convertToDomainModel(type),
-                model.fieldId);
+                model.fieldId,
+                Util.stringToPoints(model.points));
 
         return result;
     }

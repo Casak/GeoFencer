@@ -31,6 +31,7 @@ public class RouteConverterTest {
         assertNotNull(result);
         assertEquals(model.getId(), result.id);
         assertEquals(model.getFieldId(), result.fieldId);
+        assertEquals(model.getRoutePoints(), Util.stringToPoints(result.points));
         assertEquals(2, result.type);
     }
 
@@ -47,11 +48,13 @@ public class RouteConverterTest {
         route.id = 1;
         route.fieldId = 1;
         route.type = 2;
+        route.points = "50.0,30.0;51.0,31.0;";
         RouteModel result = RouteConverter.convertToDomainModel(route);
 
         assertNotNull(result);
         assertEquals(route.id, result.getId());
         assertEquals(route.fieldId, result.getFieldId());
+        assertEquals(Util.stringToPoints(route.points), result.getRoutePoints());
         assertEquals(RouteModel.Type.COMPUTED, result.getType());
     }
 
