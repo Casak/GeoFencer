@@ -4,6 +4,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.List;
+
+import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.storage.model.Route;
 
@@ -24,7 +27,9 @@ public class RouteConverterTest {
 
     @Test
     public void convertToStorageModel_fromNonEmptyModel_returnsConvertedModel() {
-        RouteModel model = new RouteModel(1, RouteModel.Type.COMPUTED, 1);
+        List<Point> points = Util.stringToPoints("50.0,30.0;51.0,31.0;");
+
+        RouteModel model = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
 
         Route result = RouteConverter.convertToStorageModel(model);
 
