@@ -17,16 +17,16 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
 public class Route extends BaseModel {
     @Column
     @PrimaryKey(autoincrement = true)
-    int id;
+    public int id;
 
     @Column
     @Unique
-    int fieldId;
+    public int fieldId;
 
     @ForeignKey(tableClass = RouteType.class)
     @Column
-    int type;
+    public int type;
 
     @Column
-    String points;
+    public String points;
 }
