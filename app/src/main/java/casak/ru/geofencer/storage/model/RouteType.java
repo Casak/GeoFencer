@@ -15,8 +15,8 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
 public class RouteType extends BaseModel {
     @Column
     @PrimaryKey
-    int id;
+    public int id;
 
     @Column
-    String type;
+    public String type;
 }
