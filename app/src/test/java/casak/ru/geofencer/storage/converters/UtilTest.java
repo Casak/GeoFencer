@@ -38,4 +38,23 @@ public class UtilTest {
 
         assertEquals("50.0,30.0;51.0,31.0;", result);
     }
+
+
+    @Test
+    public void stringToPoints_fromEmptyString_returnsEmptyList() {
+        String empty = "";
+
+        List<Point> result = Util.stringToPoints(empty);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void stringToPoints_fromNonEmptyString_returnsListOfPoints() {
+        String points = "50.0,30.0;51.0,31.0;";
+
+        List<Point> result = Util.stringToPoints(points);
+
+        assertEquals(2, result.size());
+    }
 }

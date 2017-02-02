@@ -1,5 +1,6 @@
 package casak.ru.geofencer.storage.converters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.model.Point;
@@ -20,5 +21,21 @@ public class Util {
         }
 
         return stringBuilder.toString();
+    }
+
+    public static List<Point> stringToPoints(String in){
+        List<Point> result = new ArrayList<>();
+        if(in.length() == 0)
+            return result;
+
+        String[] points = in.split(";");
+        for (String point : points){
+            String[] latlng = point.split(",");
+            double lat = Double.parseDouble(latlng[0]);
+            double lng = Double.parseDouble(latlng[1]);
+            Point p = new Point(lat, lng);
+            result.add(p);
+        }
+        return result;
     }
 }
