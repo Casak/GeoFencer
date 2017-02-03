@@ -35,13 +35,6 @@ public class RouteConverterTest {
     }
 
     @Test
-    public void convertToDomainModel_fromEmptyModel_returnsNull() {
-        RouteModel result = RouteConverter.convertToDomainModel(null);
-
-        assertNull(result);
-    }
-
-    @Test
     public void convertToDomainModel_fromNonEmptyModel_returnsConvertedModel() {
         Route route = new Route();
         route.id = 1;
@@ -65,7 +58,7 @@ public class RouteConverterTest {
         List<Route> result = RouteConverter.convertToStorageModel(emptyList);
 
         assertNotNull(result);
-        assertEquals(emptyList.size(), result.size());
+        assertEquals(0, result.size());
     }
 
     @Test
@@ -84,8 +77,58 @@ public class RouteConverterTest {
         List<Route> result = RouteConverter.convertToStorageModel(routeList);
 
         assertNotNull(result);
-        assertEquals(routeList.size(), result.size());
-        for (Route route : result)
+        assertEquals(3, result.size());
+        for (Route route : result) {
+            assertEquals(1, route.id);
+            assertEquals(1, route.fieldId);
+            assertEquals(2, route.type);
             assertEquals(stringPoints, route.points);
+
+        }
     }
+
+    @Test
+    public void convertToDomainModel_fromEmptyList_returnsEmptyList() {
+        List<Route> emptyList = new ArrayList<>();
+
+        List<RouteModel> result = RouteConverter.convertToDomainModel(emptyList);
+
+        assertNotNull(result);
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void convertToDomainModel_fromNonEmptyList_returnsConvertedList() {
+        List<Route> routeList = new ArrayList<>();
+
+        String stringPoints = "50.0,30.0;51.0,31.0;";
+
+        Route route1 = new Route();
+        Route route2 = new Route();
+        Route route3 = new Route();
+
+        routeList.add(route1);
+        routeList.add(route2);
+        routeList.add(route3);
+
+        for(Route r : routeList){
+            r.id = 1;
+            r.type = 1;
+            r.fieldId = 1;
+            r.points = stringPoints;
+        }
+
+        List<RouteModel> result = RouteConverter.convertToDomainModel(routeList);
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        for(RouteModel model : result){
+            assertEquals(1, model.getId());
+            assertEquals(1, model.getType());
+            assertEquals(1, model.getFieldId());
+            assertEquals(Util.stringToPoints(stringPoints), model.getRoutePoints());
+        }
+    }
+
+
 }
