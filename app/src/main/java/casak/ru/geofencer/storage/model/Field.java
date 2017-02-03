@@ -19,12 +19,12 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
 public class Field extends BaseModel {
     @Column
     @PrimaryKey
-    int id;
+    public int id;
 
     @Column
-    String points;
+    public String points;
 
-    List<Route> routes;
+    public List<Route> routes;
 
     //TODO Create getters for route types
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "routes")
