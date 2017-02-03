@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.model.Point;
@@ -17,13 +18,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RouteConverterTest {
-
-    @Test
-    public void convertToStorageModel_fromEmptyModel_returnsNull() {
-        Route result = RouteConverter.convertToStorageModel(null);
-
-        assertNull(result);
-    }
 
     @Test
     public void convertToStorageModel_fromNonEmptyModel_returnsConvertedModel() {
@@ -64,4 +58,34 @@ public class RouteConverterTest {
     }
 
 
+    @Test
+    public void convertToStorageModel_fromEmptyList_returnsEmptyList() {
+        List<RouteModel> emptyList = new ArrayList<>();
+
+        List<Route> result = RouteConverter.convertToStorageModel(emptyList);
+
+        assertNotNull(result);
+        assertEquals(emptyList.size(), result.size());
+    }
+
+    @Test
+    public void convertToStorageModel_fromNonEmptyList_returnsConvertedList() {
+        List<RouteModel> routeList = new ArrayList<>();
+        String stringPoints = "50.0,30.0;51.0,31.0;";
+        List<Point> points = Util.stringToPoints(stringPoints);
+
+        RouteModel model1 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        RouteModel model2 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        RouteModel model3 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        routeList.add(model1);
+        routeList.add(model2);
+        routeList.add(model3);
+
+        List<Route> result = RouteConverter.convertToStorageModel(routeList);
+
+        assertNotNull(result);
+        assertEquals(routeList.size(), result.size());
+        for (Route route : result)
+            assertEquals(stringPoints, route.points);
+    }
 }

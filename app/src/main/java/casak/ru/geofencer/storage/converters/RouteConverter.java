@@ -1,5 +1,8 @@
 package casak.ru.geofencer.storage.converters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.storage.model.Route;
 import casak.ru.geofencer.storage.model.RouteType;
@@ -35,5 +38,13 @@ public class RouteConverter {
                 Util.stringToPoints(model.points));
 
         return result;
+    }
+
+    public static List<Route> convertToStorageModel(List<RouteModel> routeModels){
+        List<Route> result = new ArrayList<>();
+        if(routeModels == null || routeModels.size() == 0)
+            return result;
+
+        return null;
     }
 }
