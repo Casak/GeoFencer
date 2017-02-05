@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -473,6 +474,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     //Pointer
 
     private RouteModel currentRouteModel;
+    private int currentRouteId;
 
     public double computePointerNew(Location position) {
         Point pointPosition = convertLocationToPoint(position);
@@ -481,6 +483,17 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
         if (nearestRoute == null)
             return 0;
+
+        if(nearestRoute.getId() != currentRouteId){
+            currentRouteId = nearestRoute.getId();
+            for(Polyline polyline : notHarvestedRoutes){
+                if(polyline.getColor() == Color.RED)
+                    if(Integer.parseInt(polyline.getId()) != currentRouteId)
+                        polyline.setColor(Color.BLUE);
+            }
+            Polyline polyline = notHarvestedRoutes.get(currentRouteId);
+            polyline.setColor(Color.RED);
+        }
 
         int index = nearestRoute.getRoutePoints().indexOf(getNearestPoint(nearestRoute.getRoutePoints(), pointPosition));
 
