@@ -1,33 +1,41 @@
 package casak.ru.geofencer.storage;
 
 
-import casak.ru.geofencer.domain.model.Point;
+import com.raizlabs.android.dbflow.sql.language.Method;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import casak.ru.geofencer.domain.repository.LocationRepository;
+import casak.ru.geofencer.storage.converters.PointConverter;
+import casak.ru.geofencer.storage.model.Point;
+import casak.ru.geofencer.storage.model.Point_Table;
 
 public class LocationRepositoryImpl implements LocationRepository{
 
     @Override
-    public boolean insert(Point point, Destination destination) {
-        return false;
+    public boolean insert(casak.ru.geofencer.domain.model.Point point) {
+        Point result = PointConverter.convertToStorage(point);
+
+        result.insert();
+
+        return true;
     }
 
     @Override
-    public boolean update(Point point) {
-        return false;
+    public casak.ru.geofencer.domain.model.Point get(long id) {
+        Point result = SQLite.select()
+                .from(Point.class)
+                .where(Point_Table.id.eq(id))
+                .querySingle();
+
+        return PointConverter.convertToDomain(result);
     }
 
+    //TODO Check query statement
     @Override
-    public Point get(Integer id) {
-        return null;
-    }
-
-    @Override
-    public Point getLastLocation() {
-        return null;
-    }
-
-    @Override
-    public boolean delete(Point point) {
-        return false;
+    public casak.ru.geofencer.domain.model.Point getLastLocation() {
+        Point result = SQLite.select(Method.max(Point_Table.date))
+                .from(Point.class)
+                .querySingle();
+        return PointConverter.convertToDomain(result);
     }
 }
