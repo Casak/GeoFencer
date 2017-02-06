@@ -7,10 +7,10 @@ import casak.ru.geofencer.domain.model.RouteModel;
 public interface RouteRepository {
 
     boolean addRouteModel(RouteModel model);
-    RouteModel createRouteModel(int fieldId, RouteModel.Type type);
+    RouteModel createRouteModel(long fieldId, RouteModel.Type type);
 
-    RouteModel getBaseRoute(int fieldId);
-    RouteModel getRouteModel(Integer id);
+    RouteModel getBaseRoute(long fieldId);
+    RouteModel getRouteModel(long id);
 
-    List<RouteModel> getAllRoutes(int fieldId);
+    List<RouteModel> getAllRoutes(long fieldId);
 }

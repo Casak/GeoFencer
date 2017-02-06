@@ -14,7 +14,7 @@ import casak.ru.geofencer.domain.repository.ArrowRepository;
  * Created on 09.01.2017.
  */
 public class ArrowRepositoryImpl implements ArrowRepository {
-    private Map<Integer, List<ArrowModel>> warehouse = new HashMap<>();
+    private Map<Long, List<ArrowModel>> warehouse = new HashMap<>();
 
     public static class SingletonHolder {
         public static final ArrowRepository HOLDER_INSTANCE = new ArrowRepositoryImpl() {
@@ -26,22 +26,22 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public List<ArrowModel> getArrows(Integer fieldId) {
+    public List<ArrowModel> getArrows(long fieldId) {
         return warehouse.get(fieldId);
     }
 
     @Override
-    public ArrowModel getLeftArrow(Integer fieldId) {
+    public ArrowModel getLeftArrow(long fieldId) {
         return getArrow(fieldId, ArrowModel.Type.LEFT);
     }
 
     @Override
-    public ArrowModel getRightArrow(Integer fieldId) {
+    public ArrowModel getRightArrow(long fieldId) {
         return getArrow(fieldId, ArrowModel.Type.RIGHT);
     }
 
     @Override
-    public void addArrow(ArrowModel arrow, Integer fieldId) {
+    public void addArrow(ArrowModel arrow, long fieldId) {
         List<ArrowModel> arrows = warehouse.get(fieldId);
         if (arrows == null)
             arrows = new LinkedList<>();
@@ -50,12 +50,12 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public void deleteArrows(Integer fieldId) {
+    public void deleteArrows(long fieldId) {
         warehouse.remove(fieldId);
     }
 
     @Nullable
-    private ArrowModel getArrow(Integer fieldId, ArrowModel.Type type) {
+    private ArrowModel getArrow(long fieldId, ArrowModel.Type type) {
         List<ArrowModel> arrowModelList = warehouse.get(fieldId);
 
         if (arrowModelList == null || arrowModelList.size() == 0)

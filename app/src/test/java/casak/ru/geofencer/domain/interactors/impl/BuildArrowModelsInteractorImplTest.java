@@ -62,12 +62,12 @@ public class BuildArrowModelsInteractorImplTest {
 
         mMockedCallback = Mockito.spy(new BuildArrowModelsInteractor.Callback() {
             @Override
-            public void onArrowsBuildFinished(int fieldId) {
+            public void onArrowsBuildFinished(long fieldId) {
 
             }
 
             @Override
-            public void onArrowsBuildFailed(int fieldId) {
+            public void onArrowsBuildFailed(long fieldId) {
 
             }
         });

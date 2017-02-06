@@ -9,13 +9,13 @@ import casak.ru.geofencer.domain.model.ArrowModel;
 public interface ArrowRepository {
 
     @Nullable
-    List<ArrowModel> getArrows(Integer fieldId);
+    List<ArrowModel> getArrows(long fieldId);
     @Nullable
-    ArrowModel getLeftArrow(Integer fieldId);
+    ArrowModel getLeftArrow(long fieldId);
     @Nullable
-    ArrowModel getRightArrow(Integer fieldId);
-    void addArrow(ArrowModel arrow, Integer fieldId);
+    ArrowModel getRightArrow(long fieldId);
+    void addArrow(ArrowModel arrow, long fieldId);
 
-    void deleteArrows(Integer fieldId);
+    void deleteArrows(long fieldId);
 
 }

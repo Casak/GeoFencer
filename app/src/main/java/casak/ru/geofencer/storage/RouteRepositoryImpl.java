@@ -14,7 +14,7 @@ import casak.ru.geofencer.storage.model.Route_Table;
 public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
-    public RouteModel getBaseRoute(int fieldId) {
+    public RouteModel getBaseRoute(long fieldId) {
         Route result = SQLite
                 .select()
                 .from(Route.class)
@@ -26,7 +26,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     }
 
     @Override
-    public RouteModel getRouteModel(Integer id) {
+    public RouteModel getRouteModel(long id) {
         Route result = SQLite
                 .select()
                 .from(Route.class)
@@ -36,7 +36,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     }
 
     @Override
-    public List<RouteModel> getAllRoutes(int fieldId) {
+    public List<RouteModel> getAllRoutes(long fieldId) {
         List<Route> result = SQLite
                 .select()
                 .from(Route.class)
@@ -47,7 +47,7 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Check returned route ID
     @Override
-    public RouteModel createRouteModel(int fieldId, RouteModel.Type type) {
+    public RouteModel createRouteModel(long fieldId, RouteModel.Type type) {
         Route route = new Route();
         route.fieldId = fieldId;
         route.type = RouteTypeConverter.convertToStorageModel(type).id;

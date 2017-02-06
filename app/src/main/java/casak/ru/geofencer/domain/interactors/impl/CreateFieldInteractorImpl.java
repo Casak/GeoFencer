@@ -110,13 +110,13 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public void onArrowsBuildFinished(int fieldId) {
+    public void onArrowsBuildFinished(long fieldId) {
         mCallback.showArrow(mArrowRepository.getLeftArrow(fieldId));
         mCallback.showArrow(mArrowRepository.getRightArrow(fieldId));
     }
 
     @Override
-    public void onArrowsBuildFailed(int fieldId) {
+    public void onArrowsBuildFailed(long fieldId) {
         //TODO Error handling
     }
 
