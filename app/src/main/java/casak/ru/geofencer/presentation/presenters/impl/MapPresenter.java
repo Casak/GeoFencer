@@ -491,11 +491,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     //Pointer
 
     private RouteModel currentRouteModel;
-    private int currentRouteId;
+    private long currentRouteId;
     private Circle currentDot;
     private Circle nextDot;
 
-    public void updatePointerVisualization(int routeId, Point current, Point next, Point position) {
+    public void updatePointerVisualization(long routeId, Point current, Point next) {
         if (currentRouteId != routeId) {
             currentRouteId = routeId;
             for (Polyline polyline : notHarvestedRoutes) {
@@ -509,7 +509,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                         id != currentRouteId)
                     polyline.setColor(Color.BLUE);
             }
-            notHarvestedRoutes.get(currentRouteId).setColor(Color.RED);
+            notHarvestedRoutes.get((int)currentRouteId).setColor(Color.RED);
         }
 
         CircleOptions currentOptions = new CircleOptions()
@@ -542,7 +542,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         if (nearestRoute == null)
             return 0;
 
-        int nearestRouteId = nearestRoute.getId();
+        long nearestRouteId = nearestRoute.getId();
 
         int index = nearestRoute.getRoutePoints().indexOf(getNearestPoint(nearestRoute.getRoutePoints(), pointPosition));
 
@@ -566,8 +566,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 result = crossTrackError(nearestPoints.get(0), nearestPoints.get(0), pointPosition);
                 updatePointerVisualization(nearestRouteId,
                         nearestPoints.get(0),
-                        nearestPoints.get(0),
-                        pointPosition);
+                        nearestPoints.get(0));
                 break;
             case 2:
                 Log.d(TAG, "routeCurrent point: " + nearestPoints.get(0).getLatitude()
@@ -577,8 +576,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 result = crossTrackError(nearestPoints.get(0), nearestPoints.get(1), pointPosition);
                 updatePointerVisualization(nearestRouteId,
                         nearestPoints.get(0),
-                        nearestPoints.get(1),
-                        pointPosition);
+                        nearestPoints.get(1));
         }
         Log.d(TAG, "CTE: " + result);
         return result;
