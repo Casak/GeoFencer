@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -179,6 +182,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
     @Nullable
+    public Circle showCircle(CircleOptions options) {
+        return options == null ? null : mGoogleMap.addCircle(options);
+    }
+
+    @Nullable
     public Polyline showPolyline(PolylineOptions options) {
         return options == null ? null : mGoogleMap.addPolyline(options);
     }
@@ -196,6 +204,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     public void removeMarker(Marker marker) {
         marker.setVisible(false);
         marker.remove();
+    }
+
+    public void removeCircle(Circle circle) {
+        circle.setVisible(false);
+        circle.remove();
     }
 
     public void removePolyline(Polyline polyline) {
@@ -362,6 +375,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             //TODO Delete this mock
             List<LatLng> list = new ArrayList<>();
 
+            list.add(new LatLng(50.422912, 30.425952));
+            list.add(new LatLng(50.422601, 30.425775));
+            list.add(new LatLng(50.422061, 30.425292));
+            list.add(new LatLng(50.421608, 30.424369));
+            list.add(new LatLng(50.421454, 30.424938));
             list.add(new LatLng(50.421403047796304, 30.425471959874532));
             list.add(new LatLng(50.421492947796295, 30.425563359499005));
             list.add(new LatLng(50.4215796477963, 30.425650459136847));
@@ -411,9 +429,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
     private List<Polyline> createComputedPolylines(Polyline oldPolyline, double heading) {
         List<Polyline> routes = new LinkedList<>();
-        routes.add(oldPolyline);
 
         List<LatLng> oldPolylineList = oldPolyline.getPoints();
+
+        routes.add(showPolyline(new PolylineOptions()
+                .addAll(oldPolylineList)));
         //TODO Normal check
         LatLng start = oldPolylineList.get(0);
         LatLng end = oldPolylineList.get(oldPolylineList.size() - 1);
@@ -467,12 +487,52 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     }
 
 
-
-
     //TODO Move to interactor
     //Pointer
 
     private RouteModel currentRouteModel;
+    private int currentRouteId;
+    private Circle currentDot;
+    private Circle nextDot;
+
+    public void updatePointerVisualization(int routeId, Point current, Point next, Point position) {
+        if (currentRouteId != routeId) {
+            currentRouteId = routeId;
+            for (Polyline polyline : notHarvestedRoutes) {
+                int id = -1;
+                try {
+                    id = Integer.parseInt(polyline.getId());
+                } catch (NumberFormatException e) {
+                    Log.d(TAG, "Invalid polyline. It is not computed one");
+                }
+                if (polyline.getColor() == Color.RED &&
+                        id != currentRouteId)
+                    polyline.setColor(Color.BLUE);
+            }
+            notHarvestedRoutes.get(currentRouteId).setColor(Color.RED);
+        }
+
+        CircleOptions currentOptions = new CircleOptions()
+                .center(new LatLng(current.getLatitude(), current.getLongitude()))
+                .radius(0.5)
+                .fillColor(Color.GRAY);
+        CircleOptions nextOptions = new CircleOptions()
+                .center(new LatLng(next.getLatitude(), next.getLongitude()))
+                .radius(0.5)
+                .fillColor(Color.DKGRAY);
+
+        if (currentDot != null && nextDot != null) {
+            removeCircle(currentDot);
+            removeCircle(nextDot);
+            currentDot = null;
+            nextDot = null;
+        }
+
+        if (currentDot == null && nextDot == null) {
+            currentDot = showCircle(currentOptions);
+            nextDot = showCircle(nextOptions);
+        }
+    }
 
     public double computePointerNew(Location position) {
         Point pointPosition = convertLocationToPoint(position);
@@ -481,6 +541,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
 
         if (nearestRoute == null)
             return 0;
+
+        int nearestRouteId = nearestRoute.getId();
 
         int index = nearestRoute.getRoutePoints().indexOf(getNearestPoint(nearestRoute.getRoutePoints(), pointPosition));
 
@@ -502,6 +564,10 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 Log.d(TAG, "routeCurrent point: " + nearestPoints.get(0).getLatitude()
                         + ", " + nearestPoints.get(0).getLongitude());
                 result = crossTrackError(nearestPoints.get(0), nearestPoints.get(0), pointPosition);
+                updatePointerVisualization(nearestRouteId,
+                        nearestPoints.get(0),
+                        nearestPoints.get(0),
+                        pointPosition);
                 break;
             case 2:
                 Log.d(TAG, "routeCurrent point: " + nearestPoints.get(0).getLatitude()
@@ -509,6 +575,10 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 Log.d(TAG, "routeNext point: " + nearestPoints.get(1).getLatitude()
                         + ", " + nearestPoints.get(1).getLongitude());
                 result = crossTrackError(nearestPoints.get(0), nearestPoints.get(1), pointPosition);
+                updatePointerVisualization(nearestRouteId,
+                        nearestPoints.get(0),
+                        nearestPoints.get(1),
+                        pointPosition);
         }
         Log.d(TAG, "CTE: " + result);
         return result;
