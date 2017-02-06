@@ -13,14 +13,14 @@ public class RouteModel {
     private Type type;
     private List<Point> routePoints;
 
-    public RouteModel(int id, int fieldId, Type type){
+    public RouteModel(long id, long fieldId, Type type){
         this.id = id;
         this.type = type;
         this.fieldId = fieldId;
         routePoints = new ArrayList<>();
     }
 
-    public RouteModel(int id, int fieldId, Type type, List<Point> routePoints){
+    public RouteModel(long id, long fieldId, Type type, List<Point> routePoints){
         this(id, fieldId, type);
         this.routePoints = routePoints;
     }
