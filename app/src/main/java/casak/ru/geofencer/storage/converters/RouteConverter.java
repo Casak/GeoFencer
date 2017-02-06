@@ -45,6 +45,38 @@ public class RouteConverter {
         if(routeModels == null || routeModels.size() == 0)
             return result;
 
-        return null;
+        for(RouteModel model : routeModels){
+            Route route = new Route();
+            route.id = model.getId();
+            route.fieldId = model.getFieldId();
+            route.points = Util.pointsToString(model.getRoutePoints());
+            route.type = RouteTypeConverter.convertToStorageModel(model.getType()).id;
+
+            result.add(route);
+        }
+
+        return result;
+    }
+
+    public static List<RouteModel> convertToDomainModel(List<Route> routeModels){
+        List<RouteModel> result = new ArrayList<>();
+        if(routeModels == null || routeModels.size() == 0)
+            return result;
+
+        for(Route model : routeModels){
+            RouteType type = new RouteType();
+            type.id = model.type;
+
+            RouteModel routeModel = new RouteModel(
+                    model.id,
+                    RouteTypeConverter.convertToDomainModel(type),
+                    model.fieldId,
+                    Util.stringToPoints(model.points)
+            );
+
+            result.add(routeModel);
+        }
+
+        return result;
     }
 }

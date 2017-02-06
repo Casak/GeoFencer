@@ -124,7 +124,7 @@ public class RouteConverterTest {
         assertEquals(3, result.size());
         for(RouteModel model : result){
             assertEquals(1, model.getId());
-            assertEquals(1, model.getType());
+            assertEquals(RouteModel.Type.FIELD_BUILDING, model.getType());
             assertEquals(1, model.getFieldId());
             assertEquals(Util.stringToPoints(stringPoints), model.getRoutePoints());
         }
