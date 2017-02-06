@@ -1,18 +1,27 @@
 package casak.ru.geofencer.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+//TODO Do I need harvestedRoute? Check converter test if do
 public class FieldModel {
     private int id;
     private List<Point> points;
     private RouteModel currentRoute;
-    private List<RouteModel> computedRoutes;
-    private List<RouteModel> harvestedRoutes;
+    private List<RouteModel> routes;
+
+    private FieldModel(){
+        routes = new ArrayList<>();
+    }
 
     public FieldModel(int id) {
+        this();
+        this.id = id;
     }
 
     public FieldModel(int id, List<Point> points) {
+        this();
+        this.id = id;
         this.points = points;
     }
 
@@ -32,24 +41,16 @@ public class FieldModel {
         this.currentRoute = currentRoute;
     }
 
-    public List<RouteModel> getComputedRoutes() {
-        return computedRoutes;
+    public List<RouteModel> getRoutes() {
+        return routes;
     }
 
-    public void setComputedRoutes(List<RouteModel> computedRoutes) {
-        this.computedRoutes = computedRoutes;
+    public void setRoutes(List<RouteModel> computedRoutes) {
+        this.routes = computedRoutes;
     }
 
-    public List<RouteModel> getHarvestedRoutes() {
-        return harvestedRoutes;
-    }
-
-    public void setHarvestedRoutes(List<RouteModel> harvestedRoutes) {
-        this.harvestedRoutes = harvestedRoutes;
-    }
-
-    public void addComputedRoute(RouteModel model){
-        computedRoutes.add(model);
+    public void addRoute(RouteModel model){
+        routes.add(model);
     }
 
     public int getId() {

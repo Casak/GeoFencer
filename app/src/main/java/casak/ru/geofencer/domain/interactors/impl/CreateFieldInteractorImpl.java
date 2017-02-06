@@ -104,7 +104,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
             case COMPUTED:
                 if (field == null)
                     field = mFieldRepository.getField(fieldId);
-                field.addComputedRoute(route);
+                field.addRoute(route);
                 mFieldRepository.updateField(field);
                 mCallback.showRoute(route);
                 break;
