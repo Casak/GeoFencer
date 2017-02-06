@@ -8,8 +8,8 @@ public class RouteModel {
         BASE,
         COMPUTED,
     }
-    private int id;
-    private int fieldId;
+    private long id;
+    private long fieldId;
     private Type type;
     private List<Point> routePoints;
 
@@ -25,11 +25,11 @@ public class RouteModel {
         this.routePoints = routePoints;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getFieldId() {
+    public long getFieldId() {
         return fieldId;
     }
 
