@@ -147,7 +147,6 @@ public class MapPresenterTest {
 
     @Before
     public void setUp() {
-        when(mMockRouteRepository.getAllRoutes(FIELD_ID, RouteModel.Type.COMPUTED)).thenReturn(routeModels);
         when(mMockRealLocation.getLatitude()).thenReturn(50.0d);
         when(mMockRealLocation.getLongitude()).thenReturn(30.0d);
 

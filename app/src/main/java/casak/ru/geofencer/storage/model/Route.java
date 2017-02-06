@@ -17,7 +17,7 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
 public class Route extends BaseModel {
     @Column
     @PrimaryKey(autoincrement = true)
-    public int id;
+    public long id;
 
     @Column
     @Unique
