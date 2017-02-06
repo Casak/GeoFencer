@@ -6,11 +6,7 @@ public interface LocationRepository {
 
     boolean insert(Point point);
 
-    boolean update(Point point);
-
-    Point get(Integer id);
+    Point get(long id);
 
     Point getLastLocation();
-
-    boolean delete(Point point);
 }
