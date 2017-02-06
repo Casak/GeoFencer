@@ -5,7 +5,7 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import java.sql.Date;
+import java.util.Date;
 
 import casak.ru.geofencer.storage.db.GeoDatabase;
 
@@ -13,24 +13,31 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
  * Created on 02.02.2017.
  */
 
-@Table(database = GeoDatabase.class)
-public class Session extends BaseModel {
+@Table(name = "session", database = GeoDatabase.class)
+public class Point extends BaseModel {
     @Column
     @PrimaryKey(autoincrement = true)
-    int id;
+    public long id;
 
     @Column
-    String lat;
+    public double lat;
 
     @Column
-    String lng;
+    public double lng;
 
     @Column
-    String alt;
+    public double alt;
 
     @Column
-    String speed;
+    public double speed;
 
     @Column
-    Date date;
+    public double bearing;
+
+
+    @Column
+    public double accuracy;
+
+    @Column
+    public Date date;
 }

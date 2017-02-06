@@ -1,13 +1,13 @@
 package casak.ru.geofencer.domain.model;
 
 public class Point{
-    private double mTime = 0.0d;
+    private long mDate = 0;
     private double mLatitude = 0.0d;
     private double mLongitude = 0.0d;
     private double mAltitude = 0.0d;
-    private float mSpeed = 0.0f;
-    private float mBearing = 0.0f;
-    private float mAccuracy = 0.0f;
+    private double mSpeed = 0.0f;
+    private double mBearing = 0.0f;
+    private double mAccuracy = 0.0f;
 
     public Point(){}
 
@@ -16,12 +16,12 @@ public class Point{
         mLongitude = longitude;
     }
 
-    public double getTime() {
-        return mTime;
+    public long getDate() {
+        return mDate;
     }
 
-    public void setTime(double mTime) {
-        this.mTime = mTime;
+    public void setDate(long date) {
+        this.mDate = date;
     }
 
     public double getLatitude() {
@@ -48,27 +48,27 @@ public class Point{
         this.mAltitude = mAltitude;
     }
 
-    public float getSpeed() {
+    public double getSpeed() {
         return mSpeed;
     }
 
-    public void setSpeed(float mSpeed) {
+    public void setSpeed(double mSpeed) {
         this.mSpeed = mSpeed;
     }
 
-    public float getBearing() {
+    public double getBearing() {
         return mBearing;
     }
 
-    public void setBearing(float mBearing) {
+    public void setBearing(double mBearing) {
         this.mBearing = mBearing;
     }
 
-    public float getAccuracy() {
+    public double getAccuracy() {
         return mAccuracy;
     }
 
-    public void setAccuracy(float mAccuracy) {
+    public void setAccuracy(double mAccuracy) {
         this.mAccuracy = mAccuracy;
     }
 
@@ -78,7 +78,7 @@ public class Point{
         if(obj == null || ! (obj instanceof Point))
             return false;
         Point point = (Point) obj;
-        if (point.mTime != mTime || point.mLatitude != mLatitude ||
+        if (point.mDate != mDate || point.mLatitude != mLatitude ||
                 point.mLongitude != mLongitude || point.mAltitude != mAltitude ||
                 point.mSpeed != mSpeed || point.mBearing != mBearing ||
                 point.mAccuracy != mAccuracy)
