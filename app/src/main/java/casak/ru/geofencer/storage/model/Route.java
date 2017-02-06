@@ -21,7 +21,7 @@ public class Route extends BaseModel {
 
     @Column
     @Unique
-    public int fieldId;
+    public long fieldId;
 
     @ForeignKey(tableClass = RouteType.class)
     @Column
