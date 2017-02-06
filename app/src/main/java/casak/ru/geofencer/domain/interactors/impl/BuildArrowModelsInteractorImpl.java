@@ -40,7 +40,7 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
 
     @Override
     public void run() {
-        RouteModel route = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        RouteModel route = mRouteRepository.getBaseRoute(fieldId);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
         if (leftArrow != null && rightArrow != null) {

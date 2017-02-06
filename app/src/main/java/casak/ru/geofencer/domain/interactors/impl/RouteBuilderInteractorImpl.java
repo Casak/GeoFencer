@@ -2,10 +2,6 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.maps.android.SphericalUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +50,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
     @Override
     public void run() {
-        mFieldBuildingRouteModel = mRouteRepository.createRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        mFieldBuildingRouteModel = mRouteRepository.createRouteModel(fieldId, RouteModel.Type.BASE);
 
         isBuildingRoute = true;
 
@@ -75,7 +71,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
     @Override
     public void createComputedRoutes(int fieldId) {
-        RouteModel fieldBuildingRoute = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        RouteModel fieldBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
         boolean toLeft = mArrowRepository.getLeftArrow(fieldId).isChosen();
 
         List<RouteModel> result = computeRouteModels(fieldBuildingRoute, toLeft);
@@ -109,8 +105,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
                     normalHeading);
 
             RouteModel route = new RouteModel(createRouteModelId(),
-                    RouteModel.Type.COMPUTED,
-                    fieldId,
+                    fieldId, RouteModel.Type.COMPUTED,
                     routePoints);
 
             result.add(route);

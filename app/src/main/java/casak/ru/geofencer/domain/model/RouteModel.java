@@ -5,25 +5,23 @@ import java.util.List;
 
 public class RouteModel {
     public enum Type {
-        FROM_BASE,
-        FIELD_BUILDING,
+        BASE,
         COMPUTED,
-        CULTIVATED
     }
     private int id;
     private int fieldId;
     private Type type;
     private List<Point> routePoints;
 
-    public RouteModel(int id, Type type, int fieldId){
+    public RouteModel(int id, int fieldId, Type type){
         this.id = id;
         this.type = type;
         this.fieldId = fieldId;
         routePoints = new ArrayList<>();
     }
 
-    public RouteModel(int id, Type type, int fieldId, List<Point> routePoints){
-        this(id, type, fieldId);
+    public RouteModel(int id, int fieldId, Type type, List<Point> routePoints){
+        this(id, fieldId, type);
         this.routePoints = routePoints;
     }
 

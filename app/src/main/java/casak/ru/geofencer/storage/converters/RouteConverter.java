@@ -33,8 +33,7 @@ public class RouteConverter {
         type.id = model.type;
         RouteModel result = new RouteModel(
                 model.id,
-                RouteTypeConverter.convertToDomainModel(type),
-                model.fieldId,
+                model.fieldId, RouteTypeConverter.convertToDomainModel(type),
                 Util.stringToPoints(model.points));
 
         return result;
@@ -69,8 +68,7 @@ public class RouteConverter {
 
             RouteModel routeModel = new RouteModel(
                     model.id,
-                    RouteTypeConverter.convertToDomainModel(type),
-                    model.fieldId,
+                    model.fieldId, RouteTypeConverter.convertToDomainModel(type),
                     Util.stringToPoints(model.points)
             );
 

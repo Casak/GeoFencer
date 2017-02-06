@@ -25,11 +25,11 @@ public class RouteTypeConverterTest {
 
     @Test
     public void convertToStorageModel_fromNonEmptyModel_returnsConvertedModel () {
-        RouteType result = RouteTypeConverter.convertToStorageModel(RouteModel.Type.FIELD_BUILDING);
+        RouteType result = RouteTypeConverter.convertToStorageModel(RouteModel.Type.BASE);
 
         assertNotNull(result);
         assertEquals(1, result.id);
-        assertEquals(RouteModel.Type.FIELD_BUILDING.toString(), result.type);
+        assertEquals(RouteModel.Type.BASE.toString(), result.type);
 
         result = RouteTypeConverter.convertToStorageModel(RouteModel.Type.COMPUTED);
 
@@ -49,11 +49,11 @@ public class RouteTypeConverterTest {
     public void convertToDomainModel_fromNonEmptyModel_returnsConvertedModel () {
         RouteType type = new RouteType();
         type.id = 1;
-        type.type = RouteModel.Type.FIELD_BUILDING.toString();
+        type.type = RouteModel.Type.BASE.toString();
         RouteModel.Type result = RouteTypeConverter.convertToDomainModel(type);
 
         assertNotNull(result);
-        assertEquals(RouteModel.Type.FIELD_BUILDING, result);
+        assertEquals(RouteModel.Type.BASE, result);
 
         type.id = 2;
         type.type = RouteModel.Type.COMPUTED.toString();

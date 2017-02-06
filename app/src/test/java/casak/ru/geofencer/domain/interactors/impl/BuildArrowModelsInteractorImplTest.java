@@ -44,7 +44,7 @@ public class BuildArrowModelsInteractorImplTest {
 
     static BuildArrowModelsInteractor mInteractor;
 
-    RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
+    RouteModel mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE);
 
 
 
@@ -84,7 +84,7 @@ public class BuildArrowModelsInteractorImplTest {
 
     @Test
     public void run_from3PointsRoute_finishedCallbackIsCalled(){
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRouteModel);
 
         ((BuildArrowModelsInteractorImpl)mInteractor).run();
@@ -94,7 +94,7 @@ public class BuildArrowModelsInteractorImplTest {
 
     @Test
     public void run_from3PointsRoute_2ArrowsCreated(){
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRouteModel);
 
         ((BuildArrowModelsInteractorImpl)mInteractor).run();
@@ -130,7 +130,7 @@ public class BuildArrowModelsInteractorImplTest {
 
     @Test
     public void createArrow_fromNullRoute_failCallbackIsCalled(){
-        when(mMockRouteRepository.getRouteModel(mMockRoute.getFieldId(), RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(mMockRoute.getFieldId()))
                 .thenReturn(mMockRoute);
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 

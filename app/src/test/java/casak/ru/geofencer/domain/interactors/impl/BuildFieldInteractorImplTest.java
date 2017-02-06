@@ -49,7 +49,7 @@ public class BuildFieldInteractorImplTest {
 
     static BuildFieldInteractorImpl mInteractor;
 
-    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID);
+    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE);
     static ArrowModel mLeftArrow;
     static ArrowModel mRightArrow;
 
@@ -66,7 +66,7 @@ public class BuildFieldInteractorImplTest {
         mLeftArrow = new ArrowModel(points, ArrowModel.Type.LEFT);
         mRightArrow = new ArrowModel(points, ArrowModel.Type.RIGHT);
 
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getLeftArrow(anyInt()))
                 .thenReturn(mLeftArrow);

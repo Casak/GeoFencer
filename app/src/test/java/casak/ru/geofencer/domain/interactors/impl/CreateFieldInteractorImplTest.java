@@ -55,7 +55,7 @@ public class CreateFieldInteractorImplTest {
 
     static CreateFieldInteractorImpl mInteractor;
 
-    static RouteModel mComputedRouteModel = new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID);
+    static RouteModel mComputedRouteModel = new RouteModel(0, FIELD_ID, RouteModel.Type.COMPUTED);
 
 
     @Before
@@ -109,7 +109,7 @@ public class CreateFieldInteractorImplTest {
     @Test
     public void run_shouldGetRouteModel() {
         mInteractor.run();
-        verify(mMockRouteRepository).getRouteModel(anyInt(), any(RouteModel.Type.class));
+        verify(mMockRouteRepository).getBaseRoute(anyInt());
     }
 
     @Test

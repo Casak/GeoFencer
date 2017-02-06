@@ -4,7 +4,7 @@ import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.storage.model.RouteType;
 
 import static casak.ru.geofencer.domain.model.RouteModel.Type.COMPUTED;
-import static casak.ru.geofencer.domain.model.RouteModel.Type.FIELD_BUILDING;
+import static casak.ru.geofencer.domain.model.RouteModel.Type.BASE;
 
 /**
  * Created on 02.02.2017.
@@ -17,9 +17,9 @@ public class RouteTypeConverter {
             return null;
         RouteType result = new RouteType();
         switch (type){
-            case FIELD_BUILDING:
+            case BASE:
                 result.id = 1;
-                result.type = FIELD_BUILDING.toString();
+                result.type = BASE.toString();
                 return result;
             case COMPUTED:
                 result.id = 2;
@@ -36,7 +36,7 @@ public class RouteTypeConverter {
 
         switch (type.id){
             case 1:
-                return RouteModel.Type.FIELD_BUILDING;
+                return RouteModel.Type.BASE;
             case 2:
                 return RouteModel.Type.COMPUTED;
             default:

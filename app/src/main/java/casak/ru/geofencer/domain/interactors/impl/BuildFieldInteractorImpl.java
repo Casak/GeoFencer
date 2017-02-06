@@ -43,7 +43,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
 
     @Override
     public void run() {
-        RouteModel route = mRouteRepository.getRouteModel(fieldId, RouteModel.Type.FIELD_BUILDING);
+        RouteModel route = mRouteRepository.getBaseRoute(fieldId);
 
         ArrowModel leftArrow = mArrowRepository.getLeftArrow(fieldId);
         ArrowModel rightArrow = mArrowRepository.getRightArrow(fieldId);

@@ -66,7 +66,7 @@ public class RouteBuilderInteractorImplTest {
         points.add(point2);
         points.add(point3);
 
-        mFieldBuildingRouteModel = new RouteModel(1, RouteModel.Type.FIELD_BUILDING, FIELD_ID, points);
+        mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE, points);
 
         mMockedCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
@@ -88,7 +88,7 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void run_withPointLocation_addPointToRoute() throws InterruptedException {
         when(mMockLocationRepository.getLastLocation()).thenReturn(point).thenReturn(null);
-        when(mMockRouteRepository.createRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.createRouteModel(FIELD_ID, RouteModel.Type.BASE))
                 .thenReturn(mFieldBuildingRouteModel);
 
         ((RouteBuilderInteractorImpl) mInteractor).run();
@@ -121,12 +121,12 @@ public class RouteBuilderInteractorImplTest {
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
-        verify(mMockRouteRepository).getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING);
+        verify(mMockRouteRepository).getBaseRoute(FIELD_ID);
     }
 
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
         when(mLeftArrowModel.isChosen()).thenReturn(true);
@@ -149,7 +149,7 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void createComputedRoutes_callCallback(){
 
-        when(mMockRouteRepository.getRouteModel(FIELD_ID, RouteModel.Type.FIELD_BUILDING))
+        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
         when(mLeftArrowModel.isChosen()).thenReturn(true);

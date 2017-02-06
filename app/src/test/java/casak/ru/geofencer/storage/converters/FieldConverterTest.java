@@ -33,9 +33,9 @@ public class FieldConverterTest {
     public void convertToStorageModel_fromDomainModel_returnConvertedModel() {
         String coords = "50.0,30.0;51.0,31.0;";
         List<Point> points = Util.stringToPoints(coords);
-        RouteModel route1 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
-        RouteModel route2 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
-        RouteModel route3 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        RouteModel route1 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        RouteModel route2 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        RouteModel route3 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
 
         FieldModel model = new FieldModel(1, points);
         model.addRoute(route1);

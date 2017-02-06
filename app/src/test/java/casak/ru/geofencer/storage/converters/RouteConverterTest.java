@@ -23,7 +23,7 @@ public class RouteConverterTest {
     public void convertToStorageModel_fromNonEmptyModel_returnsConvertedModel() {
         List<Point> points = Util.stringToPoints("50.0,30.0;51.0,31.0;");
 
-        RouteModel model = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        RouteModel model = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
 
         Route result = RouteConverter.convertToStorageModel(model);
 
@@ -67,9 +67,9 @@ public class RouteConverterTest {
         String stringPoints = "50.0,30.0;51.0,31.0;";
         List<Point> points = Util.stringToPoints(stringPoints);
 
-        RouteModel model1 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
-        RouteModel model2 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
-        RouteModel model3 = new RouteModel(1, RouteModel.Type.COMPUTED, 1, points);
+        RouteModel model1 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        RouteModel model2 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        RouteModel model3 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
         routeList.add(model1);
         routeList.add(model2);
         routeList.add(model3);
@@ -124,7 +124,7 @@ public class RouteConverterTest {
         assertEquals(3, result.size());
         for(RouteModel model : result){
             assertEquals(1, model.getId());
-            assertEquals(RouteModel.Type.FIELD_BUILDING, model.getType());
+            assertEquals(RouteModel.Type.BASE, model.getType());
             assertEquals(1, model.getFieldId());
             assertEquals(Util.stringToPoints(stringPoints), model.getRoutePoints());
         }

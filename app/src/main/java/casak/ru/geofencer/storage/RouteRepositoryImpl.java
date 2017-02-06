@@ -10,7 +10,8 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Read/write routes to/from DB
     @Override
-    public RouteModel getRouteModel(int fieldId, RouteModel.Type type) {
+    public RouteModel getBaseRoute(int fieldId) {
+
         return null;
     }
 

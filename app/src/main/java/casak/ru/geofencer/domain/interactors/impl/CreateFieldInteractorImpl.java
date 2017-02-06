@@ -15,8 +15,6 @@ import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
-import static casak.ru.geofencer.domain.model.RouteModel.Type.FIELD_BUILDING;
-
 /**
  * Created on 05.01.2017.
  */
@@ -78,7 +76,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void run() {
-        mBuildingRouteModel = mRouteRepository.getRouteModel(fieldId, FIELD_BUILDING);
+        mBuildingRouteModel = mRouteRepository.getBaseRoute(fieldId);
 
         if (mBuildingRouteModel != null) {
             //TODO Alert
@@ -97,7 +95,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     public void routeBuildingFinished(RouteModel route) {
         RouteModel.Type routeType = route.getType();
         switch (routeType) {
-            case FIELD_BUILDING:
+            case BASE:
                 mBuildingRouteModel = route;
                 createArrows();
                 break;

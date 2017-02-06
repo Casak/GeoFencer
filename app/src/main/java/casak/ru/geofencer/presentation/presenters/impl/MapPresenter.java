@@ -601,8 +601,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         if (notHarvestedRoutes != null && notHarvestedRoutes.size() > 0) {
             for (int i = 0; i < notHarvestedRoutes.size(); i++) {
                 result.add(new RouteModel(i,
-                        RouteModel.Type.COMPUTED,
-                        fieldId,
+                        fieldId, RouteModel.Type.COMPUTED,
                         latLngToPoint(notHarvestedRoutes.get(i).getPoints())));
             }
             return result;

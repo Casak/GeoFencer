@@ -130,17 +130,17 @@ public class MapPresenterTest {
 
         double lat = 50.0d;
         double lng = 30.0d;
-        routeModels.add(new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID, listWithPoint));
+        routeModels.add(new RouteModel(0, FIELD_ID, RouteModel.Type.COMPUTED, listWithPoint));
         for (int i = 0; i < 5; i++) {
             List<Point> points = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
                 points.add(new Point(lat + j, lng + i));
             }
-            routeModels.add(new RouteModel(i, RouteModel.Type.COMPUTED, FIELD_ID, points));
+            routeModels.add(new RouteModel(i, FIELD_ID, RouteModel.Type.COMPUTED, points));
         }
 
         fieldBuildingRouteModel =
-                new RouteModel(0, RouteModel.Type.FIELD_BUILDING, 0, routeBuildingRoutePoints);
+                new RouteModel(0, 0, RouteModel.Type.BASE, routeBuildingRoutePoints);
         computedRouteModels = computeRouteModels(fieldBuildingRouteModel, true);
 
     }
@@ -221,7 +221,7 @@ public class MapPresenterTest {
     @Test
     public void getNearestRoute_withNullRoutePointsOrRouteSizeSmallerTwo_returnsNull() {
         List<RouteModel> list = new ArrayList<>();
-        list.add(new RouteModel(0, RouteModel.Type.COMPUTED, FIELD_ID));
+        list.add(new RouteModel(0, FIELD_ID, RouteModel.Type.COMPUTED));
         when(mMapPresenter.getComputedRoutes(anyInt()))
                 .thenReturn(list);
 
@@ -424,8 +424,7 @@ public class MapPresenterTest {
                     normalHeading);
 
             RouteModel route = new RouteModel(i + 1,
-                    RouteModel.Type.COMPUTED,
-                    0,
+                    0, RouteModel.Type.COMPUTED,
                     routePoints);
 
             result.add(route);
