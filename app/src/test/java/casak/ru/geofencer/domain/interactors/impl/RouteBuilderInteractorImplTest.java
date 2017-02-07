@@ -42,10 +42,10 @@ public class RouteBuilderInteractorImplTest {
     static ArrowModel mLeftArrowModel;
 
     static RouteBuilderInteractor.Callback mMockedCallback;
-    @Spy
-    static LocationRepository mMockLocationRepository = Mockito.spy(LocationRepositoryImpl.class);
-    @Spy
-    static RouteRepository mMockRouteRepository = Mockito.spy(RouteRepositoryImpl.class);
+    @Mock
+    static LocationRepository mMockLocationRepository;
+    @Mock
+    static RouteRepository mMockRouteRepository;
     @Spy
     private ArrowRepository mMockArrowRepository = Mockito.spy(ArrowRepositoryImpl.class);
 
@@ -111,7 +111,7 @@ public class RouteBuilderInteractorImplTest {
     public void whenFinish_addRouteToRepository() {
         mInteractor.finish();
 
-        Mockito.verify(mMockRouteRepository).addRouteModel(null);
+        Mockito.verify(mMockRouteRepository).addRouteModel(any(RouteModel.class));
     }
 
     @Test
@@ -126,8 +126,7 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
-        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
-                .thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
         when(mLeftArrowModel.isChosen()).thenReturn(true);
 
@@ -148,9 +147,7 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_callCallback(){
-
-        when(mMockRouteRepository.getBaseRoute(FIELD_ID))
-                .thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRouteModel);
         when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
         when(mLeftArrowModel.isChosen()).thenReturn(true);
 

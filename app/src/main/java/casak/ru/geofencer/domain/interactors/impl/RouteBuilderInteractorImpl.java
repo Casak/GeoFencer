@@ -104,6 +104,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
                     Constants.WIDTH_METERS,
                     normalHeading);
 
+            //TODO Create via repo
             RouteModel route = new RouteModel(createRouteModelId(),
                     fieldId, RouteModel.Type.COMPUTED,
                     routePoints);
@@ -113,7 +114,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         return result;
     }
 
-    //Move to repository
+    //TODO Move to repository
     int routeId = 0;
 
     private int createRouteModelId() {
