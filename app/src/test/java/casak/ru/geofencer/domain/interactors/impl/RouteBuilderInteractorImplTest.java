@@ -14,15 +14,13 @@ import java.util.List;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.storage.ArrowRepositoryImpl;
-import casak.ru.geofencer.storage.LocationRepositoryImpl;
-import casak.ru.geofencer.storage.RouteRepositoryImpl;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +37,7 @@ public class RouteBuilderInteractorImplTest {
     @Mock
     static MainThread mMockMainThread;
     @Mock
-    static ArrowModel mLeftArrowModel;
+    static Arrow mLeftArrow;
 
     static RouteBuilderInteractor.Callback mMockedCallback;
     @Mock
@@ -54,7 +52,7 @@ public class RouteBuilderInteractorImplTest {
 
     static Point point = new Point(50.4236835, 30.4266010);
 
-    static RouteModel mFieldBuildingRouteModel;
+    static Route mFieldBuildingRoute;
 
 
     @Before
@@ -66,11 +64,11 @@ public class RouteBuilderInteractorImplTest {
         points.add(point2);
         points.add(point3);
 
-        mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE, points);
+        mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE, points);
 
         mMockedCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
-            public void routeBuildingFinished(RouteModel route) {
+            public void routeBuildingFinished(Route route) {
             }
         });
 
@@ -88,15 +86,15 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void run_withPointLocation_addPointToRoute() throws InterruptedException {
         when(mMockLocationRepository.getLastLocation()).thenReturn(point).thenReturn(null);
-        when(mMockRouteRepository.createRouteModel(FIELD_ID, RouteModel.Type.BASE))
-                .thenReturn(mFieldBuildingRouteModel);
+        when(mMockRouteRepository.createRouteModel(FIELD_ID, Route.Type.BASE))
+                .thenReturn(mFieldBuildingRoute);
 
         ((RouteBuilderInteractorImpl) mInteractor).run();
         Thread.sleep(1000);
         mInteractor.finish();
 
-        assertTrue(mFieldBuildingRouteModel.getRoutePoints().size() != 0);
-        assertTrue(mFieldBuildingRouteModel.getRoutePoints().get(0) == point);
+        assertTrue(mFieldBuildingRoute.getRoutePoints().size() != 0);
+        assertTrue(mFieldBuildingRoute.getRoutePoints().get(0) == point);
     }
 
 
@@ -104,20 +102,20 @@ public class RouteBuilderInteractorImplTest {
     public void whenRun_askForCreatingRouteModel() {
         ((RouteBuilderInteractorImpl) mInteractor).run();
 
-        Mockito.verify(mMockRouteRepository).createRouteModel(anyInt(), any(RouteModel.Type.class));
+        Mockito.verify(mMockRouteRepository).createRouteModel(anyInt(), any(Route.Type.class));
     }
 
     @Test
     public void whenFinish_addRouteToRepository() {
         mInteractor.finish();
 
-        Mockito.verify(mMockRouteRepository).addRouteModel(any(RouteModel.class));
+        Mockito.verify(mMockRouteRepository).addRouteModel(any(Route.class));
     }
 
     @Test
     public void createComputedRoutes_askForFieldBuildingRoute() {
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
-        when(mLeftArrowModel.isChosen()).thenReturn(true);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
@@ -126,19 +124,19 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
-        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRouteModel);
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
-        when(mLeftArrowModel.isChosen()).thenReturn(true);
+        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
-        verify(mMockRouteRepository, times(4)).addRouteModel(any(RouteModel.class));
+        verify(mMockRouteRepository, times(4)).addRouteModel(any(Route.class));
     }
 
     @Test
     public void createComputedRoutes_askForLeftArrow() {
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
-        when(mLeftArrowModel.isChosen()).thenReturn(true);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
@@ -147,12 +145,12 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_callCallback(){
-        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRouteModel);
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrowModel);
-        when(mLeftArrowModel.isChosen()).thenReturn(true);
+        when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
+        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
-        verify(mMockedCallback, times(4)).routeBuildingFinished(any(RouteModel.class));
+        verify(mMockedCallback, times(4)).routeBuildingFinished(any(Route.class));
     }
 }

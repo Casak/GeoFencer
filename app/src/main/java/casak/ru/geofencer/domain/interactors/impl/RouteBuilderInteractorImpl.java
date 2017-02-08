@@ -11,7 +11,7 @@ import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -25,7 +25,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
     private static Thread routeDaemon;
 
-    private static RouteModel mFieldBuildingRouteModel;
+    private static Route mFieldBuildingRoute;
 
     private boolean isBuildingRoute;
 
@@ -50,7 +50,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
     @Override
     public void run() {
-        mFieldBuildingRouteModel = mRouteRepository.createRouteModel(fieldId, RouteModel.Type.BASE);
+        mFieldBuildingRoute = mRouteRepository.createRouteModel(fieldId, Route.Type.BASE);
 
         isBuildingRoute = true;
 
@@ -66,29 +66,29 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         if (routeDaemon != null && routeDaemon.isAlive())
             ((LocationChangeListenerDaemon) routeDaemon).cancel();
         isBuildingRoute = false;
-        mRouteRepository.addRouteModel(mFieldBuildingRouteModel);
+        mRouteRepository.addRouteModel(mFieldBuildingRoute);
     }
 
     @Override
     public void createComputedRoutes(int fieldId) {
-        RouteModel fieldBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
+        Route fieldBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
         boolean toLeft = mArrowRepository.getLeftArrow(fieldId).isChosen();
 
-        List<RouteModel> result = computeRouteModels(fieldBuildingRoute, toLeft);
+        List<Route> result = computeRouteModels(fieldBuildingRoute, toLeft);
         if (result != null)
-            for (RouteModel model : result) {
+            for (Route model : result) {
                 mRouteRepository.addRouteModel(model);
                 mCallback.routeBuildingFinished(model);
             }
     }
 
     //TODO Pass to computeNewPath() normal values, now returns similar routes
-    private List<RouteModel> computeRouteModels(RouteModel fieldBuildingRoute, boolean toLeft) {
+    private List<Route> computeRouteModels(Route fieldBuildingRoute, boolean toLeft) {
         //TODO Normal check
         if (fieldBuildingRoute == null)
             return null;
 
-        List<RouteModel> result = new ArrayList<>();
+        List<Route> result = new ArrayList<>();
 
         List<Point> fieldBuildingPoints = fieldBuildingRoute.getRoutePoints();
         Point start = fieldBuildingPoints.get(0);
@@ -105,8 +105,8 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
                     normalHeading);
 
             //TODO Create via repo
-            RouteModel route = new RouteModel(createRouteModelId(),
-                    fieldId, RouteModel.Type.COMPUTED,
+            Route route = new Route(createRouteModelId(),
+                    fieldId, Route.Type.COMPUTED,
                     routePoints);
 
             result.add(route);
@@ -133,8 +133,8 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     }
 
     private void newPoint(Point point) {
-        if (mFieldBuildingRouteModel != null && isBuildingRoute)
-            mFieldBuildingRouteModel.addRoutePoint(point);
+        if (mFieldBuildingRoute != null && isBuildingRoute)
+            mFieldBuildingRoute.addRoutePoint(point);
     }
 
     private class LocationChangeListenerDaemon extends Thread {

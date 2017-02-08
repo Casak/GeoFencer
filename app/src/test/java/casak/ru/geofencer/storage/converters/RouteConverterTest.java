@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
-import casak.ru.geofencer.storage.model.Route;
+import casak.ru.geofencer.domain.model.Route;
 
 import static org.junit.Assert.*;
 
@@ -23,9 +22,9 @@ public class RouteConverterTest {
     public void convertToStorageModel_fromNonEmptyModel_returnsConvertedModel() {
         List<Point> points = Util.stringToPoints("50.0,30.0;51.0,31.0;");
 
-        RouteModel model = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        Route model = new Route(1, 1, Route.Type.COMPUTED, points);
 
-        Route result = RouteConverter.convertToStorageModel(model);
+        casak.ru.geofencer.storage.model.Route result = RouteConverter.convertToStorageModel(model);
 
         assertNotNull(result);
         assertEquals(model.getId(), result.id);
@@ -36,26 +35,26 @@ public class RouteConverterTest {
 
     @Test
     public void convertToDomainModel_fromNonEmptyModel_returnsConvertedModel() {
-        Route route = new Route();
+        casak.ru.geofencer.storage.model.Route route = new casak.ru.geofencer.storage.model.Route();
         route.id = 1;
         route.fieldId = 1;
         route.type = 2;
         route.points = "50.0,30.0;51.0,31.0;";
-        RouteModel result = RouteConverter.convertToDomainModel(route);
+        Route result = RouteConverter.convertToDomainModel(route);
 
         assertNotNull(result);
         assertEquals(route.id, result.getId());
         assertEquals(route.fieldId, result.getFieldId());
         assertEquals(Util.stringToPoints(route.points), result.getRoutePoints());
-        assertEquals(RouteModel.Type.COMPUTED, result.getType());
+        assertEquals(Route.Type.COMPUTED, result.getType());
     }
 
 
     @Test
     public void convertToStorageModel_fromEmptyList_returnsEmptyList() {
-        List<RouteModel> emptyList = new ArrayList<>();
+        List<Route> emptyList = new ArrayList<>();
 
-        List<Route> result = RouteConverter.convertToStorageModel(emptyList);
+        List<casak.ru.geofencer.storage.model.Route> result = RouteConverter.convertToStorageModel(emptyList);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -63,22 +62,22 @@ public class RouteConverterTest {
 
     @Test
     public void convertToStorageModel_fromNonEmptyList_returnsConvertedList() {
-        List<RouteModel> routeList = new ArrayList<>();
+        List<Route> routeList = new ArrayList<>();
         String stringPoints = "50.0,30.0;51.0,31.0;";
         List<Point> points = Util.stringToPoints(stringPoints);
 
-        RouteModel model1 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
-        RouteModel model2 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
-        RouteModel model3 = new RouteModel(1, 1, RouteModel.Type.COMPUTED, points);
+        Route model1 = new Route(1, 1, Route.Type.COMPUTED, points);
+        Route model2 = new Route(1, 1, Route.Type.COMPUTED, points);
+        Route model3 = new Route(1, 1, Route.Type.COMPUTED, points);
         routeList.add(model1);
         routeList.add(model2);
         routeList.add(model3);
 
-        List<Route> result = RouteConverter.convertToStorageModel(routeList);
+        List<casak.ru.geofencer.storage.model.Route> result = RouteConverter.convertToStorageModel(routeList);
 
         assertNotNull(result);
         assertEquals(3, result.size());
-        for (Route route : result) {
+        for (casak.ru.geofencer.storage.model.Route route : result) {
             assertEquals(1, route.id);
             assertEquals(1, route.fieldId);
             assertEquals(2, route.type);
@@ -89,9 +88,9 @@ public class RouteConverterTest {
 
     @Test
     public void convertToDomainModel_fromEmptyList_returnsEmptyList() {
-        List<Route> emptyList = new ArrayList<>();
+        List<casak.ru.geofencer.storage.model.Route> emptyList = new ArrayList<>();
 
-        List<RouteModel> result = RouteConverter.convertToDomainModel(emptyList);
+        List<Route> result = RouteConverter.convertToDomainModel(emptyList);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -99,32 +98,32 @@ public class RouteConverterTest {
 
     @Test
     public void convertToDomainModel_fromNonEmptyList_returnsConvertedList() {
-        List<Route> routeList = new ArrayList<>();
+        List<casak.ru.geofencer.storage.model.Route> routeList = new ArrayList<>();
 
         String stringPoints = "50.0,30.0;51.0,31.0;";
 
-        Route route1 = new Route();
-        Route route2 = new Route();
-        Route route3 = new Route();
+        casak.ru.geofencer.storage.model.Route route1 = new casak.ru.geofencer.storage.model.Route();
+        casak.ru.geofencer.storage.model.Route route2 = new casak.ru.geofencer.storage.model.Route();
+        casak.ru.geofencer.storage.model.Route route3 = new casak.ru.geofencer.storage.model.Route();
 
         routeList.add(route1);
         routeList.add(route2);
         routeList.add(route3);
 
-        for(Route r : routeList){
+        for(casak.ru.geofencer.storage.model.Route r : routeList){
             r.id = 1;
             r.type = 1;
             r.fieldId = 1;
             r.points = stringPoints;
         }
 
-        List<RouteModel> result = RouteConverter.convertToDomainModel(routeList);
+        List<Route> result = RouteConverter.convertToDomainModel(routeList);
 
         assertNotNull(result);
         assertEquals(3, result.size());
-        for(RouteModel model : result){
+        for(Route model : result){
             assertEquals(1, model.getId());
-            assertEquals(RouteModel.Type.BASE, model.getType());
+            assertEquals(Route.Type.BASE, model.getType());
             assertEquals(1, model.getFieldId());
             assertEquals(Util.stringToPoints(stringPoints), model.getRoutePoints());
         }

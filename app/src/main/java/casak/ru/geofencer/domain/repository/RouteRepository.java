@@ -2,15 +2,15 @@ package casak.ru.geofencer.domain.repository;
 
 import java.util.List;
 
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 
 public interface RouteRepository {
 
-    boolean addRouteModel(RouteModel model);
-    RouteModel createRouteModel(long fieldId, RouteModel.Type type);
+    boolean addRouteModel(Route model);
+    Route createRouteModel(long fieldId, Route.Type type);
 
-    RouteModel getBaseRoute(long fieldId);
-    RouteModel getRouteModel(long id);
+    Route getBaseRoute(long fieldId);
+    Route getRouteModel(long id);
 
-    List<RouteModel> getAllRoutes(long fieldId);
+    List<Route> getAllRoutes(long fieldId);
 }

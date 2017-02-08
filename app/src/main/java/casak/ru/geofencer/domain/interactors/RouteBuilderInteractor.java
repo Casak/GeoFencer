@@ -2,7 +2,7 @@ package casak.ru.geofencer.domain.interactors;
 
 
 import casak.ru.geofencer.domain.interactors.base.Interactor;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 
 /**
  * Created on 05.01.2017.
@@ -11,7 +11,7 @@ import casak.ru.geofencer.domain.model.RouteModel;
 public interface RouteBuilderInteractor extends Interactor{
 
     interface Callback{
-        void routeBuildingFinished(RouteModel route);
+        void routeBuildingFinished(Route route);
     }
 
     void finish();

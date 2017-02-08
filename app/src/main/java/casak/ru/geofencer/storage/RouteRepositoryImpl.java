@@ -4,42 +4,41 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.storage.converters.RouteConverter;
 import casak.ru.geofencer.storage.converters.RouteTypeConverter;
-import casak.ru.geofencer.storage.model.Route;
 import casak.ru.geofencer.storage.model.Route_Table;
 
 public class RouteRepositoryImpl implements RouteRepository {
 
     @Override
-    public RouteModel getBaseRoute(long fieldId) {
-        Route result = SQLite
+    public Route getBaseRoute(long fieldId) {
+        casak.ru.geofencer.storage.model.Route result = SQLite
                 .select()
-                .from(Route.class)
+                .from(casak.ru.geofencer.storage.model.Route.class)
                 .where(Route_Table.fieldId.eq(fieldId))
                 .and(Route_Table.type_id
-                        .eq(RouteTypeConverter.convertToStorageModel(RouteModel.Type.BASE).id))
+                        .eq(RouteTypeConverter.convertToStorageModel(Route.Type.BASE).id))
                 .querySingle();
         return RouteConverter.convertToDomainModel(result);
     }
 
     @Override
-    public RouteModel getRouteModel(long id) {
-        Route result = SQLite
+    public Route getRouteModel(long id) {
+        casak.ru.geofencer.storage.model.Route result = SQLite
                 .select()
-                .from(Route.class)
+                .from(casak.ru.geofencer.storage.model.Route.class)
                 .where(Route_Table.id.eq(id))
                 .querySingle();
         return RouteConverter.convertToDomainModel(result);
     }
 
     @Override
-    public List<RouteModel> getAllRoutes(long fieldId) {
-        List<Route> result = SQLite
+    public List<Route> getAllRoutes(long fieldId) {
+        List<casak.ru.geofencer.storage.model.Route> result = SQLite
                 .select()
-                .from(Route.class)
+                .from(casak.ru.geofencer.storage.model.Route.class)
                 .where(Route_Table.fieldId.eq(fieldId))
                 .queryList();
         return RouteConverter.convertToDomainModel(result);
@@ -47,8 +46,8 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Check returned route ID
     @Override
-    public RouteModel createRouteModel(long fieldId, RouteModel.Type type) {
-        Route route = new Route();
+    public Route createRouteModel(long fieldId, Route.Type type) {
+        casak.ru.geofencer.storage.model.Route route = new casak.ru.geofencer.storage.model.Route();
         route.fieldId = fieldId;
         route.type = RouteTypeConverter.convertToStorageModel(type).id;
         route.points = "";
@@ -60,8 +59,8 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Check if inserted
     @Override
-    public boolean addRouteModel(RouteModel model) {
-        Route result = RouteConverter.convertToStorageModel(model);
+    public boolean addRouteModel(Route model) {
+        casak.ru.geofencer.storage.model.Route result = RouteConverter.convertToStorageModel(model);
 
         result.insert();
         return true;

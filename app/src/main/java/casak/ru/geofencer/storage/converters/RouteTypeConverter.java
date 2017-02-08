@@ -1,10 +1,10 @@
 package casak.ru.geofencer.storage.converters;
 
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.storage.model.RouteType;
 
-import static casak.ru.geofencer.domain.model.RouteModel.Type.COMPUTED;
-import static casak.ru.geofencer.domain.model.RouteModel.Type.BASE;
+import static casak.ru.geofencer.domain.model.Route.Type.COMPUTED;
+import static casak.ru.geofencer.domain.model.Route.Type.BASE;
 
 /**
  * Created on 02.02.2017.
@@ -12,7 +12,7 @@ import static casak.ru.geofencer.domain.model.RouteModel.Type.BASE;
 
 public class RouteTypeConverter {
 
-    public static RouteType convertToStorageModel(RouteModel.Type type) {
+    public static RouteType convertToStorageModel(Route.Type type) {
         if(type == null)
             return null;
         RouteType result = new RouteType();
@@ -30,15 +30,15 @@ public class RouteTypeConverter {
         }
     }
 
-    public static RouteModel.Type convertToDomainModel(RouteType type){
+    public static Route.Type convertToDomainModel(RouteType type){
         if(type == null)
             return null;
 
         switch (type.id){
             case 1:
-                return RouteModel.Type.BASE;
+                return Route.Type.BASE;
             case 2:
-                return RouteModel.Type.COMPUTED;
+                return Route.Type.COMPUTED;
             default:
                 return null;
         }
