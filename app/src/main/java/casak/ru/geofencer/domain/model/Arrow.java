@@ -2,7 +2,7 @@ package casak.ru.geofencer.domain.model;
 
 import java.util.List;
 
-public class ArrowModel {
+public class Arrow {
     public enum Type {
         LEFT,
         RIGHT
@@ -12,7 +12,7 @@ public class ArrowModel {
     private Type type;
     private boolean isChosen;
 
-    public ArrowModel(List<Point> arrowPoints, Type type) {
+    public Arrow(List<Point> arrowPoints, Type type) {
         mArrowPoints = arrowPoints;
         this.type = type;
         isChosen = false;

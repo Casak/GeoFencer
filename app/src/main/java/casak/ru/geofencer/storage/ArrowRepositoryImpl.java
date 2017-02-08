@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 
 /**
  * Created on 09.01.2017.
  */
 public class ArrowRepositoryImpl implements ArrowRepository {
-    private Map<Long, List<ArrowModel>> warehouse = new HashMap<>();
+    private Map<Long, List<Arrow>> warehouse = new HashMap<>();
 
     public static class SingletonHolder {
         public static final ArrowRepository HOLDER_INSTANCE = new ArrowRepositoryImpl() {
@@ -26,23 +26,23 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public List<ArrowModel> getArrows(long fieldId) {
+    public List<Arrow> getArrows(long fieldId) {
         return warehouse.get(fieldId);
     }
 
     @Override
-    public ArrowModel getLeftArrow(long fieldId) {
-        return getArrow(fieldId, ArrowModel.Type.LEFT);
+    public Arrow getLeftArrow(long fieldId) {
+        return getArrow(fieldId, Arrow.Type.LEFT);
     }
 
     @Override
-    public ArrowModel getRightArrow(long fieldId) {
-        return getArrow(fieldId, ArrowModel.Type.RIGHT);
+    public Arrow getRightArrow(long fieldId) {
+        return getArrow(fieldId, Arrow.Type.RIGHT);
     }
 
     @Override
-    public void addArrow(ArrowModel arrow, long fieldId) {
-        List<ArrowModel> arrows = warehouse.get(fieldId);
+    public void addArrow(Arrow arrow, long fieldId) {
+        List<Arrow> arrows = warehouse.get(fieldId);
         if (arrows == null)
             arrows = new LinkedList<>();
         arrows.add(arrow);
@@ -55,17 +55,17 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Nullable
-    private ArrowModel getArrow(long fieldId, ArrowModel.Type type) {
-        List<ArrowModel> arrowModelList = warehouse.get(fieldId);
+    private Arrow getArrow(long fieldId, Arrow.Type type) {
+        List<Arrow> arrowList = warehouse.get(fieldId);
 
-        if (arrowModelList == null || arrowModelList.size() == 0)
+        if (arrowList == null || arrowList.size() == 0)
             return null;
 
-        ArrowModel result = warehouse.get(fieldId).get(0);
+        Arrow result = warehouse.get(fieldId).get(0);
         if (result != null && result.getType() == type)
             return result;
-        if (arrowModelList.size() > 1)
-            result = arrowModelList.get(1);
+        if (arrowList.size() > 1)
+            result = arrowList.get(1);
         if (result != null && result.getType() == type)
             return result;
         return null;

@@ -4,17 +4,17 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 
 public interface ArrowRepository {
 
     @Nullable
-    List<ArrowModel> getArrows(long fieldId);
+    List<Arrow> getArrows(long fieldId);
     @Nullable
-    ArrowModel getLeftArrow(long fieldId);
+    Arrow getLeftArrow(long fieldId);
     @Nullable
-    ArrowModel getRightArrow(long fieldId);
-    void addArrow(ArrowModel arrow, long fieldId);
+    Arrow getRightArrow(long fieldId);
+    void addArrow(Arrow arrow, long fieldId);
 
     void deleteArrows(long fieldId);
 
