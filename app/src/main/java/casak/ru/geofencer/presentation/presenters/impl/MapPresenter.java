@@ -47,10 +47,10 @@ import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.impl.MapUtils;
-import casak.ru.geofencer.domain.model.FieldModel;
-import casak.ru.geofencer.domain.model.HarvesterModel;
+import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Route;
+import casak.ru.geofencer.presentation.model.HarvesterModel;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
 import casak.ru.geofencer.storage.RouteRepositoryImpl;
 import casak.ru.geofencer.presentation.presenters.IMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
@@ -79,7 +79,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     private DeltaFragment deltaFragment;
 
     //TODO Inject
-    private FieldModel field;
     private HarvesterModel harvester;
 
     public MapPresenter(Context context, Executor executor, MainThread mainThread) {
@@ -108,7 +107,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                     currentLocation.getLongitude());
 
         harvester = new HarvesterModel(this, currentLatLng);
-        field = new FieldModel(1);
     }
 
     @Override
@@ -275,8 +273,9 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             LatLng currentLocation = new LatLng(location.getLatitude(),
                     location.getLongitude());
 
-            //TODO Move to pointer interactor
-            MapActivity.updateCTE(computePointerNew(location)+"");
+            //TODO Move to pointer interactor.
+            //TODO Enable
+            //MapActivity.updateCTE(computePointerNew(location)+"");
 
             harvester.updateCurrentLocation(currentLocation);
 
@@ -486,11 +485,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
                 .zIndex(Constants.FIELD_INDEX));
     }
 
-
+/*
     //TODO Move to interactor
     //Pointer
 
-    private RouteModel currentRouteModel;
+    private Route currentRoute;
     private long currentRouteId;
     private Circle currentDot;
     private Circle nextDot;
@@ -537,7 +536,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
     public double computePointerNew(Location position) {
         Point pointPosition = convertLocationToPoint(position);
 
-        RouteModel nearestRoute = getCurrentRoute(position);
+        Route nearestRoute = getCurrentRoute(position);
 
         if (nearestRoute == null)
             return 0;
@@ -582,11 +581,11 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return result;
     }
 
-    public RouteModel getCurrentRoute(Location position) {
+    public Route getCurrentRoute(Location position) {
         Point pointPosition = convertLocationToPoint(position);
 
         if (!isStillCurrentRoute(pointPosition)) {
-            RouteModel result = getNearestRoute(position);
+            Route result = getNearestRoute(position);
             if (result == null)
                 return null;
             double distanceToStart = MapUtils.computeDistanceBetween(
@@ -602,31 +601,31 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             setCurrentRoute(result);
             return result;
         }
-        return currentRouteModel;
+        return currentRoute;
     }
 
     public boolean isStillCurrentRoute(Point location) {
-        return currentRouteModel != null &&
+        return currentRoute != null &&
                 MapUtils.isLocationOnPath(
                         location,
-                        currentRouteModel.getRoutePoints(),
+                        currentRoute.getRoutePoints(),
                         true,
                         Constants.WIDTH_METERS / 2
                 );
     }
 
     //TODO Check it
-    public RouteModel getNearestRoute(Location location) {
+    public Route getNearestRoute(Location location) {
         if (location == null || location.getLatitude() == 0 || location.getLongitude() == 0)
             return null;
 
-        List<RouteModel> computedRoutes = getComputedRoutes(0); //fieldID
+        List<Route> computedRoutes = getComputedRoutes(0); //fieldID
 
         if (computedRoutes == null || computedRoutes.size() == 0)
             return null;
 
         Point position = convertLocationToPoint(location);
-        for (RouteModel model : computedRoutes)
+        for (Route model : computedRoutes)
             if (MapUtils.isLocationOnPath(
                     position,
                     model.getRoutePoints(),
@@ -635,7 +634,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             ))
                 return model;
 
-        /*double[] distances = new double[computedRoutes.size()];
+        *//*double[] distances = new double[computedRoutes.size()];
         Point from = new Point(location.getLatitude(), location.getLongitude());
         for (int i = 0; i < computedRoutes.size(); i++) {
             List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
@@ -651,7 +650,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             distances[i] = distance;
         }
 
-        RouteModel result = null;
+        Route result = null;
         double previous = Double.MAX_VALUE;
         for (int i = 0; i < distances.length; i++) {
             if (distances[i] < previous)
@@ -659,17 +658,17 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             previous = distances[i];
         }
 
-        return result != null ? result : null;*/
+        return result != null ? result : null;*//*
         return null;
     }
 
     //TODO When moved - normal implementation
-    public List<RouteModel> getComputedRoutes(int fieldId) {
-        List<RouteModel> result = new ArrayList<>();
+    public List<Route> getComputedRoutes(int fieldId) {
+        List<Route> result = new ArrayList<>();
         if (notHarvestedRoutes != null && notHarvestedRoutes.size() > 0) {
             for (int i = 0; i < notHarvestedRoutes.size(); i++) {
-                result.add(new RouteModel(i,
-                        fieldId, RouteModel.Type.COMPUTED,
+                result.add(new Route(i,
+                        fieldId, Route.Type.COMPUTED,
                         latLngToPoint(notHarvestedRoutes.get(i).getPoints())));
             }
             return result;
@@ -678,8 +677,8 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         return new RouteRepositoryImpl().getAllRoutes(fieldId);
     }
 
-    public void setCurrentRoute(RouteModel route) {
-        currentRouteModel = route;
+    public void setCurrentRoute(Route route) {
+        currentRoute = route;
     }
 
     public Point getNearestPoint(List<Point> routePoints, Point current) {
@@ -763,4 +762,6 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         }
         return result;
     }
+
+*/
 }

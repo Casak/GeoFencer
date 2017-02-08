@@ -77,7 +77,7 @@ public class MapActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_map);
 
-        mapPresenter = new MapPresenter(this, ThreadExecutor.getInstance(), MainThreadImpl.getInstance());
+        mapPresenter = new MapPresenter(this, new ThreadExecutor(), new MainThreadImpl());
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
         myFab.setOnClickListener(mapPresenter.getOnClickListener());

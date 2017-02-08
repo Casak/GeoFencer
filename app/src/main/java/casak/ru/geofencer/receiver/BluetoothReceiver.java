@@ -135,7 +135,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 BluetoothAntennaLocationSource.getListener().onLocationChanged(location);
 
 
-                MainThread mainThread = MainThreadImpl.getInstance();
+                MainThread mainThread = new MainThreadImpl();
                 MapPresenter presenter = MapActivity.mapPresenter;
                 final LocationListener listener;
                 LocationListener tmpListener = null;
