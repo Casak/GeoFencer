@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
@@ -30,7 +30,7 @@ public class BuildArrowModelsInteractorImplTest {
     static final int FIELD_ID = 1;
 
     @Mock
-    RouteModel mMockRoute;
+    Route mMockRoute;
     @Mock
     static Executor mMockExecutor;
     @Mock
@@ -44,7 +44,7 @@ public class BuildArrowModelsInteractorImplTest {
 
     static BuildArrowModelsInteractor mInteractor;
 
-    RouteModel mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE);
+    Route mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE);
 
 
 
@@ -58,7 +58,7 @@ public class BuildArrowModelsInteractorImplTest {
         points.add(point2);
         points.add(point3);
 
-        mFieldBuildingRouteModel.setRoutePoints(points);
+        mFieldBuildingRoute.setRoutePoints(points);
 
         mMockedCallback = Mockito.spy(new BuildArrowModelsInteractor.Callback() {
             @Override
@@ -85,17 +85,17 @@ public class BuildArrowModelsInteractorImplTest {
     @Test
     public void run_from3PointsRoute_finishedCallbackIsCalled(){
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
-                .thenReturn(mFieldBuildingRouteModel);
+                .thenReturn(mFieldBuildingRoute);
 
         ((BuildArrowModelsInteractorImpl)mInteractor).run();
 
-        verify(mMockedCallback).onArrowsBuildFinished(mFieldBuildingRouteModel.getFieldId());
+        verify(mMockedCallback).onArrowsBuildFinished(mFieldBuildingRoute.getFieldId());
     }
 
     @Test
     public void run_from3PointsRoute_2ArrowsCreated(){
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
-                .thenReturn(mFieldBuildingRouteModel);
+                .thenReturn(mFieldBuildingRoute);
 
         ((BuildArrowModelsInteractorImpl)mInteractor).run();
 
@@ -107,25 +107,25 @@ public class BuildArrowModelsInteractorImplTest {
     public void createArrow_fromNullRoute_nullReturned(){
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 
-        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
+        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
 
         assertNull(result);
     }
 
     @Test
     public void createArrow_from3PointsRoute_modelReturned(){
-        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor)
-                .createArrow(mFieldBuildingRouteModel, true);
+        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor)
+                .createArrow(mFieldBuildingRoute, true);
 
         assertNotNull(result);
     }
 
     @Test
     public void createArrow_from3PointsRoute_leftModelReturned(){
-        ArrowModel result = ((BuildArrowModelsInteractorImpl)mInteractor)
-                .createArrow(mFieldBuildingRouteModel, true);
+        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor)
+                .createArrow(mFieldBuildingRoute, true);
 
-        assertTrue(result.getType() == ArrowModel.Type.LEFT);
+        assertTrue(result.getType() == Arrow.Type.LEFT);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class BuildArrowModelsInteractorImplTest {
 
         ((BuildArrowModelsInteractorImpl)mInteractor).run();
 
-        verify(mMockedCallback).onArrowsBuildFailed(mFieldBuildingRouteModel.getFieldId());
+        verify(mMockedCallback).onArrowsBuildFailed(mFieldBuildingRoute.getFieldId());
 
 
     }

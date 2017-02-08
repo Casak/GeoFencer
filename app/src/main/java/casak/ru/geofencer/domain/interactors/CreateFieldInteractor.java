@@ -1,9 +1,9 @@
 package casak.ru.geofencer.domain.interactors;
 
 import casak.ru.geofencer.domain.interactors.base.Interactor;
-import casak.ru.geofencer.domain.model.ArrowModel;
-import casak.ru.geofencer.domain.model.FieldModel;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Route;
 
 /**
  * Created on 05.01.2017.
@@ -11,15 +11,15 @@ import casak.ru.geofencer.domain.model.RouteModel;
 
 public interface CreateFieldInteractor extends Interactor{
     interface Callback {
-        void showArrow(ArrowModel model);
-        void hideArrow(ArrowModel model);
-        void showField(FieldModel model);
-        void hideField(FieldModel model);
-        void showRoute(RouteModel model);
-        void hideRoute(RouteModel model);
+        void showArrow(Arrow model);
+        void hideArrow(Arrow model);
+        void showField(Field model);
+        void hideField(Field model);
+        void showRoute(Route model);
+        void hideRoute(Route model);
     }
 
-    void onArrowClick(ArrowModel model);
+    void onArrowClick(Arrow model);
     void onStartCreatingRouteClick();
     void onFinishCreatingRouteClick();
 }

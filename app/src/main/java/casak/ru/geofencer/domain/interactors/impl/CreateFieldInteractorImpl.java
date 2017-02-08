@@ -7,9 +7,9 @@ import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
-import casak.ru.geofencer.domain.model.FieldModel;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
@@ -30,9 +30,9 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private RouteBuilderInteractor mRouteBuilderInteractor;
     private BuildArrowModelsInteractor mArrowsInteractor;
     private BuildFieldInteractor mBuildFieldInteractor;
-    private RouteModel mBuildingRouteModel;
+    private Route mBuildingRoute;
     private int fieldId;
-    private FieldModel field;
+    private Field field;
 
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                      CreateFieldInteractor.Callback callback,
@@ -76,9 +76,9 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void run() {
-        mBuildingRouteModel = mRouteRepository.getBaseRoute(fieldId);
+        mBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
 
-        if (mBuildingRouteModel != null) {
+        if (mBuildingRoute != null) {
             //TODO Alert
         }
     }
@@ -92,11 +92,11 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public void routeBuildingFinished(RouteModel route) {
-        RouteModel.Type routeType = route.getType();
+    public void routeBuildingFinished(Route route) {
+        Route.Type routeType = route.getType();
         switch (routeType) {
             case BASE:
-                mBuildingRouteModel = route;
+                mBuildingRoute = route;
                 createArrows();
                 break;
             case COMPUTED:
@@ -121,7 +121,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public void onArrowClick(ArrowModel model) {
+    public void onArrowClick(Arrow model) {
         model.setChosen(true);
         mBuildFieldInteractor.execute();
     }

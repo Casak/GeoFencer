@@ -13,10 +13,10 @@ import java.util.List;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
-import casak.ru.geofencer.domain.model.FieldModel;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -49,9 +49,9 @@ public class BuildFieldInteractorImplTest {
 
     static BuildFieldInteractorImpl mInteractor;
 
-    static RouteModel mFieldBuildingRouteModel = new RouteModel(1, FIELD_ID, RouteModel.Type.BASE);
-    static ArrowModel mLeftArrow;
-    static ArrowModel mRightArrow;
+    static Route mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE);
+    static Arrow mLeftArrow;
+    static Arrow mRightArrow;
 
     @Before
     public void setUp() {
@@ -63,17 +63,17 @@ public class BuildFieldInteractorImplTest {
         points.add(point2);
         points.add(point3);
 
-        mLeftArrow = new ArrowModel(points, ArrowModel.Type.LEFT);
-        mRightArrow = new ArrowModel(points, ArrowModel.Type.RIGHT);
+        mLeftArrow = new Arrow(points, Arrow.Type.LEFT);
+        mRightArrow = new Arrow(points, Arrow.Type.RIGHT);
 
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
-                .thenReturn(mFieldBuildingRouteModel);
+                .thenReturn(mFieldBuildingRoute);
         when(mMockArrowRepository.getLeftArrow(anyInt()))
                 .thenReturn(mLeftArrow);
         when(mMockArrowRepository.getRightArrow(anyInt()))
                 .thenReturn(mRightArrow);
 
-        mFieldBuildingRouteModel.setRoutePoints(points);
+        mFieldBuildingRoute.setRoutePoints(points);
 
         mMockedCallback = Mockito.spy(new BuildFieldInteractor.Callback() {
             @Override
@@ -105,7 +105,7 @@ public class BuildFieldInteractorImplTest {
 
         mInteractor.run();
 
-        verify(mMockFieldRepository).addField(any(FieldModel.class));
+        verify(mMockFieldRepository).addField(any(Field.class));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class BuildFieldInteractorImplTest {
         mRightArrow.setChosen(false);
 
         mInteractor.run();
-        FieldModel compareModel = mInteractor.getFieldModel();
+        Field compareModel = mInteractor.getFieldModel();
 
         assertNotNull(compareModel);
 

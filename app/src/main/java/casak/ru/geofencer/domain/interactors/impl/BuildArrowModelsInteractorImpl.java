@@ -8,9 +8,9 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
@@ -21,8 +21,8 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
 
-    private ArrowModel leftArrow;
-    private ArrowModel rightArrow;
+    private Arrow leftArrow;
+    private Arrow rightArrow;
     private int fieldId;
 
     public BuildArrowModelsInteractorImpl(Executor threadExecutor,
@@ -40,7 +40,7 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
 
     @Override
     public void run() {
-        RouteModel route = mRouteRepository.getBaseRoute(fieldId);
+        Route route = mRouteRepository.getBaseRoute(fieldId);
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
         if (leftArrow != null && rightArrow != null) {
@@ -51,7 +51,7 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
         else mCallback.onArrowsBuildFailed(fieldId);
     }
 
-    ArrowModel createArrow(RouteModel route, boolean toLeft) {
+    Arrow createArrow(Route route, boolean toLeft) {
         if (route == null)
             return null;
 
@@ -65,10 +65,10 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
             Point routeCenter = MapUtils.computeOffset(start, distanceBetween / 2, heading);
 
             return toLeft ?
-                    new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
-                            ArrowModel.Type.LEFT) :
-                    new ArrowModel(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
-                            ArrowModel.Type.RIGHT);
+                    new Arrow(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
+                            Arrow.Type.LEFT) :
+                    new Arrow(createArrowPoints(routeCenter, distanceBetween, heading, toLeft),
+                            Arrow.Type.RIGHT);
         }
         return null;
     }
@@ -102,11 +102,11 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
         return result;
     }
 
-    public ArrowModel getLeftArrow() {
+    public Arrow getLeftArrow() {
         return leftArrow;
     }
 
-    public ArrowModel getRightArrow() {
+    public Arrow getRightArrow() {
         return rightArrow;
     }
 }

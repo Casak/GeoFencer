@@ -11,9 +11,9 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
-import casak.ru.geofencer.domain.model.FieldModel;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.LocationRepository;
@@ -49,45 +49,45 @@ public class CreateFieldInteractorImplTest {
     @Mock
     static LocationRepository mMockLocationRepository = Mockito.spy(LocationRepositoryImpl.class);
     @Mock
-    static ArrowModel mMockArrowModel;
+    static Arrow mMockArrow;
     @Mock
-    static FieldModel mMockFieldModel;
+    static Field mMockField;
 
     static CreateFieldInteractorImpl mInteractor;
 
-    static RouteModel mComputedRouteModel = new RouteModel(0, FIELD_ID, RouteModel.Type.COMPUTED);
+    static Route mComputedRoute = new Route(0, FIELD_ID, Route.Type.COMPUTED);
 
 
     @Before
     public void setUp() throws Exception {
         mMockedCreateFieldCallback = Mockito.spy(new CreateFieldInteractor.Callback() {
             @Override
-            public void showArrow(ArrowModel model) {
+            public void showArrow(Arrow model) {
 
             }
 
             @Override
-            public void hideArrow(ArrowModel model) {
+            public void hideArrow(Arrow model) {
 
             }
 
             @Override
-            public void showField(FieldModel model) {
+            public void showField(Field model) {
 
             }
 
             @Override
-            public void hideField(FieldModel model) {
+            public void hideField(Field model) {
 
             }
 
             @Override
-            public void showRoute(RouteModel model) {
+            public void showRoute(Route model) {
 
             }
 
             @Override
-            public void hideRoute(RouteModel model) {
+            public void hideRoute(Route model) {
 
             }
         });
@@ -116,41 +116,41 @@ public class CreateFieldInteractorImplTest {
     public void onArrowsBuildFinished_shouldAskToShowArrows() {
         mInteractor.onArrowsBuildFinished(FIELD_ID);
 
-        verify(mMockedCreateFieldCallback, times(2)).showArrow(any(ArrowModel.class));
+        verify(mMockedCreateFieldCallback, times(2)).showArrow(any(Arrow.class));
     }
 
     @Test
     public void onArrowClick_shouldSetChosen() {
-        mInteractor.onArrowClick(mMockArrowModel);
+        mInteractor.onArrowClick(mMockArrow);
 
-        verify(mMockArrowModel).setChosen(true);
+        verify(mMockArrow).setChosen(true);
     }
 
     @Test
     public void routeBuildingFinished_withComputedRouteModel_shouldAskForFieldFromRepo() {
-        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockField);
 
-        mInteractor.routeBuildingFinished(mComputedRouteModel);
+        mInteractor.routeBuildingFinished(mComputedRoute);
 
         verify(mMockFieldRepository).getField(anyInt());
     }
 
     @Test
     public void routeBuildingFinished_withComputedRouteModel_shouldUpdateFieldInRepo() {
-        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockField);
 
-        mInteractor.routeBuildingFinished(mComputedRouteModel);
+        mInteractor.routeBuildingFinished(mComputedRoute);
 
-        verify(mMockFieldRepository).updateField(any(FieldModel.class));
+        verify(mMockFieldRepository).updateField(any(Field.class));
     }
 
 
     @Test
     public void routeBuildingFinished_withComputedRouteModel_shouldShowComputedRoutesViaCallback() {
-        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockFieldModel);
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mMockField);
 
-        mInteractor.routeBuildingFinished(mComputedRouteModel);
+        mInteractor.routeBuildingFinished(mComputedRoute);
 
-        verify(mMockedCreateFieldCallback).showRoute(mComputedRouteModel);
+        verify(mMockedCreateFieldCallback).showRoute(mComputedRoute);
     }
 }

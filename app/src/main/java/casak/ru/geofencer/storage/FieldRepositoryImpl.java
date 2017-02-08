@@ -2,12 +2,11 @@ package casak.ru.geofencer.storage;
 
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import casak.ru.geofencer.domain.model.FieldModel;
+import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.storage.converters.FieldConverter;
 import casak.ru.geofencer.storage.converters.RouteConverter;
 import casak.ru.geofencer.storage.converters.Util;
-import casak.ru.geofencer.storage.model.Field;
 import casak.ru.geofencer.storage.model.Field_Table;
 
 /**
@@ -15,17 +14,17 @@ import casak.ru.geofencer.storage.model.Field_Table;
  */
 public class FieldRepositoryImpl implements FieldRepository {
     @Override
-    public boolean addField(FieldModel field) {
-        Field result = FieldConverter.convertToStorageModel(field);
+    public boolean addField(Field field) {
+        casak.ru.geofencer.storage.model.Field result = FieldConverter.convertToStorageModel(field);
 
         result.insert();
         return true;
     }
 
     @Override
-    public FieldModel getField(Integer id) {
-        Field result = SQLite.select()
-                .from(Field.class)
+    public Field getField(Integer id) {
+        casak.ru.geofencer.storage.model.Field result = SQLite.select()
+                .from(casak.ru.geofencer.storage.model.Field.class)
                 .where(Field_Table.id.eq(id))
                 .querySingle();
 
@@ -34,9 +33,9 @@ public class FieldRepositoryImpl implements FieldRepository {
 
     //TODO Normal implementation
     @Override
-    public boolean updateField(FieldModel field) {
-        Field result = SQLite.select()
-                .from(Field.class)
+    public boolean updateField(Field field) {
+        casak.ru.geofencer.storage.model.Field result = SQLite.select()
+                .from(casak.ru.geofencer.storage.model.Field.class)
                 .where(Field_Table.id.eq(field.getId()))
                 .querySingle();
 

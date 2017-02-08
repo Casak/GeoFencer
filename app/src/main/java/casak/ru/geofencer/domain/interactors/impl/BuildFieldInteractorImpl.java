@@ -8,10 +8,10 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
-import casak.ru.geofencer.domain.model.ArrowModel;
-import casak.ru.geofencer.domain.model.FieldModel;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.RouteModel;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -26,7 +26,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
-    private FieldModel mFieldModel;
+    private Field mField;
     private int fieldId;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
@@ -43,10 +43,10 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
 
     @Override
     public void run() {
-        RouteModel route = mRouteRepository.getBaseRoute(fieldId);
+        Route route = mRouteRepository.getBaseRoute(fieldId);
 
-        ArrowModel leftArrow = mArrowRepository.getLeftArrow(fieldId);
-        ArrowModel rightArrow = mArrowRepository.getRightArrow(fieldId);
+        Arrow leftArrow = mArrowRepository.getLeftArrow(fieldId);
+        Arrow rightArrow = mArrowRepository.getRightArrow(fieldId);
 
         if (!leftArrow.isChosen() && !rightArrow.isChosen()) {
             mCallback.onFieldBuildFail();
@@ -57,12 +57,12 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         Point end = route.getRoutePoints().get(route.getRoutePoints().size() - 1);
         boolean toLeft = leftArrow.isChosen();
 
-        mFieldModel = buildField(start, end, toLeft);
-        mFieldRepository.addField(mFieldModel);
+        mField = buildField(start, end, toLeft);
+        mFieldRepository.addField(mField);
     }
 
-    FieldModel buildField(Point start, Point end, boolean toLeft) {
-        FieldModel field = new FieldModel(1, computeCorners(start,
+    Field buildField(Point start, Point end, boolean toLeft) {
+        Field field = new Field(1, computeCorners(start,
                 end,
                 //TODO Implement different sizes
                 Constants.WIDTH_METERS,
@@ -105,7 +105,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         return result;
     }
 
-    public FieldModel getFieldModel() {
-        return mFieldModel;
+    public Field getFieldModel() {
+        return mField;
     }
 }

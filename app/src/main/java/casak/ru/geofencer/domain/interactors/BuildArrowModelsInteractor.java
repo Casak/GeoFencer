@@ -2,7 +2,7 @@ package casak.ru.geofencer.domain.interactors;
 
 
 import casak.ru.geofencer.domain.interactors.base.Interactor;
-import casak.ru.geofencer.domain.model.ArrowModel;
+import casak.ru.geofencer.domain.model.Arrow;
 
 
 public interface BuildArrowModelsInteractor extends Interactor {
@@ -12,6 +12,6 @@ public interface BuildArrowModelsInteractor extends Interactor {
         void onArrowsBuildFailed(long fieldId);
     }
 
-    ArrowModel getLeftArrow();
-    ArrowModel getRightArrow();
+    Arrow getLeftArrow();
+    Arrow getRightArrow();
 }
