@@ -1,7 +1,6 @@
-package casak.ru.geofencer.domain.model;
+package casak.ru.geofencer.presentation.model;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
