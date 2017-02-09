@@ -1,7 +1,6 @@
 package casak.ru.geofencer.injector.modules;
 
 import android.app.Activity;
-import android.content.Context;
 
 import casak.ru.geofencer.injector.scopes.ActivityScope;
 import dagger.Module;
@@ -21,7 +20,7 @@ public class ActivityModule {
 
     @Provides
     @ActivityScope
-    Activity getActivityContext(){
+    Activity getActivityContext() {
         return activity;
     }
 }
