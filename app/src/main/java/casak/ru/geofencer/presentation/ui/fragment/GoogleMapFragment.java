@@ -2,15 +2,15 @@ package casak.ru.geofencer.presentation.ui.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import javax.inject.Inject;
 
@@ -26,16 +26,16 @@ import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
  * Created on 08.02.2017.
  */
 
-public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View {
+public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View, View.OnClickListener {
 
     @Inject
     GoogleMapPresenter presenter;
 
     MapView mMapView;
-    private GoogleMap googleMap;
 
+    FloatingActionButton button;
 
-
+    private GoogleMap map;
     private MapComponent mapComponent;
 
     public MapComponent component() {
@@ -49,32 +49,32 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         return mapComponent;
     }
 
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        button = (FloatingActionButton) rootView.findViewById(R.id.temp_button);
+
+        button.setOnClickListener(this);
+
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                LatLng geoCentrUkraine = new LatLng(48.9592699d, 32.8723257d);
-                googleMap = mMap;
-                googleMap.setMyLocationEnabled(true);
-                googleMap.getUiSettings().setZoomControlsEnabled(true);
-                googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentrUkraine, 6f));
-            }
-        });
-
         component().inject(this);
-        presenter.injected();
+
+        mMapView.getMapAsync(presenter);
 
         return rootView;
+    }
+
+    @Override
+    public void setMap(GoogleMap googleMap) {
+        map = googleMap;
+    }
+
+    @Override
+    public Polyline showPolyline(PolylineOptions options) {
+        return map.addPolyline(options);
     }
 
     @Override
@@ -117,5 +117,14 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (!presenter.isFieldBuilding()) {
+            presenter.startBuildField();
+        } else {
+            presenter.finishBuildField();
+        }
     }
 }
