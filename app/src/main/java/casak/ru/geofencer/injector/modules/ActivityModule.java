@@ -21,7 +21,7 @@ public class ActivityModule {
 
     @Provides
     @ActivityScope
-    Context getActivityContext(){
+    Activity getActivityContext(){
         return activity;
     }
 }
