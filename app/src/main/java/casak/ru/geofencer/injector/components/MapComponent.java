@@ -1,5 +1,7 @@
 package casak.ru.geofencer.injector.components;
 
+import com.google.android.gms.maps.LocationSource;
+
 import casak.ru.geofencer.injector.modules.ActivityModule;
 import casak.ru.geofencer.injector.modules.MapModule;
 import casak.ru.geofencer.injector.scopes.ActivityScope;
@@ -19,4 +21,6 @@ public interface MapComponent extends AbstractActivityComponent {
     GoogleMapPresenter.View getView();
 
     GoogleMapPresenter getPresenter();
+
+    LocationSource getLocationSource();
 }
