@@ -32,6 +32,7 @@ public class AppModule {
     Context providesApplicationContext() {
         return application.getApplicationContext();
     }
+/*
 
     @Provides
     @Singleton
@@ -40,6 +41,7 @@ public class AppModule {
                 .addApi(LocationServices.API)
                 .build();
     }
+*/
 
     @Provides
     @Singleton
