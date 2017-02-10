@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.injector.modules.AppModule;
 import dagger.Component;
 
@@ -25,4 +26,6 @@ public interface AppComponent {
     Executor getExecutor();
 
     MainThread getMainThread();
+
+    LocationRepository getLocationRepository();
 }

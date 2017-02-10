@@ -79,10 +79,4 @@ public class MapModule {
     FieldRepository providesFieldRepository(){
         return new FieldRepositoryImpl();
     }
-
-    @Provides
-    @ActivityScope
-    LocationRepository providesLocationRepository(){
-        return new LocationRepositoryImpl();
-    }
 }

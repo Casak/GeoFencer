@@ -38,6 +38,4 @@ public interface MapComponent extends AbstractActivityComponent {
     ArrowRepository getArrowRepository();
 
     FieldRepository getFieldRepository();
-
-    LocationRepository getLocationRepository();
 }
