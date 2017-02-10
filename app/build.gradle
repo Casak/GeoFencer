@@ -38,6 +38,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.0.1'
     compile 'com.google.dagger:dagger:2.7'
     apt "com.google.dagger:dagger-compiler:2.7"
+    compile 'com.jakewharton:butterknife:8.5.1'
+    apt 'com.jakewharton:butterknife-compiler:8.5.1'
     apt 'javax.annotation:jsr250-api:1.0'
 
     testCompile 'junit:junit:4.12'
