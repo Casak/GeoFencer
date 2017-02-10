@@ -1,7 +1,5 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
-import android.util.Log;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -9,10 +7,13 @@ import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.model.Arrow;
+import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.injector.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
+import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 
 /**
  * Created on 09.02.2017.
@@ -24,38 +25,33 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
 
     private boolean isFieldBuilding;
 
-    GoogleMapPresenter.View mapView;
+    private GoogleMapPresenter.View mapView;
+    private LocationSource locationSource;
+    private CreateFieldInteractor interactor;
 
     @Inject
-    LocationSource locationSource;
-    @Inject
-    Executor threadExecutor;
-    @Inject
-    MainThread mainThread;
+    public GoogleMapPresenterImpl(GoogleMapPresenter.View mapView, LocationSource locationSource) {
+        this.mapView = mapView;
+        this.locationSource = locationSource;
 
-    @Inject
-    public GoogleMapPresenterImpl(GoogleMapPresenter.View view){
-        mapView = view;
         isFieldBuilding = false;
     }
 
     @Override
-    public boolean isFieldBuilding() {
-        return isFieldBuilding;
-    }
-
-    @Override
     public void startBuildField() {
+        isFieldBuilding = true;
 
+        if (interactor == null) {
+            interactor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
+        }
+        interactor.execute();
+        interactor.onStartCreatingRouteClick();
     }
 
     @Override
     public void finishBuildField() {
-
-    }
-
-    public void injected(){
-        Log.d(TAG, "INJECTED!!");
+        isFieldBuilding = false;
+        interactor.onFinishCreatingRouteClick();
     }
 
     @Override
@@ -68,6 +64,11 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
         LatLng geoCentreUkraine = new LatLng(48.9592699, 32.8723257);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(geoCentreUkraine, 6f));
         mapView.setMap(googleMap);
+    }
+
+    @Override
+    public boolean isFieldBuilding() {
+        return isFieldBuilding;
     }
 
     @Override
@@ -92,6 +93,36 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
 
     @Override
     public void onError(String message) {
+
+    }
+
+    @Override
+    public void showArrow(Arrow model) {
+
+    }
+
+    @Override
+    public void hideArrow(Arrow model) {
+
+    }
+
+    @Override
+    public void showField(Field model) {
+
+    }
+
+    @Override
+    public void hideField(Field model) {
+
+    }
+
+    @Override
+    public void showRoute(Route model) {
+
+    }
+
+    @Override
+    public void hideRoute(Route model) {
 
     }
 }

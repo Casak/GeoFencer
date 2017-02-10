@@ -8,14 +8,12 @@ import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.injector.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.GoogleMapPresenterImpl;
 import casak.ru.geofencer.storage.ArrowRepositoryImpl;
 import casak.ru.geofencer.storage.FieldRepositoryImpl;
-import casak.ru.geofencer.storage.LocationRepositoryImpl;
 import casak.ru.geofencer.storage.RouteRepositoryImpl;
 import dagger.Module;
 import dagger.Provides;
@@ -40,14 +38,8 @@ public class MapModule {
 
     @Provides
     @ActivityScope
-    GoogleMapPresenter providesGoogleMapsPresenter() {
-        return new GoogleMapPresenterImpl(mapView);
-    }
-
-    @Provides
-    @ActivityScope
-    CreateFieldInteractor.Callback providesCreateFieldInteractorCallback(GoogleMapPresenter presenter){
-        return presenter;
+    GoogleMapPresenter providesGoogleMapsPresenter(LocationSource locationSource) {
+        return new GoogleMapPresenterImpl(mapView, locationSource);
     }
 
     @Provides
@@ -58,25 +50,31 @@ public class MapModule {
 
     @Provides
     @ActivityScope
-    LocationSource providesLocationSource(){
+    CreateFieldInteractor.Callback providesCreateFieldInteractorCallback(GoogleMapPresenter callback) {
+        return callback;
+    }
+
+    @Provides
+    @ActivityScope
+    LocationSource providesLocationSource() {
         return new BluetoothAntennaLocationSource();
     }
 
     @Provides
     @ActivityScope
-    RouteRepository providesRouteRepository(){
+    RouteRepository providesRouteRepository() {
         return new RouteRepositoryImpl();
     }
 
     @Provides
     @ActivityScope
-    ArrowRepository providesArrowRepository(){
+    ArrowRepository providesArrowRepository() {
         return new ArrowRepositoryImpl();
     }
 
     @Provides
     @ActivityScope
-    FieldRepository providesFieldRepository(){
+    FieldRepository providesFieldRepository() {
         return new FieldRepositoryImpl();
     }
 }
