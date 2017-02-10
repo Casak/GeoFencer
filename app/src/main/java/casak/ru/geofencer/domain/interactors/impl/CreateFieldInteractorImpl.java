@@ -1,5 +1,7 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
+import javax.inject.Inject;
+
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
@@ -26,7 +28,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
-    private LocationRepository mLocationRepository;
     private RouteBuilderInteractor mRouteBuilderInteractor;
     private BuildArrowModelsInteractor mArrowsInteractor;
     private BuildFieldInteractor mBuildFieldInteractor;
@@ -34,24 +35,26 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private int fieldId;
     private Field field;
 
+    @Inject
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                      CreateFieldInteractor.Callback callback,
                                      RouteRepository routeRepository, ArrowRepository arrowRepository,
                                      FieldRepository fieldRepository, LocationRepository locationRepository) {
         super(threadExecutor, mainThread);
+        //TODO Fix it, bastard
         fieldId = computeFieldId();
 
         mCallback = callback;
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
         mFieldRepository = fieldRepository;
-        mLocationRepository = locationRepository;
 
+        //TODO Move locationRepository usage logic to a class
         mRouteBuilderInteractor = new RouteBuilderInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
                 this,
-                mLocationRepository,
+                locationRepository,
                 mRouteRepository,
                 mArrowRepository,
                 fieldId);
@@ -153,6 +156,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     //TODO implement method
     private int computeFieldId() {
-        return 1;
+        return 1000;
     }
 }
