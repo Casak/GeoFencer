@@ -27,12 +27,13 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receiver.BluetoothReceiver"
+        <receiver
+            android:name=".bluetooth.BluetoothReceiver"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.bluetooth.device.action.FOUND"/>
-                <action android:name="android.bluetooth.device.action.DISAPPEARED"/>
+                <action android:name="android.bluetooth.device.action.FOUND" />
+                <action android:name="android.bluetooth.device.action.DISAPPEARED" />
             </intent-filter>
         </receiver>
 

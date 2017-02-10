@@ -1,4 +1,4 @@
-package casak.ru.geofencer.receiver;
+package casak.ru.geofencer.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import casak.ru.geofencer.bluetooth.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.storage.db.Contract;
@@ -37,7 +36,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
     private static final String TAG = BluetoothReceiver.class.getSimpleName();
 
     private Context context;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -142,7 +140,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
                 if (presenter != null)
                     tmpListener = presenter.getLocationListener();
-                if(tmpListener != null)
+                if (tmpListener != null)
                     listener = tmpListener;
                 else listener = null;
 
@@ -152,7 +150,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                     final Location newLocation = parse(result.toString("UTF-8"));
 
                     if (newLocation != null) {
-                        if(tmpListener != null)
+                        if (tmpListener != null)
                             mainThread.post(new Runnable() {
                                 @Override
                                 public void run() {
