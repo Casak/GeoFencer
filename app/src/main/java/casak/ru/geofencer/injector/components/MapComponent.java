@@ -5,7 +5,6 @@ import com.google.android.gms.maps.LocationSource;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.injector.modules.ActivityModule;
 import casak.ru.geofencer.injector.modules.MapModule;
@@ -23,6 +22,7 @@ import dagger.Component;
 @Component(modules = {ActivityModule.class, MapModule.class}, dependencies = {AppComponent.class})
 public interface MapComponent extends AbstractActivityComponent {
     void inject(GoogleMapFragment fragment);
+
     void inject(GoogleMapPresenterImpl presenter);
 
     GoogleMapPresenter.View getView();
@@ -30,6 +30,8 @@ public interface MapComponent extends AbstractActivityComponent {
     GoogleMapPresenter getPresenter();
 
     LocationSource getLocationSource();
+
+    CreateFieldInteractor getCreateFieldInteractor();
 
     CreateFieldInteractor.Callback getCreateFieldInteractorCallback();
 
