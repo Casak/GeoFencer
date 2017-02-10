@@ -2,74 +2,83 @@ package casak.ru.geofencer.presentation.ui.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.injector.components.DaggerMapComponent;
 import casak.ru.geofencer.injector.components.MapComponent;
-import casak.ru.geofencer.injector.modules.ActivityModule;
 import casak.ru.geofencer.injector.modules.MapModule;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
+import casak.ru.geofencer.presentation.ui.activities.BaseActivity;
 
 /**
  * Created on 08.02.2017.
  */
 
-public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View, View.OnClickListener {
+public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View {
+    private static final String TAG = GoogleMapFragment.class.getSimpleName();
+
+    private static MapComponent mapComponent;
+    private static MapModule mapModule;
+
+    private GoogleMap map;
 
     @Inject
     GoogleMapPresenter presenter;
+    @BindView(R.id.mapView)
+    MapView mapView;
 
-    MapView mMapView;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    FloatingActionButton button;
+        if (mapModule == null)
+            mapModule = new MapModule(this);
 
-    private GoogleMap map;
-    private MapComponent mapComponent;
-
-    public MapComponent component() {
-        if (mapComponent == null) {
+        if (mapComponent == null)
             mapComponent = DaggerMapComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
-                    .mapModule(new MapModule(this))
-                    .activityModule(new ActivityModule(getActivity()))
+                    .activityModule(BaseActivity.getActivityModule())
+                    .mapModule(getMapModule())
                     .build();
-        }
-        return mapComponent;
+
+        getMapComponent().inject(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        button = (FloatingActionButton) rootView.findViewById(R.id.temp_button);
+        ButterKnife.bind(this, rootView);
 
-        button.setOnClickListener(this);
-
-        mMapView = (MapView) rootView.findViewById(R.id.mapView);
-        mMapView.onCreate(savedInstanceState);
-
-        component().inject(this);
-
-        mMapView.getMapAsync(presenter);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(presenter);
 
         return rootView;
     }
 
-    @Override
-    public void setMap(GoogleMap googleMap) {
-        map = googleMap;
+    @OnClick(R.id.temp_button)
+    public void buildField() {
+        if (!presenter.isFieldBuilding()) {
+            presenter.startBuildField();
+        } else {
+            presenter.finishBuildField();
+        }
     }
 
     @Override
@@ -78,53 +87,62 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     }
 
     @Override
+    public Polygon showPolygon(PolygonOptions options) {
+        return map.addPolygon(options);
+    }
+
+    @Override
+    public void setMap(GoogleMap googleMap) {
+        map = googleMap;
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        mMapView.onStart();
+        mapView.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        mapView.onPause();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mMapView.onStop();
+        mapView.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        mapView.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mMapView.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mMapView.onLowMemory();
+        mapView.onLowMemory();
     }
 
-    @Override
-    public void onClick(View v) {
-        if (!presenter.isFieldBuilding()) {
-            presenter.startBuildField();
-        } else {
-            presenter.finishBuildField();
-        }
+    public static MapModule getMapModule() {
+        return mapModule;
+    }
+
+    public static MapComponent getMapComponent() {
+        return mapComponent;
     }
 }
