@@ -83,11 +83,13 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
     @Override
     public Polyline showPolyline(PolylineOptions options) {
+        isMapReady();
         return map.addPolyline(options);
     }
 
     @Override
     public Polygon showPolygon(PolygonOptions options) {
+        isMapReady();
         return map.addPolygon(options);
     }
 
@@ -144,5 +146,12 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
     public static MapComponent getMapComponent() {
         return mapComponent;
+    }
+
+    private boolean isMapReady() {
+        if (map == null) {
+            throw new NullPointerException("Map is not ready!");
+        }
+        return true;
     }
 }
