@@ -40,6 +40,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import casak.ru.geofencer.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.R;
@@ -250,7 +251,7 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
             if (firstClick) {
                 firstClick = false;
                 harvester.startFieldRouteBuilding();
-                MapsUtils.mockLocations(getLocationListener());
+                MapsUtils.mockLocations(getLocationListener(), 100);
             } else {
                 firstClick = true;
                 harvester.finishFieldRouteBuilding();
@@ -373,43 +374,20 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         }
         if (polyline.equals(leftArrow) || polyline.equals(rightArrow)) {
             //TODO Delete this mock
+            List<LatLng> list15 = offsetList(15);
+            List<LatLng> list45 = reverseLatLngList(offsetList(45));
+            List<LatLng> list25 = offsetList(25);
+            List<LatLng> list35 = reverseLatLngList(offsetList(35));
+
             List<LatLng> list = new ArrayList<>();
+            list.addAll(list35);
+            list.addAll(list25);
+            list.addAll(list45);
+            list.addAll(list15);
 
-            list.add(new LatLng(50.422912, 30.425952));
-            list.add(new LatLng(50.422601, 30.425775));
-            list.add(new LatLng(50.422061, 30.425292));
-            list.add(new LatLng(50.421608, 30.424369));
-            list.add(new LatLng(50.421454, 30.424938));
-            list.add(new LatLng(50.421403047796304, 30.425471959874532));
-            list.add(new LatLng(50.421492947796295, 30.425563359499005));
-            list.add(new LatLng(50.4215796477963, 30.425650459136847));
-            list.add(new LatLng(50.4216630477963, 30.42568115878848));
-            list.add(new LatLng(50.4217475477963, 30.42573765843551));
-            list.add(new LatLng(50.42183264779631, 30.42579085808003));
-            list.add(new LatLng(50.421915947796315, 30.425823957732078));
-            list.add(new LatLng(50.42199704779629, 30.4258847573933));
-            list.add(new LatLng(50.422077147796294, 30.425945157058703));
-            list.add(new LatLng(50.42215504779629, 30.42599855673329));
-            list.add(new LatLng(50.42242494779629, 30.42616205560584));
-            list.add(new LatLng(50.422517047796305, 30.426176555221105));
-            list.add(new LatLng(50.4226024477963, 30.42622365486436));
-            list.add(new LatLng(50.422682847796295, 30.42625355452849));
-            list.add(new LatLng(50.4227546477963, 30.426359654228563));
-            list.add(new LatLng(50.4228218477963, 30.426372253947832));
-            list.add(new LatLng(50.4228876477963, 30.426372153672965));
-            list.add(new LatLng(50.422950947796274, 30.426433853408525));
-            list.add(new LatLng(50.423012447796296, 30.42652715315161));
-            list.add(new LatLng(50.42306504779629, 30.426528752931883));
-            list.add(new LatLng(50.42311024779629, 30.426541052743065));
-            list.add(new LatLng(50.42315084779628, 30.426602752573455));
-            list.add(new LatLng(50.423222247796296, 30.42662315227518));
-            list.add(new LatLng(50.42324924779629, 30.42659715216239));
-            list.add(new LatLng(50.42326574779629, 30.42663665209346));
-            list.add(new LatLng(50.42327484779629, 30.42663695205544));
-            list.add(new LatLng(50.423281180329916, 30.426680696850383));
-
-
-            MapsUtils.mockLocations(getLocationListener(),
+            MapsUtils.mockLocations(
+                    getLocationListener(),
+                    2000,
                     list.toArray(new LatLng[list.size()]));
 
             CameraUpdate cameraUpdate = MapsUtils.harvestedPolygonToCameraUpdate(notHarvestedRoutes.get(0).getPoints());
@@ -421,6 +399,59 @@ public class MapPresenter extends AbstractPresenter implements IMapPresenter, Go
         removeArrow(rightArrow);
         leftArrow = null;
         rightArrow = null;
+    }
+
+    private List<LatLng> reverseLatLngList(List<LatLng> list) {
+        List<LatLng> result = new LinkedList<>();
+        for (int i = list.size() - 1; i >= 0; i--)
+            result.add(list.get(i));
+
+        return result;
+    }
+
+    public List<LatLng> offsetList(double offset) {
+        List<LatLng> newList = new ArrayList<>();
+        Random random = new Random(Double.doubleToLongBits(offset));
+        for (LatLng p : notHarvestedRoutes.get(0).getPoints()) {
+            LatLng point = new LatLng(p.latitude, p.longitude +
+                    Double.parseDouble("0.0000" + random.nextInt(100)));
+            newList.add(computeOffset(point, offset,
+                    computeHeading(notHarvestedRoutes.get(0).getPoints().get(0),
+                            notHarvestedRoutes.get(0).getPoints().get(notHarvestedRoutes.size() - 1)) - 90));
+        }
+        return newList;
+    }
+
+    static double mod(double x, double m) {
+        return (x % m + m) % m;
+    }
+
+    static double wrap(double n, double min, double max) {
+        return n >= min && n < max ? n : mod(n - min, max - min) + min;
+    }
+
+    public static double computeHeading(LatLng from, LatLng to) {
+        double fromLat = Math.toRadians(from.latitude);
+        double fromLng = Math.toRadians(from.longitude);
+        double toLat = Math.toRadians(to.latitude);
+        double toLng = Math.toRadians(to.longitude);
+        double dLng = toLng - fromLng;
+        double heading = Math.atan2(Math.sin(dLng) * Math.cos(toLat), Math.cos(fromLat) * Math.sin(toLat) - Math.sin(fromLat) * Math.cos(toLat) * Math.cos(dLng));
+        return wrap(Math.toDegrees(heading), -180.0D, 180.0D);
+    }
+
+    public static LatLng computeOffset(LatLng from, double distance, double heading) {
+        distance /= 6371009.0D;
+        heading = Math.toRadians(heading);
+        double fromLat = Math.toRadians(from.latitude);
+        double fromLng = Math.toRadians(from.longitude);
+        double cosDistance = Math.cos(distance);
+        double sinDistance = Math.sin(distance);
+        double sinFromLat = Math.sin(fromLat);
+        double cosFromLat = Math.cos(fromLat);
+        double sinLat = cosDistance * sinFromLat + sinDistance * cosFromLat * Math.cos(heading);
+        double dLng = Math.atan2(sinDistance * cosFromLat * Math.sin(heading), cosDistance - sinFromLat * sinLat);
+        return new LatLng(Math.toDegrees(Math.asin(sinLat)), Math.toDegrees(fromLng + dLng));
     }
 
     private void removeArrow(Polyline arrow) {
