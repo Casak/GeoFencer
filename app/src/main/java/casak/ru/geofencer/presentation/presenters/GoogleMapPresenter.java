@@ -1,7 +1,9 @@
 package casak.ru.geofencer.presentation.presenters;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -21,6 +23,10 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
         Polyline showPolyline(PolylineOptions options);
 
         Polygon showPolygon(PolygonOptions options);
+
+        void changeCamera(CameraUpdate update);
+
+        CameraPosition getCurrentCameraPosition();
     }
 
     boolean isFieldBuilding();
@@ -28,4 +34,8 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
     void startBuildField();
 
     void finishBuildField();
+
+    void onTiltMore();
+
+    void onTiltLess();
 }

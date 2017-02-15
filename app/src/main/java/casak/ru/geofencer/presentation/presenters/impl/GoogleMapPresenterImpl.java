@@ -3,6 +3,7 @@ package casak.ru.geofencer.presentation.presenters.impl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
@@ -124,5 +125,35 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
     @Override
     public void hideRoute(Route model) {
 
+    }
+
+    @Override
+    public void onTiltMore() {
+        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
+
+        float currentTilt = currentCameraPosition.tilt;
+        float newTilt = currentTilt + 10;
+
+        newTilt = (newTilt > 90) ? 90 : newTilt;
+
+        CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
+                .tilt(newTilt).build();
+
+        mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    @Override
+    public void onTiltLess() {
+        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
+
+        float currentTilt = currentCameraPosition.tilt;
+
+        float newTilt = currentTilt - 10;
+        newTilt = (newTilt > 0) ? newTilt : 0;
+
+        CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
+                .tilt(newTilt).build();
+
+        mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 }

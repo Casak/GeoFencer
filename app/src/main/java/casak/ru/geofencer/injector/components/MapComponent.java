@@ -12,6 +12,7 @@ import casak.ru.geofencer.injector.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.GoogleMapPresenterImpl;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
+import casak.ru.geofencer.presentation.ui.fragment.MapButtonFragment;
 import dagger.Component;
 
 /**
@@ -22,6 +23,8 @@ import dagger.Component;
 @Component(modules = {ActivityModule.class, MapModule.class}, dependencies = {AppComponent.class})
 public interface MapComponent extends AbstractActivityComponent {
     void inject(GoogleMapFragment fragment);
+
+    void inject(MapButtonFragment fragment);
 
     void inject(GoogleMapPresenterImpl presenter);
 

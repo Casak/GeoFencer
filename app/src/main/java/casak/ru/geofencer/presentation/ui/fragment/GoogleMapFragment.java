@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -82,6 +84,11 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     }
 
     @Override
+    public void setMap(GoogleMap googleMap) {
+        map = googleMap;
+    }
+
+    @Override
     public Polyline showPolyline(PolylineOptions options) {
         isMapReady();
         return map.addPolyline(options);
@@ -94,8 +101,15 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     }
 
     @Override
-    public void setMap(GoogleMap googleMap) {
-        map = googleMap;
+    public void changeCamera(CameraUpdate update) {
+        isMapReady();
+        map.moveCamera(update);
+    }
+
+    @Override
+    public CameraPosition getCurrentCameraPosition(){
+        isMapReady();
+        return map.getCameraPosition();
     }
 
     @Override
