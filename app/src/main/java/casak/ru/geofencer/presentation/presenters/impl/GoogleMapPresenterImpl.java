@@ -4,7 +4,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -13,6 +17,7 @@ import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.injector.scopes.ActivityScope;
+import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 
@@ -91,14 +96,23 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
 
     }
 
+    //TODO Refactor
+    Map<Arrow, Polyline> arrowsMap = new HashMap<>();
+
     @Override
     public void showArrow(Arrow model) {
-
+        PolylineOptions arrowOptions = ArrowConverter.convertToPresentationModel(model);
+        Polyline polyline = mapView.showPolyline(arrowOptions);
+        arrowsMap.put(model, polyline);
     }
 
+    //TODO Check
     @Override
     public void hideArrow(Arrow model) {
-
+        Polyline polyline = arrowsMap.get(model);
+        polyline.setVisible(false);
+        polyline.remove();
+        arrowsMap.remove(model);
     }
 
     @Override
