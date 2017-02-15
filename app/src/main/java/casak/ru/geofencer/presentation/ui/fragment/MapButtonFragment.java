@@ -64,4 +64,14 @@ public class MapButtonFragment extends Fragment {
     public void onChangeTypeClicked() {
         presenter.changeMapType();
     }
+
+    @OnClick(R.id.button_zoom_more)
+    public void onZoomMoreClicked() {
+        presenter.onZoomMore();
+    }
+
+    @OnClick(R.id.button_zoom_less)
+    public void onZoomLessClicked() {
+        presenter.onZoomLess();
+    }
 }

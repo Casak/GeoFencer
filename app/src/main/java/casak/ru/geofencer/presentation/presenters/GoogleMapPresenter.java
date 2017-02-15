@@ -39,6 +39,10 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
 
     void finishBuildField();
 
+    void onZoomMore();
+
+    void onZoomLess();
+
     void onTiltMore();
 
     void onTiltLess();

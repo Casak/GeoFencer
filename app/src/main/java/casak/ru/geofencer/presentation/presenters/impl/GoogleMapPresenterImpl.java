@@ -59,7 +59,7 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
     public void onMapReady(GoogleMap googleMap) {
         googleMap.setLocationSource(locationSource);
         googleMap.setMyLocationEnabled(true);
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         LatLng geoCentreUkraine = new LatLng(48.9592699, 32.8723257);
@@ -125,6 +125,16 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
     @Override
     public void hideRoute(Route model) {
 
+    }
+
+    @Override
+    public void onZoomMore() {
+        mapView.changeCamera(CameraUpdateFactory.zoomIn());
+    }
+
+    @Override
+    public void onZoomLess() {
+        mapView.changeCamera(CameraUpdateFactory.zoomOut());
     }
 
     @Override
