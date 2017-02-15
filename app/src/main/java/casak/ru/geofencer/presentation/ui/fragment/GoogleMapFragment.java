@@ -89,27 +89,39 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     }
 
     @Override
+    public void changeCamera(CameraUpdate update) {
+        checkMapReady();
+        map.moveCamera(update);
+    }
+
+    @Override
+    public void changeMapType(int type) {
+        checkMapReady();
+        map.setMapType(type);
+    }
+
+    @Override
     public Polyline showPolyline(PolylineOptions options) {
-        isMapReady();
+        checkMapReady();
         return map.addPolyline(options);
     }
 
     @Override
     public Polygon showPolygon(PolygonOptions options) {
-        isMapReady();
+        checkMapReady();
         return map.addPolygon(options);
     }
 
     @Override
-    public void changeCamera(CameraUpdate update) {
-        isMapReady();
-        map.moveCamera(update);
+    public CameraPosition getCurrentCameraPosition() {
+        checkMapReady();
+        return map.getCameraPosition();
     }
 
     @Override
-    public CameraPosition getCurrentCameraPosition(){
-        isMapReady();
-        return map.getCameraPosition();
+    public int getCurrentMapType() {
+        checkMapReady();
+        return map.getMapType();
     }
 
     @Override
@@ -162,7 +174,7 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         return mapComponent;
     }
 
-    private boolean isMapReady() {
+    private boolean checkMapReady() {
         if (map == null) {
             throw new NullPointerException("Map is not ready!");
         }

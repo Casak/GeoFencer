@@ -157,7 +157,26 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
         mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
-    private float getCurrentCameraTilt(){
+    @Override
+    public void changeMapType() {
+        int current = mapView.getCurrentMapType();
+
+        switch (current) {
+            case GoogleMap.MAP_TYPE_NONE:
+                mapView.changeMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+            case GoogleMap.MAP_TYPE_NORMAL:
+                mapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                break;
+            case GoogleMap.MAP_TYPE_SATELLITE:
+                mapView.changeMapType(GoogleMap.MAP_TYPE_NONE);
+                break;
+            default:
+                mapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        }
+    }
+
+    private float getCurrentCameraTilt() {
         return mapView.getCurrentCameraPosition().tilt;
     }
 }

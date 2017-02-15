@@ -7,38 +7,47 @@
     <!--TODO STRING RESOURCES, bastard-->
 
     <Button
+        android:id="@+id/button_change_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B3FAFAFA"
+        android:text="Change\ntype"
+        android:textColor="#424242"
+        android:textSize="30sp" />
+
+    <Button
         android:id="@+id/button_3d"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
+        android:text="3D"
         android:textColor="#424242"
-        android:textSize="40sp"
-        android:text="3D" />
+        android:textSize="40sp" />
 
     <Button
         android:id="@+id/button_2d"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
+        android:text="2D"
         android:textColor="#424242"
-        android:textSize="40sp"
-        android:text="2D" />
+        android:textSize="40sp" />
 
     <Button
         android:id="@+id/button_tilt_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
+        android:text="Tilt+"
         android:textColor="#424242"
-        android:textSize="40sp"
-        android:text="Tilt+" />
+        android:textSize="40sp" />
 
     <Button
         android:id="@+id/button_tilt_less"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
+        android:text="Tilt−"
         android:textColor="#424242"
-        android:textSize="40sp"
-        android:text="Tilt−" />
+        android:textSize="40sp" />
 </LinearLayout>

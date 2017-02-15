@@ -18,6 +18,9 @@ import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
  */
 
 public class MapButtonFragment extends Fragment {
+    private final int MAP_3D = 90;
+    private final int MAP_2D = 0;
+
     @Inject
     GoogleMapPresenter presenter;
 
@@ -38,24 +41,27 @@ public class MapButtonFragment extends Fragment {
     }
 
     @OnClick(R.id.button_tilt_more)
-    public void onTiltMoreClicked(){
+    public void onTiltMoreClicked() {
         presenter.onTiltMore();
     }
 
     @OnClick(R.id.button_tilt_less)
-    public void onTiltLessClicked(){
+    public void onTiltLessClicked() {
         presenter.onTiltLess();
     }
 
     @OnClick(R.id.button_2d)
-    public void on2DClicked(){
-        presenter.changeTilt(0);
+    public void on2DClicked() {
+        presenter.changeTilt(MAP_2D);
     }
 
     @OnClick(R.id.button_3d)
-    public void on3DClicked(){
-        presenter.changeTilt(90);
+    public void on3DClicked() {
+        presenter.changeTilt(MAP_3D);
     }
 
-
+    @OnClick(R.id.button_change_type)
+    public void onChangeTypeClicked() {
+        presenter.changeMapType();
+    }
 }

@@ -20,13 +20,17 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
     interface View {
         void setMap(GoogleMap googleMap);
 
+        void changeCamera(CameraUpdate update);
+
+        void changeMapType(int type);
+
         Polyline showPolyline(PolylineOptions options);
 
         Polygon showPolygon(PolygonOptions options);
 
-        void changeCamera(CameraUpdate update);
-
         CameraPosition getCurrentCameraPosition();
+
+        int getCurrentMapType();
     }
 
     boolean isFieldBuilding();
@@ -40,4 +44,6 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
     void onTiltLess();
 
     void changeTilt(float tilt);
+
+    void changeMapType();
 }
