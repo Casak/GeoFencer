@@ -38,4 +38,6 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
     void onTiltMore();
 
     void onTiltLess();
+
+    void changeTilt(float tilt);
 }

@@ -129,31 +129,35 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
 
     @Override
     public void onTiltMore() {
-        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
-
-        float currentTilt = currentCameraPosition.tilt;
+        float currentTilt = getCurrentCameraTilt();
         float newTilt = currentTilt + 10;
 
         newTilt = (newTilt > 90) ? 90 : newTilt;
 
-        CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
-                .tilt(newTilt).build();
-
-        mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        changeTilt(newTilt);
     }
 
     @Override
     public void onTiltLess() {
-        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
-
-        float currentTilt = currentCameraPosition.tilt;
-
+        float currentTilt = getCurrentCameraTilt();
         float newTilt = currentTilt - 10;
+
         newTilt = (newTilt > 0) ? newTilt : 0;
 
+        changeTilt(newTilt);
+    }
+
+    @Override
+    public void changeTilt(float tilt) {
+        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
+
         CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
-                .tilt(newTilt).build();
+                .tilt(tilt).build();
 
         mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private float getCurrentCameraTilt(){
+        return mapView.getCurrentCameraPosition().tilt;
     }
 }

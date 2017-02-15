@@ -7,12 +7,30 @@
     <!--TODO STRING RESOURCES, bastard-->
 
     <Button
+        android:id="@+id/button_3d"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B3FAFAFA"
+        android:textColor="#424242"
+        android:textSize="40sp"
+        android:text="3D" />
+
+    <Button
+        android:id="@+id/button_2d"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B3FAFAFA"
+        android:textColor="#424242"
+        android:textSize="40sp"
+        android:text="2D" />
+
+    <Button
         android:id="@+id/button_tilt_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
         android:textColor="#424242"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:text="Tilt+" />
 
     <Button
@@ -21,6 +39,6 @@
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
         android:textColor="#424242"
-        android:textSize="50sp"
+        android:textSize="40sp"
         android:text="Tilt−" />
 </LinearLayout>

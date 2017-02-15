@@ -38,12 +38,24 @@ public class MapButtonFragment extends Fragment {
     }
 
     @OnClick(R.id.button_tilt_more)
-    public void tiltMore(){
+    public void onTiltMoreClicked(){
         presenter.onTiltMore();
     }
 
     @OnClick(R.id.button_tilt_less)
-    public void tiltLess(){
+    public void onTiltLessClicked(){
         presenter.onTiltLess();
     }
+
+    @OnClick(R.id.button_2d)
+    public void on2DClicked(){
+        presenter.changeTilt(0);
+    }
+
+    @OnClick(R.id.button_3d)
+    public void on3DClicked(){
+        presenter.changeTilt(90);
+    }
+
+
 }
