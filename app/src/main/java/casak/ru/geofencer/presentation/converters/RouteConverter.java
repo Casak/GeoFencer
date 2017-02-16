@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import casak.ru.geofencer.R;
 import casak.ru.geofencer.domain.model.Route;
 
 /**
@@ -16,7 +17,17 @@ public class RouteConverter {
 
         result.clickable(false);
         result.geodesic(true);
-        result.color(Color.CYAN);
+
+        switch (route.getType()){
+            case COMPUTED:
+                result.color(R.color.route_computed);
+                break;
+            case BASE:
+                result.color(R.color.route_base);
+                break;
+            default:
+                result.color(Color.BLACK);
+        }
 
         result.addAll(LatLngConverter.convertToLatLng(route.getRoutePoints()));
 

@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import casak.ru.geofencer.R;
 import casak.ru.geofencer.domain.model.Arrow;
 
 /**
@@ -15,7 +16,7 @@ public class ArrowConverter {
         PolylineOptions result = new PolylineOptions();
 
         result.clickable(true);
-        result.color(Color.YELLOW);
+        result.color(R.color.arrow);
         result.geodesic(true);
 
         result.addAll(LatLngConverter.convertToLatLng(arrow.getArrowPoints()));
