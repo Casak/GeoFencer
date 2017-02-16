@@ -2,6 +2,7 @@ package casak.ru.geofencer.injector.components;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
@@ -28,4 +29,6 @@ public interface AppComponent {
     MainThread getMainThread();
 
     LocationRepository getLocationRepository();
+
+    SharedPreferences getSharedPreferences();
 }

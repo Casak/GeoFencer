@@ -1,6 +1,8 @@
 package casak.ru.geofencer.injector.modules;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -52,5 +54,11 @@ public class AppModule {
     @Singleton
     LocationRepository providesLocationRepository(){
         return new LocationRepositoryImpl();
+    }
+
+    @Provides
+    @Singleton
+    SharedPreferences providesSharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }
