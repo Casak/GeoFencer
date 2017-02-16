@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import casak.ru.geofencer.domain.Constants;
+import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -31,13 +33,15 @@ public class PointerInteractorImplTest {
     @Mock
     public Point mMockLocation;
     @Mock
-    public MainThread mMockMainThread;
+    public Executor mMockExecutor;
     @Mock
-    public PointerInteractorImpl mInteractor;
+    public MainThread mMockMainThread;
     @Mock
     public RouteRepository mMockRouteRepository;
     @Mock
     public static Point mMockRealLocation;
+
+    public PointerInteractorImpl mInteractor;
 
     public static Route fieldBuildingRoute;
     public static List<Route> routes;
@@ -136,7 +140,7 @@ public class PointerInteractorImplTest {
 
         fieldBuildingRoute =
                 new Route(0, 0, Route.Type.BASE, routeBuildingRoutePoints);
-        computedRoutes = computeRouteModels(fieldBuildingRoute, true);
+        computedRoutes = computeRouteModels(fieldBuildingRoute);
 
     }
 
@@ -145,14 +149,17 @@ public class PointerInteractorImplTest {
         when(mMockRealLocation.getLatitude()).thenReturn(50.0d);
         when(mMockRealLocation.getLongitude()).thenReturn(30.0d);
 
-        when(mInteractor.getComputedRoutes(anyInt())).thenReturn(computedRoutes);
-        when(mInteractor.isStillCurrentRoute(any(Point.class))).thenCallRealMethod();
+        mInteractor = new PointerInteractorImpl(
+                mMockExecutor,
+                mMockMainThread,
+                mMockRouteRepository,
+                new PointerInteractor.Callback() {
+                    @Override
+                    public void showPointer(double value) {
 
-        when(mInteractor.getNearestPoint(any(Point.class), any(Point.class), any(Point.class)))
-                .thenCallRealMethod();
-        when(mInteractor.getNearestRoute(any(Point.class))).thenCallRealMethod();
-        when(mInteractor.getNearAndNextPoints(anyList(), any(Point.class))).thenCallRealMethod();
-        when(mInteractor.getNearestPoint(anyList(), any(Point.class))).thenCallRealMethod();
+                    }
+                }
+        );
     }
 
     @Ignore
@@ -208,9 +215,12 @@ public class PointerInteractorImplTest {
 
     @Test
     public void getNearestRoute_fromRealLocation_obtainComputedRoutes() {
-        Route result = mInteractor.getNearestRoute(mMockRealLocation);
+        PointerInteractorImpl mock = mock(PointerInteractorImpl.class);
+        when(mock.getNearestRoute(any(Point.class))).thenCallRealMethod();
 
-        verify(mInteractor).getComputedRoutes(anyInt());
+        Route result = mock.getNearestRoute(mMockRealLocation);
+
+        verify(mock).getComputedRoutes(anyInt());
     }
 
     @Test
@@ -227,15 +237,16 @@ public class PointerInteractorImplTest {
 
     @Test
     public void getNearestRoute_withoutRoutesInRepo_returnsNull() {
-        when(mInteractor.getComputedRoutes(anyInt()))
+        PointerInteractorImpl mock = mock(PointerInteractorImpl.class);
+        when(mock.getComputedRoutes(anyInt()))
                 .thenReturn(null)
                 .thenReturn(new ArrayList<Route>());
 
-        Route result = mInteractor.getNearestRoute(mMockRealLocation);
+        Route result = mock.getNearestRoute(mMockRealLocation);
 
         assertNull(result);
 
-        result = mInteractor.getNearestRoute(mMockRealLocation);
+        result = mock.getNearestRoute(mMockRealLocation);
 
         assertNull(result);
     }
@@ -254,6 +265,7 @@ public class PointerInteractorImplTest {
     public void isStillCurrentRoute_fromLocationOnCurrentRoute_returnTrue() {
         Route model = computedRoutes.get(0);
         when(mInteractor.getCurrentRoute(any(Point.class))).thenReturn(model);
+        mInteractor.setCurrentRoute(model);
 
         boolean result = mInteractor.isStillCurrentRoute(model.getRoutePoints().get(0));
 
@@ -262,8 +274,6 @@ public class PointerInteractorImplTest {
 
     @Test
     public void isStillCurrentRoute_fromLocationNotOnRoute_returnFalse() {
-        when(mInteractor.getCurrentRoute(any(Point.class))).thenReturn(computedRoutes.get(0));
-
         boolean result = mInteractor.isStillCurrentRoute(currentPoint);
 
         assertFalse(result);
@@ -328,7 +338,6 @@ public class PointerInteractorImplTest {
         assertTrue(result.isEmpty());
     }
 
-    @Ignore
     @Test
     public void getNearAndNextPoints_FromOnePointRoute_returnThisPoint() {
         List<Point> onePointList = new ArrayList<>();
@@ -340,7 +349,6 @@ public class PointerInteractorImplTest {
         assertEquals(result.get(0), nearPoint);
     }
 
-    @Ignore
     @Test
     public void getNearAndNextPoints_FromRouteAndPointAtStartOfTheRoute_returnThisPointAndTheNextOne() {
         List<Point> result = mInteractor.getNearAndNextPoints(listWithPoint, nearPoint);
@@ -355,8 +363,8 @@ public class PointerInteractorImplTest {
                 computedRoutePoints,
                 harvestingRoute.get(0));
 
-        assertEquals(result.get(0), computedRoutePoints.get(0));
-        assertEquals(result.get(1), computedRoutePoints.get(1));
+        assertEquals(result.get(0), computedRoutePoints.get(1));
+        assertEquals(result.get(1), computedRoutePoints.get(2));
     }
 
     @Ignore
@@ -376,7 +384,6 @@ public class PointerInteractorImplTest {
         assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size() - 1));
     }
 
-    @Ignore
     @Test
     public void getNearAndNextPoints_FromRouteAndPointAtCenterOfTheRoute_returnThisPointAndTheNextOne() {
         List<Point> result = mInteractor.getNearAndNextPoints(listWithPoint, listWithPoint.get(5));
@@ -389,12 +396,14 @@ public class PointerInteractorImplTest {
                 computedRoutePoints,
                 harvestingRoute.get(harvestingRoute.size() / 2));
 
-        assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size() / 2));
-        assertEquals(result.get(1), computedRoutePoints.get(computedRoutePoints.size() / 2 + 1));
+        Point expected1 = computedRoutePoints.get(computedRoutePoints.size() / 2 + 1);
+        Point expected2 = computedRoutePoints.get(computedRoutePoints.size() / 2 + 2);
+
+        assertEquals(expected1, result.get(0));
+        assertEquals(expected2, result.get(1));
     }
 
-
-    private static List<Route> computeRouteModels(Route fieldBuildingRoute, boolean toLeft) {
+    private static List<Route> computeRouteModels(Route fieldBuildingRoute) {
         //TODO Normal check
         if (fieldBuildingRoute == null)
             return null;
@@ -406,13 +415,12 @@ public class PointerInteractorImplTest {
         Point start = fieldBuildingPoints.get(0);
         Point end = fieldBuildingPoints.get(fieldBuildingPoints.size() - 1);
 
-        double arrowHeading = toLeft ? Constants.HEADING_TO_LEFT : Constants.HEADING_TO_RIGHT;
+        double arrowHeading = Constants.HEADING_TO_LEFT;
 
         double computedHeading = MapUtils.computeHeading(start, end);
         double normalHeading = computedHeading + arrowHeading;
 
         for (int i = 0; i < 4; i++) {
-
             List<Point> routePoints = computeNewPath(result.get(i).getRoutePoints(),
                     Constants.WIDTH_METERS,
                     normalHeading);

@@ -169,40 +169,12 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         if (computedRoutes == null || computedRoutes.size() == 0)
             return null;
 
-        for (Route model : computedRoutes)
-            if (MapUtils.isLocationOnPath(
-                    position,
-                    model.getRoutePoints(),
-                    true,
-                    width / 2
-            ))
+        for (Route model : computedRoutes) {
+            if (MapUtils.isLocationOnPath(position, model.getRoutePoints(), true, width / 2)) {
                 return model;
-
-        double[] distances = new double[computedRoutes.size()];
-        Point from = new Point(position.getLatitude(), position.getLongitude());
-        for (int i = 0; i < computedRoutes.size(); i++) {
-            List<Point> routePoints = computedRoutes.get(i).getRoutePoints();
-            if (routePoints == null || routePoints.size() < 2)
-                return null;
-
-            Point start = routePoints.get(0);
-            Point end = routePoints.get(routePoints.size() - 1);
-
-            double distance1 = MapUtils.computeDistanceBetween(from, start);
-            double distance2 = MapUtils.computeDistanceBetween(from, end);
-            double distance = distance1 < distance2 ? distance1 : distance2;
-            distances[i] = distance;
+            }
         }
-
-        Route result = null;
-        double previous = Double.MAX_VALUE;
-        for (int i = 0; i < distances.length; i++) {
-            if (distances[i] < previous)
-                result = computedRoutes.get(i);
-            previous = distances[i];
-        }
-
-        return result != null ? result : null;
+        return null;
     }
 
     //TODO Check implementation
