@@ -1,9 +1,14 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
+import android.util.LongSparseArray;
+import android.util.SparseArray;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -18,6 +23,8 @@ import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.injector.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
+import casak.ru.geofencer.presentation.converters.FieldConverter;
+import casak.ru.geofencer.presentation.converters.RouteConverter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 
@@ -96,7 +103,7 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
 
     }
 
-    //TODO Refactor
+    //TODO Refactor and check incoming data
     Map<Arrow, Polyline> arrowsMap = new HashMap<>();
 
     @Override
@@ -115,24 +122,48 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
         arrowsMap.remove(model);
     }
 
+    SparseArray<Polygon> fields = new SparseArray<>();
+
     @Override
     public void showField(Field model) {
+        PolygonOptions fieldOptions = FieldConverter.convertToPresentation(model);
 
+        Polygon polygon = mapView.showPolygon(fieldOptions);
+
+        fields.append(model.getId(), polygon);
     }
 
     @Override
     public void hideField(Field model) {
+        int fieldId = model.getId();
+        Polygon polygon = fields.get(fieldId);
 
+        polygon.setVisible(false);
+        polygon.remove();
+
+        fields.remove(fieldId);
     }
+
+    LongSparseArray<Polyline> routes = new LongSparseArray<>();
 
     @Override
     public void showRoute(Route model) {
+        PolylineOptions routeOptions = RouteConverter.convertToPresentation(model);
 
+        Polyline polyline = mapView.showPolyline(routeOptions);
+
+        routes.append(model.getId(), polyline);
     }
 
     @Override
     public void hideRoute(Route model) {
+        long routeId = model.getId();
+        Polyline polyline = routes.get(routeId);
 
+        polyline.setVisible(false);
+        polyline.remove();
+
+        routes.remove(routeId);
     }
 
     @Override
