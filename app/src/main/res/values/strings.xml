@@ -10,4 +10,8 @@
     <string name="location_manager" translatable="false">Location Manager</string>
     <string name="gps_enable_question">Would you like to enable GPS?</string>
 
+    <!--Preferences-->
+    <string name="pref_machinery_width">What is your machinery width?</string>
+    <string name="pref_machinery_width_dialog_title">In meters</string>
+
 </resources>
