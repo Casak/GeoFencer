@@ -5,4 +5,12 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <!--Map elements colors-->
+    <color name="field_fill">#7F00FF00</color>
+    <color name="field_stroke">#7F00F000</color>
+    <color name="harvested_fill">#7f0061ff</color>
+    <color name="harvested_stroke">#8f0061ff</color>
+    <color name="arrow">#9FF4F142</color>
+    <color name="route_computed">#9FFF00FF</color>
 </resources>
