@@ -16,7 +16,8 @@ import casak.ru.geofencer.presentation.presenters.base.BasePresenter;
  * Created on 09.02.2017.
  */
 
-public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor.Callback, OnMapReadyCallback {
+public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor.Callback,
+        OnMapReadyCallback, GoogleMap.OnPolylineClickListener {
     interface View {
         void setMap(GoogleMap googleMap);
 

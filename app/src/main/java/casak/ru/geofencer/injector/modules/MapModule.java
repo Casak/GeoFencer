@@ -4,6 +4,8 @@ import com.google.android.gms.maps.LocationSource;
 
 
 import casak.ru.geofencer.bluetooth.BluetoothAntennaLocationSource;
+import casak.ru.geofencer.domain.executor.Executor;
+import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
@@ -38,8 +40,10 @@ public class MapModule {
 
     @Provides
     @ActivityScope
-    GoogleMapPresenter providesGoogleMapsPresenter(LocationSource locationSource) {
-        return new GoogleMapPresenterImpl(mapView, locationSource);
+    GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
+                                                   MainThread mainThread,
+                                                   LocationSource locationSource) {
+        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView, locationSource);
     }
 
     @Provides
