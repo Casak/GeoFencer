@@ -17,6 +17,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import casak.ru.geofencer.domain.executor.Executor;
+import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
@@ -26,6 +28,7 @@ import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
 import casak.ru.geofencer.presentation.converters.RouteConverter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
+import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 
 /**
@@ -33,7 +36,7 @@ import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
  */
 
 @ActivityScope
-public class GoogleMapPresenterImpl implements GoogleMapPresenter {
+public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleMapPresenter {
     private static final String TAG = GoogleMapPresenterImpl.class.getSimpleName();
 
     private boolean isFieldBuilding;
@@ -43,7 +46,10 @@ public class GoogleMapPresenterImpl implements GoogleMapPresenter {
     private CreateFieldInteractor interactor;
 
     @Inject
-    public GoogleMapPresenterImpl(GoogleMapPresenter.View mapView, LocationSource locationSource) {
+    public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
+                                  GoogleMapPresenter.View mapView, LocationSource locationSource) {
+        super(executor, mainThread);
+
         this.mapView = mapView;
         this.locationSource = locationSource;
 
