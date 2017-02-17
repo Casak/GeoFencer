@@ -44,11 +44,10 @@ public class BuildArrowModelsInteractorImpl extends AbstractInteractor implement
         leftArrow = createArrow(route, true);
         rightArrow = createArrow(route, false);
         if (leftArrow != null && rightArrow != null) {
-            mArrowRepository.addArrow(leftArrow, fieldId);
-            mArrowRepository.addArrow(rightArrow, fieldId);
+            mArrowRepository.add(leftArrow, fieldId);
+            mArrowRepository.add(rightArrow, fieldId);
             mCallback.onArrowsBuildFinished(fieldId);
-        }
-        else mCallback.onArrowsBuildFailed(fieldId);
+        } else mCallback.onArrowsBuildFailed(fieldId);
     }
 
     Arrow createArrow(Route route, boolean toLeft) {

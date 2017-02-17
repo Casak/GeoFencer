@@ -9,9 +9,11 @@ public interface BuildArrowModelsInteractor extends Interactor {
 
     interface Callback {
         void onArrowsBuildFinished(long fieldId);
+
         void onArrowsBuildFailed(long fieldId);
     }
 
     Arrow getLeftArrow();
+
     Arrow getRightArrow();
 }

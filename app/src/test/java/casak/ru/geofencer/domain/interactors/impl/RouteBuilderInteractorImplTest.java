@@ -58,8 +58,8 @@ public class RouteBuilderInteractorImplTest {
     @Before
     public void setUp() {
         List<Point> points = new ArrayList<>();
-        Point point2 = new Point(50.4236812,30.4266095);
-        Point point3 = new Point(50.4236714,30.4266477);
+        Point point2 = new Point(50.4236812, 30.4266095);
+        Point point3 = new Point(50.4236714, 30.4266477);
         points.add(point);
         points.add(point2);
         points.add(point3);
@@ -114,7 +114,7 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_askForFieldBuildingRoute() {
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
@@ -125,7 +125,7 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
@@ -135,18 +135,18 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void createComputedRoutes_askForLeftArrow() {
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);
 
-        verify(mMockArrowRepository).getLeftArrow(FIELD_ID);
+        verify(mMockArrowRepository).getLeft(FIELD_ID);
     }
 
     @Test
-    public void createComputedRoutes_callCallback(){
+    public void createComputedRoutes_callCallback() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
-        when(mMockArrowRepository.getLeftArrow(FIELD_ID)).thenReturn(mLeftArrow);
+        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 
         mInteractor.createComputedRoutes(FIELD_ID);

@@ -1,6 +1,7 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -118,9 +119,9 @@ public class CreateFieldInteractorImplTest {
 
         verify(mMockedCreateFieldCallback, times(2)).showArrow(any(Arrow.class));
     }
-
+    
     @Test
-    public void onArrowClick_shouldSetChosen() {
+    public void onArrowClick_shouldSetChosenAtArrowInteractor() {
         mInteractor.onArrowClick(mMockArrow);
 
         verify(mMockArrow).setChosen(true);

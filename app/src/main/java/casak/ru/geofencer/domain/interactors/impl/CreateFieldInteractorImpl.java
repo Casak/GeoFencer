@@ -114,8 +114,8 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void onArrowsBuildFinished(long fieldId) {
-        mCallback.showArrow(mArrowRepository.getLeftArrow(fieldId));
-        mCallback.showArrow(mArrowRepository.getRightArrow(fieldId));
+        mCallback.showArrow(mArrowRepository.getLeft(fieldId));
+        mCallback.showArrow(mArrowRepository.getRight(fieldId));
     }
 
     @Override
@@ -132,9 +132,9 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     @Override
     public void onFieldBuildFinish() {
         field = mFieldRepository.getField(fieldId);
-        mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
-        mCallback.hideArrow(mArrowRepository.getLeftArrow(fieldId));
-        mArrowRepository.deleteArrows(fieldId);
+        mCallback.hideArrow(mArrowRepository.getLeft(fieldId));
+        mCallback.hideArrow(mArrowRepository.getLeft(fieldId));
+        mArrowRepository.delete(fieldId);
         mCallback.showField(field);
 
         createComputedRoutes();

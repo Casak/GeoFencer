@@ -68,9 +68,9 @@ public class BuildFieldInteractorImplTest {
 
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRoute);
-        when(mMockArrowRepository.getLeftArrow(anyInt()))
+        when(mMockArrowRepository.getLeft(anyInt()))
                 .thenReturn(mLeftArrow);
-        when(mMockArrowRepository.getRightArrow(anyInt()))
+        when(mMockArrowRepository.getRight(anyInt()))
                 .thenReturn(mRightArrow);
 
         mFieldBuildingRoute.setRoutePoints(points);
@@ -99,7 +99,7 @@ public class BuildFieldInteractorImplTest {
     }
 
     @Test
-    public void run_withChosenArrow_shouldAddFieldToRepo(){
+    public void run_withChosenArrow_shouldAddFieldToRepo() {
         mLeftArrow.setChosen(true);
         mRightArrow.setChosen(false);
 
@@ -129,7 +129,7 @@ public class BuildFieldInteractorImplTest {
     }
 
     @Test
-    public void run_withChosenArrow_callsFinishCallback(){
+    public void run_withChosenArrow_callsFinishCallback() {
         mLeftArrow.setChosen(true);
 
         mInteractor.run();
@@ -138,7 +138,7 @@ public class BuildFieldInteractorImplTest {
     }
 
     @Test
-    public void run_withoutChosenArrow_callFailCallback(){
+    public void run_withoutChosenArrow_callFailCallback() {
         mLeftArrow.setChosen(false);
         mRightArrow.setChosen(false);
 
@@ -148,7 +148,7 @@ public class BuildFieldInteractorImplTest {
     }
 
     @Test
-    public void buildField_withoutPoints_callsFailCallback(){
+    public void buildField_withoutPoints_callsFailCallback() {
         mInteractor.buildField(null, null, true);
 
         Mockito.verify(mMockedCallback).onFieldBuildFail();

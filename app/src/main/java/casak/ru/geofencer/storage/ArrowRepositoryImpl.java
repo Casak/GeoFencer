@@ -26,22 +26,22 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public List<Arrow> getArrows(long fieldId) {
+    public List<Arrow> get(long fieldId) {
         return warehouse.get(fieldId);
     }
 
     @Override
-    public Arrow getLeftArrow(long fieldId) {
+    public Arrow getLeft(long fieldId) {
         return getArrow(fieldId, Arrow.Type.LEFT);
     }
 
     @Override
-    public Arrow getRightArrow(long fieldId) {
+    public Arrow getRight(long fieldId) {
         return getArrow(fieldId, Arrow.Type.RIGHT);
     }
 
     @Override
-    public void addArrow(Arrow arrow, long fieldId) {
+    public void add(Arrow arrow, long fieldId) {
         List<Arrow> arrows = warehouse.get(fieldId);
         if (arrows == null)
             arrows = new LinkedList<>();
@@ -50,7 +50,7 @@ public class ArrowRepositoryImpl implements ArrowRepository {
     }
 
     @Override
-    public void deleteArrows(long fieldId) {
+    public void delete(long fieldId) {
         warehouse.remove(fieldId);
     }
 

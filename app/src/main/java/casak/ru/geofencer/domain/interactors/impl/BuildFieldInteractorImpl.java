@@ -45,8 +45,8 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     public void run() {
         Route route = mRouteRepository.getBaseRoute(fieldId);
 
-        Arrow leftArrow = mArrowRepository.getLeftArrow(fieldId);
-        Arrow rightArrow = mArrowRepository.getRightArrow(fieldId);
+        Arrow leftArrow = mArrowRepository.getLeft(fieldId);
+        Arrow rightArrow = mArrowRepository.getRight(fieldId);
 
         if (!leftArrow.isChosen() && !rightArrow.isChosen()) {
             mCallback.onFieldBuildFail();
@@ -77,7 +77,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     }
 
     List<Point> computeCorners(Point start, Point end, double width, boolean toLeft) {
-        if(start == null || end == null || width == 0.0)
+        if (start == null || end == null || width == 0.0)
             return null;
         double heading = MapUtils.computeHeading(start, end);
         double offset = width == 0 ? 0d : width / 2;

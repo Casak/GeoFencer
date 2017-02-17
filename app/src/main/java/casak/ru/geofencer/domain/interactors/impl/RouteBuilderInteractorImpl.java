@@ -72,7 +72,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     @Override
     public void createComputedRoutes(int fieldId) {
         Route fieldBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
-        boolean toLeft = mArrowRepository.getLeftArrow(fieldId).isChosen();
+        boolean toLeft = mArrowRepository.getLeft(fieldId).isChosen();
 
         List<Route> result = computeRouteModels(fieldBuildingRoute, toLeft);
         if (result != null)

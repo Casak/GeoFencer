@@ -42,18 +42,17 @@ public class BuildArrowModelsInteractorImplTest {
     @Mock
     static ArrowRepository mMockArrowRepository;
 
-    static BuildArrowModelsInteractor mInteractor;
+    static BuildArrowModelsInteractorImpl mInteractor;
 
     Route mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE);
 
 
-
     @Before
-    public void setUp(){
+    public void setUp() {
         List<Point> points = new ArrayList<>();
-        Point point1 = new Point(50.4236835,30.4266010);
-        Point point2 = new Point(50.4236812,30.4266095);
-        Point point3 = new Point(50.4236714,30.4266477);
+        Point point1 = new Point(50.4236835, 30.4266010);
+        Point point2 = new Point(50.4236812, 30.4266095);
+        Point point3 = new Point(50.4236714, 30.4266477);
         points.add(point1);
         points.add(point2);
         points.add(point3);
@@ -83,62 +82,57 @@ public class BuildArrowModelsInteractorImplTest {
     }
 
     @Test
-    public void run_from3PointsRoute_finishedCallbackIsCalled(){
+    public void run_from3PointsRoute_finishedCallbackIsCalled() {
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRoute);
 
-        ((BuildArrowModelsInteractorImpl)mInteractor).run();
+        mInteractor.run();
 
         verify(mMockedCallback).onArrowsBuildFinished(mFieldBuildingRoute.getFieldId());
     }
 
     @Test
-    public void run_from3PointsRoute_2ArrowsCreated(){
+    public void run_from3PointsRoute_2ArrowsCreated() {
         when(mMockRouteRepository.getBaseRoute(FIELD_ID))
                 .thenReturn(mFieldBuildingRoute);
 
-        ((BuildArrowModelsInteractorImpl)mInteractor).run();
+        mInteractor.run();
 
         assertNotNull(mInteractor.getLeftArrow());
         assertNotNull(mInteractor.getRightArrow());
     }
 
     @Test
-    public void createArrow_fromNullRoute_nullReturned(){
+    public void createArrow_fromNullRoute_nullReturned() {
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 
-        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor).createArrow(mMockRoute, true);
+        Arrow result = mInteractor.createArrow(mMockRoute, true);
 
         assertNull(result);
     }
 
     @Test
-    public void createArrow_from3PointsRoute_modelReturned(){
-        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor)
-                .createArrow(mFieldBuildingRoute, true);
+    public void createArrow_from3PointsRoute_modelReturned() {
+        Arrow result = mInteractor.createArrow(mFieldBuildingRoute, true);
 
         assertNotNull(result);
     }
 
     @Test
-    public void createArrow_from3PointsRoute_leftModelReturned(){
-        Arrow result = ((BuildArrowModelsInteractorImpl)mInteractor)
-                .createArrow(mFieldBuildingRoute, true);
+    public void createArrow_from3PointsRoute_leftModelReturned() {
+        Arrow result = mInteractor.createArrow(mFieldBuildingRoute, true);
 
         assertTrue(result.getType() == Arrow.Type.LEFT);
     }
 
     @Test
-    public void createArrow_fromNullRoute_failCallbackIsCalled(){
+    public void createArrow_fromNullRoute_failCallbackIsCalled() {
         when(mMockRouteRepository.getBaseRoute(mMockRoute.getFieldId()))
                 .thenReturn(mMockRoute);
         when(mMockRoute.getRoutePoints()).thenReturn(null);
 
-        ((BuildArrowModelsInteractorImpl)mInteractor).run();
+        mInteractor.run();
 
         verify(mMockedCallback).onArrowsBuildFailed(mFieldBuildingRoute.getFieldId());
-
-
     }
-
 }
