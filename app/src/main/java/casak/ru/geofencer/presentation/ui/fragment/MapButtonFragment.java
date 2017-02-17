@@ -1,6 +1,7 @@
 package casak.ru.geofencer.presentation.ui.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
+import casak.ru.geofencer.presentation.ui.activities.SettingsActivity;
 
 /**
  * Created on 15.02.2017.
@@ -73,5 +75,11 @@ public class MapButtonFragment extends Fragment {
     @OnClick(R.id.button_zoom_less)
     public void onZoomLessClicked() {
         presenter.onZoomLess();
+    }
+
+    @OnClick(R.id.button_settings)
+    public void onSettingsClicked() {
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        startActivity(intent);
     }
 }
