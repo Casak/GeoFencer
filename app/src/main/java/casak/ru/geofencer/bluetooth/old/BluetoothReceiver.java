@@ -1,4 +1,4 @@
-package casak.ru.geofencer.bluetooth;
+package casak.ru.geofencer.bluetooth.old;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -140,7 +140,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 //    tmpListener = presenter.getLocationListener();
                 //if (tmpListener != null)
                 //    listener = tmpListener;
-               // else listener = null;
+                // else listener = null;
 
                 while ((length = in.read(buffer)) != -1) {
                     result.write(buffer, 0, length);

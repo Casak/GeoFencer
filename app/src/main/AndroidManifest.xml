@@ -35,7 +35,7 @@
             android:theme="@style/AppTheme" />
 
         <receiver
-            android:name=".bluetooth.BluetoothReceiver"
+            android:name=".bluetooth.old.BluetoothReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

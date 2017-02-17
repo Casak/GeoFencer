@@ -1,4 +1,4 @@
-package casak.ru.geofencer.bluetooth;
+package casak.ru.geofencer.bluetooth.old;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;

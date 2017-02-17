@@ -1,4 +1,4 @@
-package casak.ru.geofencer.bluetooth;
+package casak.ru.geofencer.bluetooth.old;
 
 import android.util.Log;
 
@@ -28,7 +28,7 @@ public class BluetoothAntennaLocationSource implements LocationSource {
         Log.d(TAG, "Deactivating BluetoothAntennaLocationSource");
     }
 
-    static public OnLocationChangedListener getListener(){
+    static public OnLocationChangedListener getListener() {
         return locationChangedListener;
     }
 }

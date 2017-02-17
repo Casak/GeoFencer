@@ -3,7 +3,7 @@ package casak.ru.geofencer.di.modules;
 import com.google.android.gms.maps.LocationSource;
 
 
-import casak.ru.geofencer.bluetooth.BluetoothAntennaLocationSource;
+import casak.ru.geofencer.bluetooth.old.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
