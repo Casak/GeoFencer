@@ -3,7 +3,6 @@ package casak.ru.geofencer.domain.interactors.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
@@ -28,13 +27,16 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     private FieldRepository mFieldRepository;
     private Field mField;
     private int fieldId;
+    private int machineryWidth;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                     BuildFieldInteractor.Callback callback, RouteRepository routeRepository,
                                     ArrowRepository arrowRepository, FieldRepository fieldRepository,
-                                    int fieldId) {
+                                    int fieldId, int machineryWidth) {
         super(threadExecutor, mainThread);
         this.fieldId = fieldId;
+        this.machineryWidth = machineryWidth;
+
         mCallback = callback;
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
@@ -64,8 +66,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
     Field buildField(Point start, Point end, boolean toLeft) {
         Field field = new Field(1, computeCorners(start,
                 end,
-                //TODO Implement different sizes
-                Constants.WIDTH_METERS,
+                machineryWidth,
                 toLeft));
 
         if (field.getPoints() != null)

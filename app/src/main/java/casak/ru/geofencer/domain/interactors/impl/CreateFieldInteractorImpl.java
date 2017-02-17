@@ -28,6 +28,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
+    private LocationRepository mLocationRepository;
     private RouteBuilderInteractor mRouteBuilderInteractor;
     private BuildArrowModelsInteractor mArrowsInteractor;
     private BuildFieldInteractor mBuildFieldInteractor;
@@ -48,16 +49,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
         mFieldRepository = fieldRepository;
-
-        //TODO Move locationRepository usage logic to a class
-        mRouteBuilderInteractor = new RouteBuilderInteractorImpl(
-                mThreadExecutor,
-                mMainThread,
-                this,
-                locationRepository,
-                mRouteRepository,
-                mArrowRepository,
-                fieldId);
+        mLocationRepository = locationRepository;
 
         mArrowsInteractor = new BuildArrowModelsInteractorImpl(
                 mThreadExecutor,
@@ -66,7 +58,10 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 mRouteRepository,
                 mArrowRepository,
                 fieldId);
+    }
 
+    @Override
+    public void setMachineryWidth(int width) {
         mBuildFieldInteractor = new BuildFieldInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
@@ -74,7 +69,19 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 mRouteRepository,
                 mArrowRepository,
                 mFieldRepository,
-                fieldId);
+                fieldId,
+                width);
+
+        //TODO Move locationRepository usage logic to a class
+        mRouteBuilderInteractor = new RouteBuilderInteractorImpl(
+                mThreadExecutor,
+                mMainThread,
+                this,
+                mLocationRepository,
+                mRouteRepository,
+                mArrowRepository,
+                fieldId,
+                width);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
+import android.content.SharedPreferences;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
@@ -63,6 +65,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         if (interactor == null) {
             interactor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
         }
+
+        SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
+        int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
+
+        interactor.setMachineryWidth(width);
         interactor.execute();
         interactor.onStartCreatingRouteClick();
     }

@@ -34,13 +34,15 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private int fieldId;
+    private int machineryWidth;
 
     public RouteBuilderInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                       RouteBuilderInteractor.Callback callback, LocationRepository locationRepository,
                                       RouteRepository routeRepository, ArrowRepository arrowRepository,
-                                      int fieldId) {
+                                      int fieldId, int machineryWidth) {
         super(threadExecutor, mainThread);
         this.fieldId = fieldId;
+        this.machineryWidth = machineryWidth;
 
         mCallback = callback;
         mLocationRepository = locationRepository;
@@ -101,7 +103,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
         for (int i = 0; i < 4; i++) {
             List<Point> routePoints = computeNewPath(fieldBuildingPoints,
-                    Constants.WIDTH_METERS,
+                    machineryWidth,
                     normalHeading);
 
             //TODO Create via repo
