@@ -44,11 +44,6 @@
             </intent-filter>
         </receiver>
 
-        <provider
-            android:name=".CoordContentProvider"
-            android:authorities="ru.casak.geofencer"
-            android:exported="false" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

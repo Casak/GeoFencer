@@ -22,11 +22,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.injector.components.DaggerMapComponent;
-import casak.ru.geofencer.injector.components.MapComponent;
-import casak.ru.geofencer.injector.modules.MapModule;
+import casak.ru.geofencer.di.components.DaggerMapComponent;
+import casak.ru.geofencer.di.components.MapComponent;
+import casak.ru.geofencer.di.modules.MapModule;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
-import casak.ru.geofencer.presentation.ui.activities.BaseActivity;
+import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
 /**
  * Created on 08.02.2017.

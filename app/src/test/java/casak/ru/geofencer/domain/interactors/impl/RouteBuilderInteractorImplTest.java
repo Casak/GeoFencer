@@ -11,6 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
@@ -79,7 +80,8 @@ public class RouteBuilderInteractorImplTest {
                 mMockLocationRepository,
                 mMockRouteRepository,
                 mMockArrowRepository,
-                FIELD_ID
+                FIELD_ID,
+                Constants.WIDTH_METERS
         );
     }
 

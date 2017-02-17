@@ -1,4 +1,4 @@
-package casak.ru.geofencer.injector.modules;
+package casak.ru.geofencer.di.modules;
 
 import com.google.android.gms.maps.LocationSource;
 
@@ -11,7 +11,7 @@ import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
-import casak.ru.geofencer.injector.scopes.ActivityScope;
+import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.GoogleMapPresenterImpl;
 import casak.ru.geofencer.storage.ArrowRepositoryImpl;

@@ -5,9 +5,9 @@ import android.app.Application;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
-import casak.ru.geofencer.injector.components.AppComponent;
-import casak.ru.geofencer.injector.components.DaggerAppComponent;
-import casak.ru.geofencer.injector.modules.AppModule;
+import casak.ru.geofencer.di.components.AppComponent;
+import casak.ru.geofencer.di.components.DaggerAppComponent;
+import casak.ru.geofencer.di.modules.AppModule;
 
 /**
  * Created on 01.02.2017.

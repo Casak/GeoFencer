@@ -28,8 +28,6 @@ import java.util.UUID;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.storage.db.Contract;
-import casak.ru.geofencer.presentation.presenters.impl.MapPresenter;
-import casak.ru.geofencer.presentation.ui.activities.MapActivity;
 import casak.ru.geofencer.threading.MainThreadImpl;
 
 public class BluetoothReceiver extends BroadcastReceiver {
@@ -134,15 +132,15 @@ public class BluetoothReceiver extends BroadcastReceiver {
 
 
                 MainThread mainThread = new MainThreadImpl();
-                MapPresenter presenter = MapActivity.mapPresenter;
+                //MapPresenter presenter = MapActivity.mapPresenter;
                 final LocationListener listener;
                 LocationListener tmpListener = null;
 
-                if (presenter != null)
-                    tmpListener = presenter.getLocationListener();
-                if (tmpListener != null)
-                    listener = tmpListener;
-                else listener = null;
+                //if (presenter != null)
+                //    tmpListener = presenter.getLocationListener();
+                //if (tmpListener != null)
+                //    listener = tmpListener;
+               // else listener = null;
 
                 while ((length = in.read(buffer)) != -1) {
                     result.write(buffer, 0, length);
@@ -154,7 +152,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                             mainThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    listener.onLocationChanged(newLocation);
+                                    //listener.onLocationChanged(newLocation);
                                 }
                             });
                         BluetoothAntennaLocationSource.getListener().onLocationChanged(newLocation);

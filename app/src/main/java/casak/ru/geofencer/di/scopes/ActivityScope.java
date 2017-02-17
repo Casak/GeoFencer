@@ -1,4 +1,4 @@
-package casak.ru.geofencer.injector.scopes;
+package casak.ru.geofencer.di.scopes;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

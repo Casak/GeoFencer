@@ -1,9 +1,9 @@
-package casak.ru.geofencer.injector.components;
+package casak.ru.geofencer.di.components;
 
 import android.app.Activity;
 
-import casak.ru.geofencer.injector.modules.ActivityModule;
-import casak.ru.geofencer.injector.scopes.ActivityScope;
+import casak.ru.geofencer.di.modules.ActivityModule;
+import casak.ru.geofencer.di.scopes.ActivityScope;
 import dagger.Component;
 
 /**

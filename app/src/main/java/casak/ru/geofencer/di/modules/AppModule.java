@@ -1,11 +1,8 @@
-package casak.ru.geofencer.injector.modules;
+package casak.ru.geofencer.di.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 import javax.inject.Singleton;
 
@@ -14,7 +11,6 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
 import casak.ru.geofencer.domain.repository.LocationRepository;
-import casak.ru.geofencer.injector.scopes.ActivityScope;
 import casak.ru.geofencer.storage.LocationRepositoryImpl;
 import casak.ru.geofencer.threading.MainThreadImpl;
 import dagger.Module;

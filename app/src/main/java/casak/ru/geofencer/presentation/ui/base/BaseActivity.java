@@ -1,13 +1,13 @@
-package casak.ru.geofencer.presentation.ui.activities;
+package casak.ru.geofencer.presentation.ui.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
 import casak.ru.geofencer.AndroidApplication;
-import casak.ru.geofencer.injector.components.AbstractActivityComponent;
-import casak.ru.geofencer.injector.components.DaggerAbstractActivityComponent;
-import casak.ru.geofencer.injector.modules.ActivityModule;
+import casak.ru.geofencer.di.components.AbstractActivityComponent;
+import casak.ru.geofencer.di.components.DaggerAbstractActivityComponent;
+import casak.ru.geofencer.di.modules.ActivityModule;
 
 /**
  * Created on 08.02.2017.

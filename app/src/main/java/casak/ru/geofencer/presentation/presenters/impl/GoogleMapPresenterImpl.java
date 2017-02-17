@@ -25,7 +25,7 @@ import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Route;
-import casak.ru.geofencer.injector.scopes.ActivityScope;
+import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
 import casak.ru.geofencer.presentation.converters.RouteConverter;

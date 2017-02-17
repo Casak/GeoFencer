@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
 
 /**
