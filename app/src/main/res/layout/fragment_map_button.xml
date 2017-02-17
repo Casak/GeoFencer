@@ -4,8 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--TODO STRING RESOURCES, bastard-->
+    <!--TODO STRING RESOURCES, @colors, bastard-->
 
+    <Button
+        android:id="@+id/button_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B3FAFAFA"
+        android:text="Settings"
+        android:textColor="#424242"
+        android:textSize="30sp" />
     <Button
         android:id="@+id/button_change_type"
         android:layout_width="wrap_content"

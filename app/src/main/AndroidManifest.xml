@@ -27,6 +27,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".presentation.ui.activities.SettingsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/settings_name"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" />
+
         <receiver
             android:name=".bluetooth.BluetoothReceiver"
             android:enabled="true"
