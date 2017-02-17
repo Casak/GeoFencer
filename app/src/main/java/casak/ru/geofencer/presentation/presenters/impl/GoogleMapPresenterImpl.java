@@ -80,6 +80,18 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     }
 
     @Override
+    public void onPolylineClick(Polyline polyline) {
+        for (Map.Entry<Arrow, Polyline> e : arrowsMap.entrySet()) {
+            Arrow key = e.getKey();
+            Polyline value = e.getValue();
+            if (value.equals(polyline)) {
+                interactor.onArrowClick(key);
+                break;
+            }
+        }
+    }
+
+    @Override
     public boolean isFieldBuilding() {
         return isFieldBuilding;
     }
