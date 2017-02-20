@@ -6,7 +6,6 @@ import java.util.List;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;
@@ -18,8 +17,7 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
  * Created on 05.01.2017.
  */
 //TODO Callbacks
-public class RouteBuilderInteractorImpl extends AbstractInteractor implements RouteBuilderInteractor, LocationInteractor.OnLocationChanged {
-
+public class RouteBuilderInteractorImpl extends AbstractInteractor implements RouteBuilderInteractor {
     private static final String TAG = RouteBuilderInteractorImpl.class.getSimpleName();
 
     private static Route mFieldBuildingRoute;
@@ -58,6 +56,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     @Override
     public void finish() {
         isBuildingRoute = false;
+
         mRouteRepository.addRouteModel(mFieldBuildingRoute);
     }
 

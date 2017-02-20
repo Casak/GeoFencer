@@ -8,12 +8,13 @@ import casak.ru.geofencer.domain.model.Route;
  * Created on 05.01.2017.
  */
 
-public interface RouteBuilderInteractor extends Interactor{
+public interface RouteBuilderInteractor extends Interactor, LocationInteractor.OnLocationChanged {
 
-    interface Callback{
+    interface Callback {
         void routeBuildingFinished(Route route);
     }
 
     void finish();
+
     void createComputedRoutes(int fieldId);
 }
