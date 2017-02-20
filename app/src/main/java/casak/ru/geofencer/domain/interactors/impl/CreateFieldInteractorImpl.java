@@ -103,7 +103,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public void routeBuildingFinished(Route route) {
+    public void routeBuildingFinished(final Route route) {
         Route.Type routeType = route.getType();
         switch (routeType) {
             case BASE:
@@ -115,15 +115,25 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                     field = mFieldRepository.getField(fieldId);
                 field.addRoute(route);
                 mFieldRepository.updateField(field);
-                mCallback.showRoute(route);
+                mMainThread.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.showRoute(route);
+                    }
+                });
                 break;
         }
     }
 
     @Override
-    public void onArrowsBuildFinished(long fieldId) {
-        mCallback.showArrow(mArrowRepository.getLeft(fieldId));
-        mCallback.showArrow(mArrowRepository.getRight(fieldId));
+    public void onArrowsBuildFinished(final long fieldId) {
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.showArrow(mArrowRepository.getLeft(fieldId));
+                mCallback.showArrow(mArrowRepository.getRight(fieldId));
+            }
+        });
     }
 
     @Override
@@ -133,6 +143,17 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void onArrowClick(Arrow model) {
+        final Arrow left = mArrowRepository.getLeft(fieldId);
+        final Arrow right = mArrowRepository.getRight(fieldId);
+
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.hideArrow(left);
+                mCallback.hideArrow(right);
+            }
+        });
+
         model.setChosen(true);
         mBuildFieldInteractor.execute();
     }
@@ -140,10 +161,13 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     @Override
     public void onFieldBuildFinish() {
         field = mFieldRepository.getField(fieldId);
-        mCallback.hideArrow(mArrowRepository.getLeft(fieldId));
-        mCallback.hideArrow(mArrowRepository.getLeft(fieldId));
-        mArrowRepository.delete(fieldId);
-        mCallback.showField(field);
+
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.showField(field);
+            }
+        });
 
         createComputedRoutes();
     }
@@ -153,13 +177,13 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         //TODO Error handling
     }
 
-
     private void createArrows() {
         mArrowsInteractor.execute();
     }
 
     private void createComputedRoutes() {
         mRouteBuilderInteractor.createComputedRoutes(fieldId);
+        mArrowRepository.delete(fieldId);
     }
 
     //TODO implement method

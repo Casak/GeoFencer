@@ -60,19 +60,22 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         boolean toLeft = leftArrow.isChosen();
 
         mField = buildField(start, end, toLeft);
-        mFieldRepository.addField(mField);
     }
 
     Field buildField(Point start, Point end, boolean toLeft) {
-        Field field = new Field(1, computeCorners(start,
-                end,
-                machineryWidth,
-                toLeft));
+        Field field = new Field(
+                fieldId,
+                computeCorners(start,
+                        end,
+                        machineryWidth,
+                        toLeft));
 
-        if (field.getPoints() != null)
+        if (field.getPoints() != null) {
+            mFieldRepository.addField(field);
             mCallback.onFieldBuildFinish();
-        else
+        } else {
             mCallback.onFieldBuildFail();
+        }
 
         return field;
     }

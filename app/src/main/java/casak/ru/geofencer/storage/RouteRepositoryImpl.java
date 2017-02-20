@@ -62,7 +62,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     public boolean addRouteModel(Route model) {
         casak.ru.geofencer.storage.model.Route result = RouteConverter.convertToStorageModel(model);
 
-        result.insert();
+        result.update();
         return true;
     }
 }

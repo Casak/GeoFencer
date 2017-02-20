@@ -74,6 +74,7 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 map = googleMap;
+                map.setOnPolylineClickListener(presenter);
             }
         });
 

@@ -58,6 +58,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         isBuildingRoute = false;
 
         mRouteRepository.addRouteModel(mFieldBuildingRoute);
+        mCallback.routeBuildingFinished(mFieldBuildingRoute);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         double normalHeading = computedHeading + arrowHeading;
 
         //TODO Check values
-        int offset = machineryWidth;
+        int offset = 0;
         for (int i = 0; i < 4; i++) {
             List<Point> routePoints = computeNewPath(fieldBuildingPoints,
                     offset += machineryWidth,
