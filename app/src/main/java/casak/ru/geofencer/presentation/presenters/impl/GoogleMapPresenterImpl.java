@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
@@ -47,6 +48,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     private LocationSource locationSource;
     private CreateFieldInteractor interactor;
 
+    private AntennaDataProvider dataProvider;
+
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
                                   GoogleMapPresenter.View mapView, LocationSource locationSource) {
@@ -54,6 +57,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         this.mapView = mapView;
         this.locationSource = locationSource;
+        //TODO Inject
+        dataProvider = new AntennaDataProvider();
 
         isFieldBuilding = false;
     }
@@ -70,6 +75,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
 
         interactor.setMachineryWidth(width);
+
+        dataProvider.registerObserver(interactor.getOnLocationChangedListener());
+
         interactor.execute();
         interactor.onStartCreatingRouteClick();
     }
@@ -77,13 +85,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     @Override
     public void finishBuildField() {
         isFieldBuilding = false;
+        dataProvider.removeObserver(interactor.getOnLocationChangedListener());
         interactor.onFinishCreatingRouteClick();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        googleMap.setLocationSource(locationSource);
-        mapView.setMap(googleMap);
     }
 
     @Override
