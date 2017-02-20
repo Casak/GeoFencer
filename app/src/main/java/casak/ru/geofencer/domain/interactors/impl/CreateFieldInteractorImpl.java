@@ -28,7 +28,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private RouteRepository mRouteRepository;
     private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
-    private LocationRepository mLocationRepository;
     private RouteBuilderInteractor mRouteBuilderInteractor;
     private BuildArrowModelsInteractor mArrowsInteractor;
     private BuildFieldInteractor mBuildFieldInteractor;
@@ -40,7 +39,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
                                      CreateFieldInteractor.Callback callback,
                                      RouteRepository routeRepository, ArrowRepository arrowRepository,
-                                     FieldRepository fieldRepository, LocationRepository locationRepository) {
+                                     FieldRepository fieldRepository) {
         super(threadExecutor, mainThread);
         //TODO Fix it, bastard
         fieldId = computeFieldId();
@@ -49,7 +48,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
         mFieldRepository = fieldRepository;
-        mLocationRepository = locationRepository;
 
         mArrowsInteractor = new BuildArrowModelsInteractorImpl(
                 mThreadExecutor,
@@ -72,12 +70,10 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 fieldId,
                 width);
 
-        //TODO Move locationRepository usage logic to a class
         mRouteBuilderInteractor = new RouteBuilderInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
                 this,
-                mLocationRepository,
                 mRouteRepository,
                 mArrowRepository,
                 fieldId,

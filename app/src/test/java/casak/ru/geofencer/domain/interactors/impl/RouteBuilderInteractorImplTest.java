@@ -54,7 +54,7 @@ public class RouteBuilderInteractorImplTest {
     static Point point = new Point(50.4236835, 30.4266010);
 
     static Route mFieldBuildingRoute;
-
+    static Route mComputedBuildingRoute;
 
     @Before
     public void setUp() {
@@ -66,6 +66,7 @@ public class RouteBuilderInteractorImplTest {
         points.add(point3);
 
         mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE, points);
+        mComputedBuildingRoute = new Route(2, FIELD_ID, Route.Type.COMPUTED);
 
         mMockedCallback = Mockito.spy(new RouteBuilderInteractor.Callback() {
             @Override
@@ -77,7 +78,6 @@ public class RouteBuilderInteractorImplTest {
                 mMockExecutor,
                 mMockMainThread,
                 mMockedCallback,
-                mMockLocationRepository,
                 mMockRouteRepository,
                 mMockArrowRepository,
                 FIELD_ID,
@@ -127,6 +127,8 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
+        when(mMockRouteRepository.createRouteModel(anyInt(), any(Route.Type.class)))
+                .thenReturn(mComputedBuildingRoute);
         when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 
@@ -148,6 +150,8 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void createComputedRoutes_callCallback() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
+        when(mMockRouteRepository.createRouteModel(anyInt(), any(Route.Type.class)))
+                .thenReturn(mComputedBuildingRoute);
         when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
         when(mLeftArrow.isChosen()).thenReturn(true);
 

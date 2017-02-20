@@ -101,9 +101,9 @@ public class CreateFieldInteractorImplTest {
                 mMockedCreateFieldCallback,
                 mMockRouteRepository,
                 mMockArrowRepository,
-                mMockFieldRepository,
-                mMockLocationRepository
+                mMockFieldRepository
         ));
+        mInteractor.setMachineryWidth(20);
     }
 
 
@@ -119,7 +119,7 @@ public class CreateFieldInteractorImplTest {
 
         verify(mMockedCreateFieldCallback, times(2)).showArrow(any(Arrow.class));
     }
-    
+
     @Test
     public void onArrowClick_shouldSetChosenAtArrowInteractor() {
         mInteractor.onArrowClick(mMockArrow);
