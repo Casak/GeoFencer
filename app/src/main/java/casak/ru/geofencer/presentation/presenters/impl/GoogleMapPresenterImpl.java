@@ -6,14 +6,16 @@ import android.util.SparseArray;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -23,12 +25,15 @@ import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
+import casak.ru.geofencer.presentation.converters.LatLngConverter;
 import casak.ru.geofencer.presentation.converters.RouteConverter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
@@ -45,18 +50,17 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     private boolean isFieldBuilding;
 
     private GoogleMapPresenter.View mapView;
-    private LocationSource locationSource;
     private CreateFieldInteractor interactor;
+    private LocationInteractor.OnLocationChanged domainLocationChangeListener;
 
     private AntennaDataProvider dataProvider;
 
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
-                                  GoogleMapPresenter.View mapView, LocationSource locationSource) {
+                                  GoogleMapPresenter.View mapView) {
         super(executor, mainThread);
 
         this.mapView = mapView;
-        this.locationSource = locationSource;
         //TODO Inject
         dataProvider = new AntennaDataProvider();
 
@@ -69,6 +73,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         if (interactor == null) {
             interactor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
+            domainLocationChangeListener = (LocationInteractor.OnLocationChanged)
+                    GoogleMapFragment.getMapComponent().getLocationInteractor();
         }
 
         SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
@@ -77,9 +83,12 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         interactor.setMachineryWidth(width);
 
         dataProvider.registerObserver(interactor.getOnLocationChangedListener());
+        dataProvider.registerObserver(domainLocationChangeListener);
 
         interactor.execute();
         interactor.onStartCreatingRouteClick();
+
+        dataProvider.startPassingRouteBuildingPoints();
     }
 
     @Override
@@ -99,6 +108,21 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
                 break;
             }
         }
+    }
+
+    //TODO Refactor
+    Polyline sessionRoute;
+    List<LatLng> sessionRouteLatLngs;
+
+    @Override
+    public void addToSessionRoute(Point point) {
+        if (sessionRoute == null)
+            sessionRoute = mapView.showPolyline(new PolylineOptions());
+        if (sessionRouteLatLngs == null)
+            sessionRouteLatLngs = new LinkedList<>();
+        sessionRouteLatLngs.add(LatLngConverter.convertToLatLng(point));
+
+        sessionRoute.setPoints(sessionRouteLatLngs);
     }
 
     @Override
