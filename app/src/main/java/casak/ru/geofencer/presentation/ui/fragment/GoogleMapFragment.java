@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -69,7 +70,12 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         ButterKnife.bind(this, rootView);
 
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(presenter);
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                map = googleMap;
+            }
+        });
 
         return rootView;
     }
@@ -81,11 +87,6 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         } else {
             presenter.finishBuildField();
         }
-    }
-
-    @Override
-    public void setMap(GoogleMap googleMap) {
-        map = googleMap;
     }
 
     @Override
