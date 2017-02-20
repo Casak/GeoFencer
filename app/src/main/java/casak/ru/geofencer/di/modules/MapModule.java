@@ -1,5 +1,7 @@
 package casak.ru.geofencer.di.modules;
 
+import android.content.SharedPreferences;
+
 import com.google.android.gms.maps.LocationSource;
 
 
@@ -7,9 +9,12 @@ import casak.ru.geofencer.bluetooth.old.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
+import casak.ru.geofencer.domain.interactors.impl.LocationInteractorImpl;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
+import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
@@ -41,14 +46,24 @@ public class MapModule {
     @Provides
     @ActivityScope
     GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
-                                                   MainThread mainThread,
-                                                   LocationSource locationSource) {
-        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView, locationSource);
+                                                   MainThread mainThread) {
+        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView);
     }
 
     @Provides
     @ActivityScope
-    CreateFieldInteractor providesCreateFieldInteractor(CreateFieldInteractorImpl interactor) {
+    LocationInteractor providesLocationInteractor(Executor threadExecutor,
+                                                  MainThread mainThread,
+                                                  LocationRepository repository,
+                                                  GoogleMapPresenter presenter) {
+        return new LocationInteractorImpl(threadExecutor, mainThread, repository, presenter);
+    }
+
+
+    @Provides
+    @ActivityScope
+    CreateFieldInteractor providesCreateFieldInteractor(CreateFieldInteractorImpl interactor,
+                                                        SharedPreferences preferences) {
         return interactor;
     }
 
