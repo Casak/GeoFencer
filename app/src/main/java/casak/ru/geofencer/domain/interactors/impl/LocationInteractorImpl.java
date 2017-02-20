@@ -13,12 +13,14 @@ import casak.ru.geofencer.domain.repository.LocationRepository;
 
 public class LocationInteractorImpl extends AbstractInteractor implements LocationInteractor, LocationInteractor.OnLocationChanged {
     private LocationRepository mLocationRepository;
+    private LocationInteractor.Callback mCallback;
 
     public LocationInteractorImpl(Executor threadExecutor, MainThread mainThread,
-                                  LocationRepository repository) {
+                                  LocationRepository repository, LocationInteractor.Callback callback) {
         super(threadExecutor, mainThread);
 
         mLocationRepository = repository;
+        mCallback = callback;
     }
 
     @Override
@@ -27,7 +29,13 @@ public class LocationInteractorImpl extends AbstractInteractor implements Locati
     }
 
     @Override
-    public void onChange(Point point) {
+    public void onChange(final Point point) {
         mLocationRepository.insert(point);
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.addToSessionRoute(point);
+            }
+        });
     }
 }

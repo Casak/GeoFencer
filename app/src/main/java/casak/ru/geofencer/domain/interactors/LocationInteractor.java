@@ -9,6 +9,7 @@ import casak.ru.geofencer.domain.model.Point;
 
 public interface LocationInteractor extends Interactor {
     interface Callback {
+        void addToSessionRoute(Point point);
     }
 
     interface OnLocationChanged {
