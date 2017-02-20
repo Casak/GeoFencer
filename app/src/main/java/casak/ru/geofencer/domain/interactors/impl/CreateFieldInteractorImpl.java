@@ -7,6 +7,7 @@ import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
@@ -14,7 +15,6 @@ import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
 /**
@@ -95,6 +95,11 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     public void onFinishCreatingRouteClick() {
         mRouteBuilderInteractor.finish();
+    }
+
+    @Override
+    public LocationInteractor.OnLocationChanged getOnLocationChangedListener() {
+        return mRouteBuilderInteractor;
     }
 
     @Override
