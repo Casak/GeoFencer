@@ -61,6 +61,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         mCallback.routeBuildingFinished(mFieldBuildingRoute);
     }
 
+    //TODO also add starting route as Type.Computed
     @Override
     public void createComputedRoutes(int fieldId) {
         Route fieldBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
