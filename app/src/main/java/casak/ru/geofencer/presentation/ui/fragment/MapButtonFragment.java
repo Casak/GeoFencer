@@ -82,4 +82,10 @@ public class MapButtonFragment extends Fragment {
         Intent intent = new Intent(getActivity(), SettingsActivity.class);
         startActivity(intent);
     }
+
+    @OnClick(R.id.button_load)
+    public void onLoadClicked() {
+        //TODO move to shared prefs
+        presenter.onFieldLoad(1000);
+    }
 }

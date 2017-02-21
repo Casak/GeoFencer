@@ -1,7 +1,5 @@
 package casak.ru.geofencer.di.modules;
 
-import android.content.SharedPreferences;
-
 import com.google.android.gms.maps.LocationSource;
 
 
@@ -9,12 +7,11 @@ import casak.ru.geofencer.bluetooth.old.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
-import casak.ru.geofencer.domain.interactors.LocationInteractor;
+import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
-import casak.ru.geofencer.domain.interactors.impl.LocationInteractorImpl;
+import casak.ru.geofencer.domain.interactors.impl.LoadFieldInteractorImpl;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.domain.repository.LocationRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
@@ -46,24 +43,20 @@ public class MapModule {
     @Provides
     @ActivityScope
     GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
-                                                   MainThread mainThread) {
-        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView);
+                                                   MainThread mainThread,
+                                                   FieldRepository fieldRepository) {
+        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView, fieldRepository);
     }
 
     @Provides
     @ActivityScope
-    LocationInteractor providesLocationInteractor(Executor threadExecutor,
-                                                  MainThread mainThread,
-                                                  LocationRepository repository,
-                                                  GoogleMapPresenter presenter) {
-        return new LocationInteractorImpl(threadExecutor, mainThread, repository, presenter);
+    LoadFieldInteractor providesLoadFieldInteractor(LoadFieldInteractorImpl interactor) {
+        return interactor;
     }
-
 
     @Provides
     @ActivityScope
-    CreateFieldInteractor providesCreateFieldInteractor(CreateFieldInteractorImpl interactor,
-                                                        SharedPreferences preferences) {
+    CreateFieldInteractor providesCreateFieldInteractor(CreateFieldInteractorImpl interactor) {
         return interactor;
     }
 
