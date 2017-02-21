@@ -23,10 +23,12 @@ import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.di.scopes.ActivityScope;
+import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
 import casak.ru.geofencer.presentation.converters.RouteConverter;
@@ -44,21 +46,22 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     private boolean isFieldBuilding;
 
-    private GoogleMapPresenter.View mapView;
-    private LocationSource locationSource;
-    private CreateFieldInteractor interactor;
+    private GoogleMapPresenter.View mMapView;
+    private FieldRepository mFieldRepository;
+    private CreateFieldInteractor mCreateFieldInteractor;
+    private LoadFieldInteractor mLoadFieldInteractor;
 
-    private AntennaDataProvider dataProvider;
+    private AntennaDataProvider mDataProvider;
 
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
-                                  GoogleMapPresenter.View mapView, LocationSource locationSource) {
+                                  GoogleMapPresenter.View mapView, FieldRepository fieldRepository) {
         super(executor, mainThread);
 
-        this.mapView = mapView;
-        this.locationSource = locationSource;
+        mMapView = mapView;
+        mFieldRepository = fieldRepository;
         //TODO Inject
-        dataProvider = new AntennaDataProvider();
+        mDataProvider = new AntennaDataProvider();
 
         isFieldBuilding = false;
     }
@@ -67,26 +70,26 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     public void startBuildField() {
         isFieldBuilding = true;
 
-        if (interactor == null) {
-            interactor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
+        if (mCreateFieldInteractor == null) {
+            mCreateFieldInteractor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
         }
 
         SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
         int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
 
-        interactor.setMachineryWidth(width);
+        mCreateFieldInteractor.setMachineryWidth(width);
 
-        dataProvider.registerObserver(interactor.getOnLocationChangedListener());
+        mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
 
-        interactor.execute();
-        interactor.onStartCreatingRouteClick();
+        mCreateFieldInteractor.execute();
+        mCreateFieldInteractor.onStartCreatingRouteClick();
     }
 
     @Override
     public void finishBuildField() {
         isFieldBuilding = false;
-        dataProvider.removeObserver(interactor.getOnLocationChangedListener());
-        interactor.onFinishCreatingRouteClick();
+        mDataProvider.removeObserver(mCreateFieldInteractor.getOnLocationChangedListener());
+        mCreateFieldInteractor.onFinishCreatingRouteClick();
     }
 
     @Override
@@ -95,7 +98,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
             Arrow key = e.getKey();
             Polyline value = e.getValue();
             if (value.equals(polyline)) {
-                interactor.onArrowClick(key);
+                mCreateFieldInteractor.onArrowClick(key);
                 break;
             }
         }
@@ -137,7 +140,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     @Override
     public void showArrow(Arrow model) {
         PolylineOptions arrowOptions = ArrowConverter.convertToPresentationModel(model);
-        Polyline polyline = mapView.showPolyline(arrowOptions);
+        Polyline polyline = mMapView.showPolyline(arrowOptions);
         arrowsMap.put(model, polyline);
     }
 
@@ -156,7 +159,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     public void showField(Field model) {
         PolygonOptions fieldOptions = FieldConverter.convertToPresentation(model);
 
-        Polygon polygon = mapView.showPolygon(fieldOptions);
+        Polygon polygon = mMapView.showPolygon(fieldOptions);
 
         fields.append(model.getId(), polygon);
     }
@@ -178,7 +181,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     public void showRoute(Route model) {
         PolylineOptions routeOptions = RouteConverter.convertToPresentation(model);
 
-        Polyline polyline = mapView.showPolyline(routeOptions);
+        Polyline polyline = mMapView.showPolyline(routeOptions);
 
         routes.append(model.getId(), polyline);
     }
@@ -196,12 +199,12 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void onZoomMore() {
-        mapView.changeCamera(CameraUpdateFactory.zoomIn());
+        mMapView.changeCamera(CameraUpdateFactory.zoomIn());
     }
 
     @Override
     public void onZoomLess() {
-        mapView.changeCamera(CameraUpdateFactory.zoomOut());
+        mMapView.changeCamera(CameraUpdateFactory.zoomOut());
     }
 
     @Override
@@ -226,34 +229,43 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void changeTilt(float tilt) {
-        CameraPosition currentCameraPosition = mapView.getCurrentCameraPosition();
+        CameraPosition currentCameraPosition = mMapView.getCurrentCameraPosition();
 
         CameraPosition cameraPosition = new CameraPosition.Builder(currentCameraPosition)
                 .tilt(tilt).build();
 
-        mapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMapView.changeCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Override
     public void changeMapType() {
-        int current = mapView.getCurrentMapType();
+        int current = mMapView.getCurrentMapType();
 
         switch (current) {
             case GoogleMap.MAP_TYPE_NONE:
-                mapView.changeMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mMapView.changeMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
             case GoogleMap.MAP_TYPE_NORMAL:
-                mapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                mMapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 break;
             case GoogleMap.MAP_TYPE_SATELLITE:
-                mapView.changeMapType(GoogleMap.MAP_TYPE_NONE);
+                mMapView.changeMapType(GoogleMap.MAP_TYPE_NONE);
                 break;
             default:
-                mapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                mMapView.changeMapType(GoogleMap.MAP_TYPE_SATELLITE);
         }
     }
 
+    @Override
+    public void onFieldLoad(int fieldId) {
+        if (mLoadFieldInteractor == null) {
+            mLoadFieldInteractor = GoogleMapFragment.getMapComponent().getLoadFieldInteractor();
+        }
+        mLoadFieldInteractor.init(mFieldRepository, this, fieldId);
+        mLoadFieldInteractor.execute();
+    }
+
     private float getCurrentCameraTilt() {
-        return mapView.getCurrentCameraPosition().tilt;
+        return mMapView.getCurrentCameraPosition().tilt;
     }
 }

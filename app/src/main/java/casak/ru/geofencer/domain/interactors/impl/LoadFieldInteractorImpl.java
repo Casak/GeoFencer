@@ -1,7 +1,8 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
@@ -12,7 +13,7 @@ import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 
 /**
- * Created by Casak on 21.02.2017.
+ * Created on 21.02.2017.
  */
 
 public class LoadFieldInteractorImpl extends AbstractInteractor implements LoadFieldInteractor {
@@ -21,6 +22,7 @@ public class LoadFieldInteractorImpl extends AbstractInteractor implements LoadF
     private LoadFieldInteractor.Callback mCallback;
     private int mFieldId;
 
+    @Inject
     public LoadFieldInteractorImpl(Executor threadExecutor, MainThread mainThread) {
         super(threadExecutor, mainThread);
     }

@@ -3,6 +3,7 @@ package casak.ru.geofencer.di.components;
 import com.google.android.gms.maps.LocationSource;
 
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -35,6 +36,8 @@ public interface MapComponent extends AbstractActivityComponent {
     LocationSource getLocationSource();
 
     CreateFieldInteractor getCreateFieldInteractor();
+
+    LoadFieldInteractor getLoadFieldInteractor();
 
     CreateFieldInteractor.Callback getCreateFieldInteractorCallback();
 
