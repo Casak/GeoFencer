@@ -19,41 +19,42 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
 
 public class PointerInteractorImpl extends AbstractInteractor implements PointerInteractor {
 
-    private Route currentRoute;
-    private RouteRepository repository;
-    private PointerInteractor.Callback callback;
-    private int fieldId;
-    private int width;
+    private Route mCurrentRoute;
+    private RouteRepository mRepository;
+    private PointerInteractor.Callback mCallback;
+    private int mFieldId;
+    private int mMachineryWidth;
 
     @Inject
     public PointerInteractorImpl(Executor threadExecutor,
                                  MainThread mainThread,
-                                 RouteRepository routeRepository,
-                                 PointerInteractor.Callback pointerCallback) {
+                                 RouteRepository routeRepository) {
         super(threadExecutor, mainThread);
-        repository = routeRepository;
-        callback = pointerCallback;
+        mRepository = routeRepository;
     }
 
     @Override
-    public void setFieldId(int id) {
-        fieldId = id;
-    }
-
-    @Override
-    public void setWidth(int meters) {
-        width = meters;
+    public void init(PointerInteractor.Callback callback, int width, int fieldId) {
+        mCallback = callback;
+        mFieldId = fieldId;
+        mMachineryWidth = width;
     }
 
     @Override
     public void run() {
-
+        if (mCallback == null || mFieldId == 0 || mMachineryWidth == 0)
+            throw new NullPointerException("PointerInteractor was not initialized!");
     }
 
     @Override
-    public void onPositionChanged(Point point) {
-        double result = computePointerNew(point);
-        callback.showPointer(result);
+    public void onChange(Point point) {
+        final double result = computePointerNew(point);
+        mMainThread.post(new Runnable() {
+            @Override
+            public void run() {
+                mCallback.showPointer(result);
+            }
+        });
     }
 
     //TODO Probably move to presenter or somewhere else at presentation layer
@@ -143,19 +144,19 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
             );
             if (distanceToEnd < distanceToStart)
                 result.setRoutePoints(reverseList(result.getRoutePoints()));
-            setCurrentRoute(result);
+            setmCurrentRoute(result);
             return result;
         }
-        return currentRoute;
+        return mCurrentRoute;
     }
 
     boolean isStillCurrentRoute(Point location) {
-        return currentRoute != null &&
+        return mCurrentRoute != null &&
                 MapUtils.isLocationOnPath(
                         location,
-                        currentRoute.getRoutePoints(),
+                        mCurrentRoute.getRoutePoints(),
                         true,
-                        width / 2
+                        mMachineryWidth / 2
                 );
     }
 
@@ -164,13 +165,13 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         if (position == null || position.getLatitude() == 0 || position.getLongitude() == 0)
             return null;
 
-        List<Route> computedRoutes = getComputedRoutes(fieldId);
+        List<Route> computedRoutes = getComputedRoutes(mFieldId);
 
         if (computedRoutes == null || computedRoutes.size() == 0)
             return null;
 
         for (Route model : computedRoutes) {
-            if (MapUtils.isLocationOnPath(position, model.getRoutePoints(), true, width / 2)) {
+            if (MapUtils.isLocationOnPath(position, model.getRoutePoints(), true, mMachineryWidth / 2)) {
                 return model;
             }
         }
@@ -179,7 +180,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
 
     //TODO Check implementation
     List<Route> getComputedRoutes(int fieldId) {
-        List<Route> result = repository.getAllRoutes(fieldId);
+        List<Route> result = mRepository.getAllRoutes(fieldId);
         for (int i = 0; i < result.size(); i++) {
             if (result.get(i).getType() != Route.Type.COMPUTED) {
                 result.remove(i);
@@ -188,8 +189,8 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         return result;
     }
 
-    void setCurrentRoute(Route route) {
-        currentRoute = route;
+    void setmCurrentRoute(Route route) {
+        mCurrentRoute = route;
     }
 
     Point getNearestPoint(List<Point> routePoints, Point current) {

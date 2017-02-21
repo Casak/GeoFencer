@@ -152,14 +152,13 @@ public class PointerInteractorImplTest {
         mInteractor = new PointerInteractorImpl(
                 mMockExecutor,
                 mMockMainThread,
-                mMockRouteRepository,
-                new PointerInteractor.Callback() {
-                    @Override
-                    public void showPointer(double value) {
-
-                    }
-                }
+                mMockRouteRepository
         );
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void beforeRun_shouldBeInited() {
+        mInteractor.run();
     }
 
     @Ignore
@@ -265,7 +264,7 @@ public class PointerInteractorImplTest {
     public void isStillCurrentRoute_fromLocationOnCurrentRoute_returnTrue() {
         Route model = computedRoutes.get(0);
         when(mInteractor.getCurrentRoute(any(Point.class))).thenReturn(model);
-        mInteractor.setCurrentRoute(model);
+        mInteractor.setmCurrentRoute(model);
 
         boolean result = mInteractor.isStillCurrentRoute(model.getRoutePoints().get(0));
 
