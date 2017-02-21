@@ -2,23 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.ui.activities.MainActivity"
-    >
+    tools:context=".presentation.ui.activities.MainActivity">
 
     <fragment
         android:id="@+id/map_fragment"
         android:name="casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment"
-        tools:layout="@layout/fragment_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/map_button_fragment"
         android:name="casak.ru.geofencer.presentation.ui.fragment.MapButtonFragment"
-        tools:layout="@layout/fragment_map_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center" />
+        android:layout_gravity="right|center"
+        tools:layout="@layout/fragment_map_button" />
+
+    <fragment
+        android:id="@+id/map_pointer_fragment"
+        android:name="casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        tools:layout="@layout/fragment_pointer" />
 
 </FrameLayout>
