@@ -41,6 +41,12 @@
         android:src="@drawable/pointer_off" />
 
     <ImageView
+        android:id="@+id/pointer_center"
+        android:layout_width="@dimen/pointer_drawable_width"
+        android:layout_height="@dimen/pointer_drawable_height"
+        android:src="@drawable/pointer_center" />
+
+    <ImageView
         android:id="@+id/pointer_right_green_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
