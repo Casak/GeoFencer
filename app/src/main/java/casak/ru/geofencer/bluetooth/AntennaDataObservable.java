@@ -8,9 +8,9 @@ import casak.ru.geofencer.domain.model.Point;
  */
 
 public interface AntennaDataObservable {
-    void registerObserver(LocationInteractor.OnLocationChanged observer);
+    void registerObserver(LocationInteractor.OnLocationChangedListener observer);
 
-    void removeObserver(LocationInteractor.OnLocationChanged observer);
+    void removeObserver(LocationInteractor.OnLocationChangedListener observer);
 
     void passLocation(Point point);
 }

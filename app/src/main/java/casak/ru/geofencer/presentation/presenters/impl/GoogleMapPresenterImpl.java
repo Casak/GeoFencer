@@ -24,8 +24,10 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
+import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.domain.repository.FieldRepository;
@@ -49,35 +51,40 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     private GoogleMapPresenter.View mMapView;
     private FieldRepository mFieldRepository;
     private CreateFieldInteractor mCreateFieldInteractor;
+    private LocationInteractor mLocationInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
 
     private AntennaDataProvider mDataProvider;
 
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
-                                  GoogleMapPresenter.View mapView, FieldRepository fieldRepository) {
+                                  CreateFieldInteractor createFieldInteractor,
+                                  LocationInteractor locationInteractor,
+                                  GoogleMapPresenter.View mapView,
+                                  FieldRepository fieldRepository,
+                                  AntennaDataProvider provider) {
         super(executor, mainThread);
 
+        mCreateFieldInteractor = createFieldInteractor;
+        mLocationInteractor = locationInteractor;
         mMapView = mapView;
         mFieldRepository = fieldRepository;
-        //TODO Inject
-        mDataProvider = new AntennaDataProvider();
+        mDataProvider = provider;
 
         isFieldBuilding = false;
+        mLocationInteractor.init(this);
+        mDataProvider.registerObserver(mLocationInteractor.getListener());
+        mLocationInteractor.execute();
     }
 
     @Override
     public void startBuildField() {
         isFieldBuilding = true;
 
-        if (mCreateFieldInteractor == null) {
-            mCreateFieldInteractor = GoogleMapFragment.getMapComponent().getCreateFieldInteractor();
-        }
-
         SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
         int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
 
-        mCreateFieldInteractor.setMachineryWidth(width);
+        mCreateFieldInteractor.init(this, width);
 
         mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
 
@@ -263,6 +270,20 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         }
         mLoadFieldInteractor.init(mFieldRepository, this, fieldId);
         mLoadFieldInteractor.execute();
+
+        //TODO Delete
+        mDataProvider.startHarvesting();
+    }
+
+    Route sessionRoute = new Route(1, 1011, Route.Type.BASE);
+
+    @Override
+    public void addToSessionRoute(Point point) {
+        if (routes.get(sessionRoute.getId()) != null) {
+            hideRoute(sessionRoute);
+        }
+        sessionRoute.addRoutePoint(point);
+        showRoute(sessionRoute);
     }
 
     private float getCurrentCameraTilt() {

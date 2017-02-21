@@ -12,7 +12,11 @@ public interface LocationInteractor extends Interactor {
         void addToSessionRoute(Point point);
     }
 
-    interface OnLocationChanged {
+    interface OnLocationChangedListener {
         void onChange(Point point);
     }
+
+    void init(Callback callback);
+
+    OnLocationChangedListener getListener();
 }

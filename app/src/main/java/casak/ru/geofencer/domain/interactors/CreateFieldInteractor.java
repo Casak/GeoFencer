@@ -24,9 +24,9 @@ public interface CreateFieldInteractor extends Interactor {
         void hideRoute(Route model);
     }
 
-    void setMachineryWidth(int width);
+    void init(Callback callback, int width);
 
-    LocationInteractor.OnLocationChanged getOnLocationChangedListener();
+    LocationInteractor.OnLocationChangedListener getOnLocationChangedListener();
 
     void onArrowClick(Arrow model);
 

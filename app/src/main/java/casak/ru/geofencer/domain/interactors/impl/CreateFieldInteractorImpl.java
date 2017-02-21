@@ -37,17 +37,20 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Inject
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
-                                     CreateFieldInteractor.Callback callback,
                                      RouteRepository routeRepository, ArrowRepository arrowRepository,
                                      FieldRepository fieldRepository) {
         super(threadExecutor, mainThread);
         //TODO Fix it, bastard
         fieldId = computeFieldId();
 
-        mCallback = callback;
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
         mFieldRepository = fieldRepository;
+    }
+
+    @Override
+    public void init(CreateFieldInteractor.Callback callback, int width) {
+        mCallback = callback;
 
         mArrowsInteractor = new BuildArrowModelsInteractorImpl(
                 mThreadExecutor,
@@ -56,10 +59,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 mRouteRepository,
                 mArrowRepository,
                 fieldId);
-    }
 
-    @Override
-    public void setMachineryWidth(int width) {
         mBuildFieldInteractor = new BuildFieldInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
@@ -82,6 +82,10 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     @Override
     public void run() {
+        if (mCallback == null) {
+            throw new NullPointerException("CreateFieldInteractor was not initialized;");
+        }
+
         mBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
 
         if (mBuildingRoute != null) {
@@ -98,7 +102,7 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public LocationInteractor.OnLocationChanged getOnLocationChangedListener() {
+    public LocationInteractor.OnLocationChangedListener getOnLocationChangedListener() {
         return mRouteBuilderInteractor;
     }
 
@@ -188,6 +192,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
     //TODO implement method
     private int computeFieldId() {
-        return 1000;
+        return 1011;
     }
 }

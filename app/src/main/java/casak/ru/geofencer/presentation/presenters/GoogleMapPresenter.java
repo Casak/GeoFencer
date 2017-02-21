@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.presentation.presenters.base.BasePresenter;
 
 /**
@@ -17,7 +18,7 @@ import casak.ru.geofencer.presentation.presenters.base.BasePresenter;
  */
 
 public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor.Callback,
-        LoadFieldInteractor.Callback, GoogleMap.OnPolylineClickListener {
+        LoadFieldInteractor.Callback, LocationInteractor.Callback, GoogleMap.OnPolylineClickListener {
     interface View {
         void changeCamera(CameraUpdate update);
 

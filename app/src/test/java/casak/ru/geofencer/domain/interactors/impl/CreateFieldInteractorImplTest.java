@@ -98,12 +98,11 @@ public class CreateFieldInteractorImplTest {
         mInteractor = Mockito.spy(new CreateFieldInteractorImpl(
                 mMockExecutor,
                 mMockMainThread,
-                mMockedCreateFieldCallback,
                 mMockRouteRepository,
                 mMockArrowRepository,
                 mMockFieldRepository
         ));
-        mInteractor.setMachineryWidth(20);
+        mInteractor.init(mMockedCreateFieldCallback, 20);
     }
 
 

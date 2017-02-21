@@ -3,13 +3,16 @@ package casak.ru.geofencer.di.modules;
 import com.google.android.gms.maps.LocationSource;
 
 
+import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.bluetooth.old.BluetoothAntennaLocationSource;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
+import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
 import casak.ru.geofencer.domain.interactors.impl.LoadFieldInteractorImpl;
+import casak.ru.geofencer.domain.interactors.impl.LocationInteractorImplListener;
 import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -44,13 +47,29 @@ public class MapModule {
     @ActivityScope
     GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
                                                    MainThread mainThread,
-                                                   FieldRepository fieldRepository) {
-        return new GoogleMapPresenterImpl(threadExecutor, mainThread, mapView, fieldRepository);
+                                                   FieldRepository fieldRepository,
+                                                   AntennaDataProvider provider,
+                                                   LocationInteractor locationInteractor,
+                                                   CreateFieldInteractor createFieldInteractor) {
+        return new GoogleMapPresenterImpl(
+                threadExecutor,
+                mainThread,
+                createFieldInteractor,
+                locationInteractor,
+                mapView,
+                fieldRepository,
+                provider);
     }
 
     @Provides
     @ActivityScope
     LoadFieldInteractor providesLoadFieldInteractor(LoadFieldInteractorImpl interactor) {
+        return interactor;
+    }
+
+    @Provides
+    @ActivityScope
+    LocationInteractor providesLocationInteractor(LocationInteractorImplListener interactor) {
         return interactor;
     }
 
