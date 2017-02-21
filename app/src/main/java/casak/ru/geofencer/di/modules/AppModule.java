@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import javax.inject.Singleton;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
@@ -48,7 +49,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    LocationRepository providesLocationRepository(){
+    LocationRepository providesLocationRepository() {
         return new LocationRepositoryImpl();
     }
 
@@ -56,5 +57,11 @@ public class AppModule {
     @Singleton
     SharedPreferences providesSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @Singleton
+    AntennaDataProvider providesAntennaDataProvider() {
+        return new AntennaDataProvider();
     }
 }

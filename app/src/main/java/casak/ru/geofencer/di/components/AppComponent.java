@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import javax.inject.Singleton;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.repository.LocationRepository;
@@ -30,4 +31,6 @@ public interface AppComponent {
     LocationRepository getLocationRepository();
 
     SharedPreferences getSharedPreferences();
+
+    AntennaDataProvider getAntennaDataProvider();
 }
