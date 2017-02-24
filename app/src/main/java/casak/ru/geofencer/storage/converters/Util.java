@@ -25,7 +25,7 @@ public class Util {
 
     public static List<Point> stringToPoints(String in){
         List<Point> result = new ArrayList<>();
-        if(in.length() == 0)
+        if(in == null || in.length() == 0)
             return result;
 
         String[] points = in.split(";");

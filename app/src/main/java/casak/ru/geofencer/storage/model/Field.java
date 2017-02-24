@@ -18,7 +18,7 @@ import casak.ru.geofencer.storage.db.GeoDatabase;
 @Table(database = GeoDatabase.class)
 public class Field extends BaseModel {
     @Column
-    @PrimaryKey
+    @PrimaryKey(autoincrement = true)
     public int id;
 
     @Column
@@ -26,7 +26,6 @@ public class Field extends BaseModel {
 
     public List<Route> routes;
 
-    //TODO Create getters for route types
     @OneToMany(methods = {OneToMany.Method.ALL}, variableName = "routes")
     public List<Route> getRoutes() {
         if (routes == null || routes.isEmpty()) {
