@@ -11,8 +11,6 @@ import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
-import casak.ru.geofencer.domain.repository.LocationRepository;
-import casak.ru.geofencer.storage.LocationRepositoryImpl;
 import casak.ru.geofencer.threading.MainThreadImpl;
 import dagger.Module;
 import dagger.Provides;
@@ -45,12 +43,6 @@ public class AppModule {
     @Singleton
     MainThread providesMainThread() {
         return new MainThreadImpl();
-    }
-
-    @Provides
-    @Singleton
-    LocationRepository providesLocationRepository() {
-        return new LocationRepositoryImpl();
     }
 
     @Provides

@@ -1,13 +1,9 @@
 package casak.ru.geofencer.di.components;
 
-import com.google.android.gms.maps.LocationSource;
-
+import casak.ru.geofencer.di.modules.RepositoryModule;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
-import casak.ru.geofencer.domain.repository.ArrowRepository;
-import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.di.modules.ActivityModule;
 import casak.ru.geofencer.di.modules.MapModule;
 import casak.ru.geofencer.di.scopes.ActivityScope;
@@ -23,7 +19,8 @@ import dagger.Component;
  */
 
 @ActivityScope
-@Component(modules = {ActivityModule.class, MapModule.class}, dependencies = {AppComponent.class})
+@Component(modules = {ActivityModule.class, MapModule.class, RepositoryModule.class},
+        dependencies = AppComponent.class)
 public interface MapComponent extends AbstractActivityComponent {
     void inject(GoogleMapFragment fragment);
 
@@ -37,8 +34,6 @@ public interface MapComponent extends AbstractActivityComponent {
 
     CameraPresenter getCameraPresenter();
 
-    LocationSource getLocationSource();
-
     CreateFieldInteractor getCreateFieldInteractor();
 
     LoadFieldInteractor getLoadFieldInteractor();
@@ -47,9 +42,4 @@ public interface MapComponent extends AbstractActivityComponent {
 
     CreateFieldInteractor.Callback getCreateFieldInteractorCallback();
 
-    RouteRepository getRouteRepository();
-
-    ArrowRepository getArrowRepository();
-
-    FieldRepository getFieldRepository();
 }
