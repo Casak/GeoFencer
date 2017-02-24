@@ -6,14 +6,15 @@ import android.util.SparseArray;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -33,7 +34,9 @@ import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
+import casak.ru.geofencer.presentation.converters.LatLngConverter;
 import casak.ru.geofencer.presentation.converters.RouteConverter;
+import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
@@ -62,7 +65,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
                                   LocationInteractor locationInteractor,
                                   GoogleMapPresenter.View mapView,
                                   FieldRepository fieldRepository,
-                                  AntennaDataProvider provider) {
+                                  AntennaDataProvider provider,
+                                  CameraPresenter cameraPresenter) {
         super(executor, mainThread);
 
         mCreateFieldInteractor = createFieldInteractor;
@@ -70,6 +74,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mMapView = mapView;
         mFieldRepository = fieldRepository;
         mDataProvider = provider;
+        mCameraPresenter = cameraPresenter;
 
         isFieldBuilding = false;
         mLocationInteractor.init(this);
@@ -275,15 +280,24 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mDataProvider.startHarvesting();
     }
 
+    //TODO Get normal IDs
     Route sessionRoute = new Route(1, 1011, Route.Type.BASE);
+
+    CameraPresenter mCameraPresenter;
 
     @Override
     public void addToSessionRoute(Point point) {
-        if (routes.get(sessionRoute.getId()) != null) {
-            hideRoute(sessionRoute);
+        if (routes.get(sessionRoute.getId()) == null) {
+            showRoute(sessionRoute);
         }
-        sessionRoute.addRoutePoint(point);
-        showRoute(sessionRoute);
+
+        Polyline polyline = routes.get(sessionRoute.getId());
+
+        List<LatLng> points = polyline.getPoints();
+        points.add(LatLngConverter.convertToLatLng(point));
+        polyline.setPoints(points);
+
+        mCameraPresenter.onLocationChanged(point);
     }
 
     private float getCurrentCameraTilt() {

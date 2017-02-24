@@ -17,7 +17,9 @@ import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 import casak.ru.geofencer.di.scopes.ActivityScope;
+import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
+import casak.ru.geofencer.presentation.presenters.impl.CameraPresenterImpl;
 import casak.ru.geofencer.presentation.presenters.impl.GoogleMapPresenterImpl;
 import casak.ru.geofencer.storage.ArrowRepositoryImpl;
 import casak.ru.geofencer.storage.FieldRepositoryImpl;
@@ -50,7 +52,8 @@ public class MapModule {
                                                    FieldRepository fieldRepository,
                                                    AntennaDataProvider provider,
                                                    LocationInteractor locationInteractor,
-                                                   CreateFieldInteractor createFieldInteractor) {
+                                                   CreateFieldInteractor createFieldInteractor,
+                                                   CameraPresenter cameraPresenter) {
         return new GoogleMapPresenterImpl(
                 threadExecutor,
                 mainThread,
@@ -58,7 +61,14 @@ public class MapModule {
                 locationInteractor,
                 mapView,
                 fieldRepository,
-                provider);
+                provider,
+                cameraPresenter);
+    }
+
+    @Provides
+    @ActivityScope
+    CameraPresenter providesCameraPresenter(CameraPresenterImpl presenter) {
+        return presenter;
     }
 
     @Provides

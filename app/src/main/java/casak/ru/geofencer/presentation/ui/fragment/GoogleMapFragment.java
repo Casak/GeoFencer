@@ -26,6 +26,7 @@ import casak.ru.geofencer.R;
 import casak.ru.geofencer.di.components.DaggerMapComponent;
 import casak.ru.geofencer.di.components.MapComponent;
 import casak.ru.geofencer.di.modules.MapModule;
+import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
@@ -43,8 +44,12 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
     @Inject
     GoogleMapPresenter presenter;
+    @Inject
+    CameraPresenter cameraPresenter;
     @BindView(R.id.mapView)
     MapView mapView;
+    @BindView(R.id.touch_listener_view)
+    View touchListenerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,8 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         ButterKnife.bind(this, rootView);
+
+        touchListenerView.setOnTouchListener(cameraPresenter);
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
