@@ -40,8 +40,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                                      RouteRepository routeRepository, ArrowRepository arrowRepository,
                                      FieldRepository fieldRepository) {
         super(threadExecutor, mainThread);
-        //TODO Fix it, bastard
-        fieldId = computeFieldId();
 
         mRouteRepository = routeRepository;
         mArrowRepository = arrowRepository;
@@ -51,6 +49,8 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     @Override
     public void init(CreateFieldInteractor.Callback callback, int width) {
         mCallback = callback;
+
+        fieldId = computeFieldId();
 
         mArrowsInteractor = new BuildArrowModelsInteractorImpl(
                 mThreadExecutor,
@@ -190,8 +190,8 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         mArrowRepository.delete(fieldId);
     }
 
-    //TODO implement method
     private int computeFieldId() {
-        return 1011;
+        Field result = mFieldRepository.createField();
+        return result.getId();
     }
 }

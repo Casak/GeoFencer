@@ -14,6 +14,14 @@ import casak.ru.geofencer.storage.model.Field_Table;
  */
 public class FieldRepositoryImpl implements FieldRepository {
     @Override
+    public Field createField() {
+        casak.ru.geofencer.storage.model.Field result = new casak.ru.geofencer.storage.model.Field();
+        result.insert();
+
+        return FieldConverter.convertToDomainModel(result);
+    }
+
+    @Override
     public boolean addField(Field field) {
         casak.ru.geofencer.storage.model.Field result = FieldConverter.convertToStorageModel(field);
 
@@ -31,7 +39,6 @@ public class FieldRepositoryImpl implements FieldRepository {
         return FieldConverter.convertToDomainModel(result);
     }
 
-    //TODO Normal implementation
     @Override
     public boolean updateField(Field field) {
         casak.ru.geofencer.storage.model.Field result = SQLite.select()
