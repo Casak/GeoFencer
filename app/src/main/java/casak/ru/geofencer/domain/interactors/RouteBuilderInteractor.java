@@ -1,6 +1,5 @@
 package casak.ru.geofencer.domain.interactors;
 
-
 import casak.ru.geofencer.domain.interactors.base.Interactor;
 import casak.ru.geofencer.domain.model.Route;
 
@@ -9,12 +8,11 @@ import casak.ru.geofencer.domain.model.Route;
  */
 
 public interface RouteBuilderInteractor extends Interactor, LocationInteractor.OnLocationChangedListener {
-
     interface Callback {
         void routeBuildingFinished(Route route);
     }
 
-    void finish();
+    void createComputedRoutes(int fieldId, boolean toLeft);
 
-    void createComputedRoutes(int fieldId);
+    void finish();
 }

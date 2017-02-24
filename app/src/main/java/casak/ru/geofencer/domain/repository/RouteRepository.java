@@ -5,12 +5,13 @@ import java.util.List;
 import casak.ru.geofencer.domain.model.Route;
 
 public interface RouteRepository {
+    Route create(long fieldId, Route.Type type);
 
-    boolean addRouteModel(Route model);
-    Route createRouteModel(long fieldId, Route.Type type);
+    Route get(long routeId);
 
     Route getBaseRoute(long fieldId);
-    Route getRouteModel(long id);
 
-    List<Route> getAllRoutes(long fieldId);
+    List<Route> getAll(long fieldId);
+
+    boolean update(Route model);
 }

@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.BuildArrowModelsInteractor;
+import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
@@ -21,7 +21,8 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
  * Created on 05.01.2017.
  */
 
-public class CreateFieldInteractorImpl extends AbstractInteractor implements CreateFieldInteractor, BuildArrowModelsInteractor.Callback, BuildFieldInteractor.Callback, RouteBuilderInteractor.Callback {
+public class CreateFieldInteractorImpl extends AbstractInteractor implements CreateFieldInteractor,
+        BuildFieldInteractor.Callback, RouteBuilderInteractor.Callback {
     private static final String TAG = CreateFieldInteractorImpl.class.getSimpleName();
 
     private CreateFieldInteractor.Callback mCallback;
@@ -29,11 +30,11 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
     private RouteBuilderInteractor mRouteBuilderInteractor;
-    private BuildArrowModelsInteractor mArrowsInteractor;
+    private BuildArrowsInteractor mArrowsInteractor;
     private BuildFieldInteractor mBuildFieldInteractor;
-    private Route mBuildingRoute;
     private int fieldId;
-    private Field field;
+    private Field mField;
+    private Arrow mArrowChosen;
 
     @Inject
     public CreateFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
@@ -52,22 +53,19 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
 
         fieldId = computeFieldId();
 
-        mArrowsInteractor = new BuildArrowModelsInteractorImpl(
+        mArrowsInteractor = new BuildArrowsInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
-                this,
+                mCallback,
                 mRouteRepository,
-                mArrowRepository,
-                fieldId);
+                mArrowRepository);
 
         mBuildFieldInteractor = new BuildFieldInteractorImpl(
                 mThreadExecutor,
                 mMainThread,
                 this,
                 mRouteRepository,
-                mArrowRepository,
                 mFieldRepository,
-                fieldId,
                 width);
 
         mRouteBuilderInteractor = new RouteBuilderInteractorImpl(
@@ -75,7 +73,6 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
                 mMainThread,
                 this,
                 mRouteRepository,
-                mArrowRepository,
                 fieldId,
                 width);
     }
@@ -83,21 +80,17 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     @Override
     public void run() {
         if (mCallback == null) {
-            throw new NullPointerException("CreateFieldInteractor was not initialized;");
-        }
-
-        mBuildingRoute = mRouteRepository.getBaseRoute(fieldId);
-
-        if (mBuildingRoute != null) {
-            //TODO Alert
+            throw new NullPointerException(TAG + " was not initialized;");
         }
     }
 
-    public void onStartCreatingRouteClick() {
+    @Override
+    public void onStartCreatingRoute() {
         mRouteBuilderInteractor.execute();
     }
 
-    public void onFinishCreatingRouteClick() {
+    @Override
+    public void onFinishCreatingRoute() {
         mRouteBuilderInteractor.finish();
     }
 
@@ -111,14 +104,14 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
         Route.Type routeType = route.getType();
         switch (routeType) {
             case BASE:
-                mBuildingRoute = route;
-                createArrows();
+                mArrowsInteractor.init(route, fieldId);
+                mArrowsInteractor.execute();
                 break;
             case COMPUTED:
-                if (field == null)
-                    field = mFieldRepository.getField(fieldId);
-                field.addRoute(route);
-                mFieldRepository.updateField(field);
+                if (mField == null)
+                    mField = mFieldRepository.getField(fieldId);
+                mField.addRoute(route);
+                mFieldRepository.updateField(mField);
                 mMainThread.post(new Runnable() {
                     @Override
                     public void run() {
@@ -130,42 +123,17 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
     }
 
     @Override
-    public void onArrowsBuildFinished(final long fieldId) {
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallback.showArrow(mArrowRepository.getLeft(fieldId));
-                mCallback.showArrow(mArrowRepository.getRight(fieldId));
-            }
-        });
-    }
-
-    @Override
-    public void onArrowsBuildFailed(long fieldId) {
-        //TODO Error handling
-    }
-
-    @Override
     public void onArrowClick(Arrow model) {
-        final Arrow left = mArrowRepository.getLeft(fieldId);
-        final Arrow right = mArrowRepository.getRight(fieldId);
+        mArrowChosen = model;
 
-        mMainThread.post(new Runnable() {
-            @Override
-            public void run() {
-                mCallback.hideArrow(left);
-                mCallback.hideArrow(right);
-            }
-        });
+        mArrowsInteractor.onArrowClick(model);
 
-        model.setChosen(true);
+        mBuildFieldInteractor.init(mField, model);
         mBuildFieldInteractor.execute();
     }
 
     @Override
-    public void onFieldBuildFinish() {
-        field = mFieldRepository.getField(fieldId);
-
+    public void onFieldBuildFinish(final Field field) {
         mMainThread.post(new Runnable() {
             @Override
             public void run() {
@@ -173,25 +141,22 @@ public class CreateFieldInteractorImpl extends AbstractInteractor implements Cre
             }
         });
 
-        createComputedRoutes();
+        boolean toLeft = mArrowChosen.isChosen();
+
+        if (mArrowChosen.getType() == Arrow.Type.RIGHT) {
+            toLeft = !toLeft;
+        }
+
+        mRouteBuilderInteractor.createComputedRoutes(field.getId(), toLeft);
     }
 
     @Override
-    public void onFieldBuildFail() {
+    public void onFieldBuildFail(Field field) {
         //TODO Error handling
     }
 
-    private void createArrows() {
-        mArrowsInteractor.execute();
-    }
-
-    private void createComputedRoutes() {
-        mRouteBuilderInteractor.createComputedRoutes(fieldId);
-        mArrowRepository.delete(fieldId);
-    }
-
     private int computeFieldId() {
-        Field result = mFieldRepository.createField();
-        return result.getId();
+        mField = mFieldRepository.createField();
+        return mField.getId();
     }
 }

@@ -31,7 +31,6 @@ import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.di.scopes.ActivityScope;
-import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.converters.ArrowConverter;
 import casak.ru.geofencer.presentation.converters.FieldConverter;
 import casak.ru.geofencer.presentation.converters.LatLngConverter;
@@ -39,7 +38,6 @@ import casak.ru.geofencer.presentation.converters.RouteConverter;
 import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
-import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 
 /**
  * Created on 09.02.2017.
@@ -81,26 +79,34 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mLocationInteractor.execute();
     }
 
+    boolean firstBuild = true;
+
     @Override
     public void startBuildField() {
         isFieldBuilding = true;
+        if (firstBuild) {
+            firstBuild = false;
 
-        SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
-        int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
+            SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
+            int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
 
-        mCreateFieldInteractor.init(this, width);
+            mCreateFieldInteractor.init(this, width);
 
-        mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
+            mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
 
-        mCreateFieldInteractor.execute();
-        mCreateFieldInteractor.onStartCreatingRouteClick();
+            mCreateFieldInteractor.execute();
+            mCreateFieldInteractor.onStartCreatingRoute();
+
+            //TODO Delete
+            mDataProvider.startPassingRouteBuildingPoints();
+        }
     }
 
     @Override
     public void finishBuildField() {
         isFieldBuilding = false;
         mDataProvider.removeObserver(mCreateFieldInteractor.getOnLocationChangedListener());
-        mCreateFieldInteractor.onFinishCreatingRouteClick();
+        mCreateFieldInteractor.onFinishCreatingRoute();
     }
 
     @Override

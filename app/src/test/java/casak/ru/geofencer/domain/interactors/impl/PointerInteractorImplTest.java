@@ -14,7 +14,6 @@ import java.util.List;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -264,7 +263,7 @@ public class PointerInteractorImplTest {
     public void isStillCurrentRoute_fromLocationOnCurrentRoute_returnTrue() {
         Route model = computedRoutes.get(0);
         when(mInteractor.getCurrentRoute(any(Point.class))).thenReturn(model);
-        mInteractor.setmCurrentRoute(model);
+        mInteractor.setCurrentRoute(model);
 
         boolean result = mInteractor.isStillCurrentRoute(model.getRoutePoints().get(0));
 

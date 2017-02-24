@@ -11,78 +11,81 @@ import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
-import casak.ru.geofencer.domain.repository.ArrowRepository;
 import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.domain.repository.RouteRepository;
 
-import static casak.ru.geofencer.domain.Constants.FIELD_HEIGHT_METERS;
-import static casak.ru.geofencer.domain.Constants.HEADING_TO_RIGHT;
-import static casak.ru.geofencer.domain.Constants.HEADING_TO_LEFT;
-
 public class BuildFieldInteractorImpl extends AbstractInteractor implements BuildFieldInteractor {
+    private static final String TAG = BuildFieldInteractorImpl.class.getSimpleName();
+
+    private static final double HEADING_TO_LEFT = -90;
+    private static final double HEADING_TO_RIGHT = 90;
+    public static final double FIELD_HEIGHT_METERS = 100;
 
     private BuildFieldInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
-    private ArrowRepository mArrowRepository;
     private FieldRepository mFieldRepository;
     private Field mField;
-    private int fieldId;
+    private Arrow mArrowChosen;
     private int machineryWidth;
 
     public BuildFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
-                                    BuildFieldInteractor.Callback callback, RouteRepository routeRepository,
-                                    ArrowRepository arrowRepository, FieldRepository fieldRepository,
-                                    int fieldId, int machineryWidth) {
+                                    BuildFieldInteractor.Callback callback,
+                                    RouteRepository routeRepository, FieldRepository fieldRepository,
+                                    int machineryWidth) {
         super(threadExecutor, mainThread);
-        this.fieldId = fieldId;
-        this.machineryWidth = machineryWidth;
 
         mCallback = callback;
         mRouteRepository = routeRepository;
-        mArrowRepository = arrowRepository;
         mFieldRepository = fieldRepository;
+        this.machineryWidth = machineryWidth;
+    }
+
+    @Override
+    public void init(Field field, Arrow arrow) {
+        mArrowChosen = arrow;
+        mField = field;
     }
 
     @Override
     public void run() {
-        Route route = mRouteRepository.getBaseRoute(fieldId);
-
-        Arrow leftArrow = mArrowRepository.getLeft(fieldId);
-        Arrow rightArrow = mArrowRepository.getRight(fieldId);
-
-        if (!leftArrow.isChosen() && !rightArrow.isChosen()) {
-            mCallback.onFieldBuildFail();
-            return;
+        if (mArrowChosen == null) {
+            throw new NullPointerException(TAG + ": Can`t create field. Arrow isn`t set!");
         }
 
-        Point start = route.getRoutePoints().get(0);
-        Point end = route.getRoutePoints().get(route.getRoutePoints().size() - 1);
-        boolean toLeft = leftArrow.isChosen();
+        populateFieldPoints();
 
-        mField = buildField(start, end, toLeft);
-    }
-
-    Field buildField(Point start, Point end, boolean toLeft) {
-        Field field = new Field(
-                fieldId,
-                computeCorners(start,
-                        end,
-                        machineryWidth,
-                        toLeft));
-
-        if (field.getPoints() != null) {
-            mFieldRepository.addField(field);
-            mCallback.onFieldBuildFinish();
+        if (mField.getPoints() != null || mField.getPoints().isEmpty()) {
+            mFieldRepository.updateField(mField);
+            mCallback.onFieldBuildFinish(mField);
         } else {
-            mCallback.onFieldBuildFail();
+            mCallback.onFieldBuildFail(mField);
         }
-
-        return field;
     }
 
-    List<Point> computeCorners(Point start, Point end, double width, boolean toLeft) {
-        if (start == null || end == null || width == 0.0)
+    private void populateFieldPoints() {
+        Route route = mRouteRepository.getBaseRoute(mField.getId());
+
+        if (route == null || route.getRoutePoints().size() < 2) {
+            throw new NullPointerException(TAG + ": Can`t create field, base route is empty!");
+        }
+
+        List<Point> points = route.getRoutePoints();
+        Point start = points.get(0);
+        Point end = points.get(points.size() - 1);
+        boolean toLeft = mArrowChosen.isChosen();
+
+        //TODO Possibly compute "bottom" and "top" edges as route
+        mField.setPoints(computeCorners(start,
+                end,
+                machineryWidth,
+                toLeft));
+    }
+
+    private List<Point> computeCorners(Point start, Point end, double width, boolean toLeft) {
+        if (start == null || end == null) {
             return null;
+        }
+
         double heading = MapUtils.computeHeading(start, end);
         double offset = width == 0 ? 0d : width / 2;
 
@@ -98,18 +101,25 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         }
 
         Point cornerSouthWest = MapUtils.computeOffset(start, offset, heading + heading1);
-        Point cornerNorthWest = MapUtils.computeOffset(cornerSouthWest, FIELD_HEIGHT_METERS, heading + heading2);
+
+        Point cornerNorthWest = MapUtils.computeOffset(
+                cornerSouthWest,
+                FIELD_HEIGHT_METERS,
+                heading + heading2
+        );
+
         Point cornerSouthEast = MapUtils.computeOffset(end, offset, heading + heading1);
-        Point cornerNorthEast = MapUtils.computeOffset(cornerSouthEast, FIELD_HEIGHT_METERS, heading + heading2);
+
+        Point cornerNorthEast = MapUtils.computeOffset(
+                cornerSouthEast,
+                FIELD_HEIGHT_METERS,
+                heading + heading2
+        );
 
         result.add(cornerNorthWest);
         result.add(cornerSouthWest);
         result.add(cornerSouthEast);
         result.add(cornerNorthEast);
         return result;
-    }
-
-    public Field getFieldModel() {
-        return mField;
     }
 }

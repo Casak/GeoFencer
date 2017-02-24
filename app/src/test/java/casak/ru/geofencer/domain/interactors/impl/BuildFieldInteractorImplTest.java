@@ -53,6 +53,7 @@ public class BuildFieldInteractorImplTest {
     static Route mFieldBuildingRoute = new Route(1, FIELD_ID, Route.Type.BASE);
     static Arrow mLeftArrow;
     static Arrow mRightArrow;
+    static Field mField;
 
     @Before
     public void setUp() {
@@ -78,12 +79,12 @@ public class BuildFieldInteractorImplTest {
 
         mMockedCallback = Mockito.spy(new BuildFieldInteractor.Callback() {
             @Override
-            public void onFieldBuildFinish() {
+            public void onFieldBuildFinish(Field field) {
 
             }
 
             @Override
-            public void onFieldBuildFail() {
+            public void onFieldBuildFail(Field field) {
 
             }
         });
@@ -93,41 +94,30 @@ public class BuildFieldInteractorImplTest {
                 mMockMainThread,
                 mMockedCallback,
                 mMockRouteRepository,
-                mMockArrowRepository,
                 mMockFieldRepository,
-                FIELD_ID,
                 Constants.WIDTH_METERS
         );
+
+        mField = new Field(FIELD_ID, points);
+
+        mInteractor.init(mField, mLeftArrow);
     }
 
     @Test
-    public void run_withChosenArrow_shouldAddFieldToRepo() {
+    public void run_withChosenArrow_shouldAddArrowsToRepo() {
         mLeftArrow.setChosen(true);
         mRightArrow.setChosen(false);
 
         mInteractor.run();
 
-        verify(mMockFieldRepository).addField(any(Field.class));
+        verify(mMockFieldRepository).updateField(any(Field.class));
     }
 
     @Test
-    public void run_withChosenArrowsAndRouteModel_returnFieldModel() {
-        mLeftArrow.setChosen(true);
-        mRightArrow.setChosen(false);
-
-        mInteractor.run();
-        Field compareModel = mInteractor.getFieldModel();
-
-        assertNotNull(compareModel);
-
-        setUp();
-        mLeftArrow.setChosen(false);
-        mRightArrow.setChosen(true);
-
+    public void run_withChosenArrowsAndRouteModel_returnFieldModelWithComputedCorners() {
         mInteractor.run();
 
-        assertNotNull(mInteractor.getFieldModel());
-        assertFalse(mInteractor.getFieldModel().getPoints().equals(compareModel.getPoints()));
+        assertEquals(4, mField.getPoints().size());
     }
 
     @Test
@@ -136,23 +126,13 @@ public class BuildFieldInteractorImplTest {
 
         mInteractor.run();
 
-        Mockito.verify(mMockedCallback).onFieldBuildFinish();
+        Mockito.verify(mMockedCallback).onFieldBuildFinish(any(Field.class));
     }
 
-    @Test
-    public void run_withoutChosenArrow_callFailCallback() {
-        mLeftArrow.setChosen(false);
-        mRightArrow.setChosen(false);
+    @Test(expected = NullPointerException.class)
+    public void buildField_withoutPoints_callsFailCallback() {
+        mFieldBuildingRoute.setRoutePoints(new ArrayList<Point>());
 
         mInteractor.run();
-
-        Mockito.verify(mMockedCallback).onFieldBuildFail();
-    }
-
-    @Test
-    public void buildField_withoutPoints_callsFailCallback() {
-        mInteractor.buildField(null, null, true);
-
-        Mockito.verify(mMockedCallback).onFieldBuildFail();
     }
 }

@@ -144,7 +144,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
             );
             if (distanceToEnd < distanceToStart)
                 result.setRoutePoints(reverseList(result.getRoutePoints()));
-            setmCurrentRoute(result);
+            setCurrentRoute(result);
             return result;
         }
         return mCurrentRoute;
@@ -180,7 +180,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
 
     //TODO Check implementation
     List<Route> getComputedRoutes(int fieldId) {
-        List<Route> result = mRepository.getAllRoutes(fieldId);
+        List<Route> result = mRepository.getAll(fieldId);
         for (int i = 0; i < result.size(); i++) {
             if (result.get(i).getType() != Route.Type.COMPUTED) {
                 result.remove(i);
@@ -189,7 +189,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         return result;
     }
 
-    void setmCurrentRoute(Route route) {
+    void setCurrentRoute(Route route) {
         mCurrentRoute = route;
     }
 

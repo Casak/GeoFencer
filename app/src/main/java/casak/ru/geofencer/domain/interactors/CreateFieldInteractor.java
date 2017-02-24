@@ -30,7 +30,7 @@ public interface CreateFieldInteractor extends Interactor {
 
     void onArrowClick(Arrow model);
 
-    void onStartCreatingRouteClick();
+    void onStartCreatingRoute();
 
-    void onFinishCreatingRouteClick();
+    void onFinishCreatingRoute();
 }

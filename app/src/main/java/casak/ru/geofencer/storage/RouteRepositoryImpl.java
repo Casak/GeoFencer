@@ -25,7 +25,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     }
 
     @Override
-    public Route getRouteModel(long id) {
+    public Route get(long id) {
         casak.ru.geofencer.storage.model.Route result = SQLite
                 .select()
                 .from(casak.ru.geofencer.storage.model.Route.class)
@@ -35,7 +35,7 @@ public class RouteRepositoryImpl implements RouteRepository {
     }
 
     @Override
-    public List<Route> getAllRoutes(long fieldId) {
+    public List<Route> getAll(long fieldId) {
         List<casak.ru.geofencer.storage.model.Route> result = SQLite
                 .select()
                 .from(casak.ru.geofencer.storage.model.Route.class)
@@ -46,7 +46,7 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Check returned route ID
     @Override
-    public Route createRouteModel(long fieldId, Route.Type type) {
+    public Route create(long fieldId, Route.Type type) {
         casak.ru.geofencer.storage.model.Route route = new casak.ru.geofencer.storage.model.Route();
         route.fieldId = fieldId;
         route.type = RouteTypeConverter.convertToStorageModel(type).id;
@@ -59,7 +59,7 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     //TODO Check if inserted
     @Override
-    public boolean addRouteModel(Route model) {
+    public boolean update(Route model) {
         casak.ru.geofencer.storage.model.Route result = RouteConverter.convertToStorageModel(model);
 
         result.update();

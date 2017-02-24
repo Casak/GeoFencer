@@ -48,8 +48,7 @@ public class RouteBuilderInteractorImplTest {
     @Spy
     private ArrowRepository mMockArrowRepository = Mockito.spy(ArrowRepositoryImpl.class);
 
-
-    static RouteBuilderInteractor mInteractor;
+    static RouteBuilderInteractorImpl mInteractor;
 
     static Point point = new Point(50.4236835, 30.4266010);
 
@@ -79,7 +78,6 @@ public class RouteBuilderInteractorImplTest {
                 mMockMainThread,
                 mMockedCallback,
                 mMockRouteRepository,
-                mMockArrowRepository,
                 FIELD_ID,
                 Constants.WIDTH_METERS
         );
@@ -88,10 +86,10 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void run_withPointLocation_addPointToRoute() throws InterruptedException {
         when(mMockLocationRepository.getLastLocation()).thenReturn(point).thenReturn(null);
-        when(mMockRouteRepository.createRouteModel(FIELD_ID, Route.Type.BASE))
+        when(mMockRouteRepository.create(FIELD_ID, Route.Type.BASE))
                 .thenReturn(mFieldBuildingRoute);
 
-        ((RouteBuilderInteractorImpl) mInteractor).run();
+        mInteractor.run();
         Thread.sleep(1000);
         mInteractor.finish();
 
@@ -102,24 +100,24 @@ public class RouteBuilderInteractorImplTest {
 
     @Test
     public void whenRun_askForCreatingRouteModel() {
-        ((RouteBuilderInteractorImpl) mInteractor).run();
+        mInteractor.run();
 
-        Mockito.verify(mMockRouteRepository).createRouteModel(anyInt(), any(Route.Type.class));
+        Mockito.verify(mMockRouteRepository).create(anyInt(), any(Route.Type.class));
     }
 
     @Test
     public void whenFinish_addRouteToRepository() {
+        when(mMockRouteRepository.create(FIELD_ID, Route.Type.BASE))
+                .thenReturn(mFieldBuildingRoute);
+        mInteractor.run();
         mInteractor.finish();
 
-        Mockito.verify(mMockRouteRepository).addRouteModel(any(Route.class));
+        Mockito.verify(mMockRouteRepository).update(any(Route.class));
     }
 
     @Test
     public void createComputedRoutes_askForFieldBuildingRoute() {
-        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
-        when(mLeftArrow.isChosen()).thenReturn(true);
-
-        mInteractor.createComputedRoutes(FIELD_ID);
+        mInteractor.createComputedRoutes(FIELD_ID, true);
 
         verify(mMockRouteRepository).getBaseRoute(FIELD_ID);
     }
@@ -127,35 +125,21 @@ public class RouteBuilderInteractorImplTest {
     @Test
     public void createComputedRoutes_shouldAddRouteModelsToRepo() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
-        when(mMockRouteRepository.createRouteModel(anyInt(), any(Route.Type.class)))
+        when(mMockRouteRepository.create(anyInt(), any(Route.Type.class)))
                 .thenReturn(mComputedBuildingRoute);
-        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
-        when(mLeftArrow.isChosen()).thenReturn(true);
 
-        mInteractor.createComputedRoutes(FIELD_ID);
+        mInteractor.createComputedRoutes(FIELD_ID, true);
 
-        verify(mMockRouteRepository, times(4)).addRouteModel(any(Route.class));
-    }
-
-    @Test
-    public void createComputedRoutes_askForLeftArrow() {
-        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
-        when(mLeftArrow.isChosen()).thenReturn(true);
-
-        mInteractor.createComputedRoutes(FIELD_ID);
-
-        verify(mMockArrowRepository).getLeft(FIELD_ID);
+        verify(mMockRouteRepository, times(5)).update(any(Route.class));
     }
 
     @Test
     public void createComputedRoutes_callCallback() {
         when(mMockRouteRepository.getBaseRoute(anyInt())).thenReturn(mFieldBuildingRoute);
-        when(mMockRouteRepository.createRouteModel(anyInt(), any(Route.Type.class)))
+        when(mMockRouteRepository.create(anyInt(), any(Route.Type.class)))
                 .thenReturn(mComputedBuildingRoute);
-        when(mMockArrowRepository.getLeft(FIELD_ID)).thenReturn(mLeftArrow);
-        when(mLeftArrow.isChosen()).thenReturn(true);
 
-        mInteractor.createComputedRoutes(FIELD_ID);
+        mInteractor.createComputedRoutes(FIELD_ID, true);
 
         verify(mMockedCallback, times(4)).routeBuildingFinished(any(Route.class));
     }
