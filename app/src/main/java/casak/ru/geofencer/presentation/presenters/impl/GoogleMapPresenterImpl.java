@@ -52,7 +52,6 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     private boolean isFieldBuilding;
 
     private GoogleMapPresenter.View mMapView;
-    private FieldRepository mFieldRepository;
     private CreateFieldInteractor mCreateFieldInteractor;
     private LocationInteractor mLocationInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
@@ -62,17 +61,17 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
                                   CreateFieldInteractor createFieldInteractor,
+                                  LoadFieldInteractor loadFieldInteractor,
                                   LocationInteractor locationInteractor,
                                   GoogleMapPresenter.View mapView,
-                                  FieldRepository fieldRepository,
                                   AntennaDataProvider provider,
                                   CameraPresenter cameraPresenter) {
         super(executor, mainThread);
 
         mCreateFieldInteractor = createFieldInteractor;
+        mLoadFieldInteractor = loadFieldInteractor;
         mLocationInteractor = locationInteractor;
         mMapView = mapView;
-        mFieldRepository = fieldRepository;
         mDataProvider = provider;
         mCameraPresenter = cameraPresenter;
 
@@ -270,10 +269,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void onFieldLoad(int fieldId) {
-        if (mLoadFieldInteractor == null) {
-            mLoadFieldInteractor = GoogleMapFragment.getMapComponent().getLoadFieldInteractor();
-        }
-        mLoadFieldInteractor.init(mFieldRepository, this, fieldId);
+        mLoadFieldInteractor.init(this, fieldId);
         mLoadFieldInteractor.execute();
 
         //TODO Delete

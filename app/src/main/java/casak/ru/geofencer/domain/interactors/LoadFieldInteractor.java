@@ -20,6 +20,6 @@ public interface LoadFieldInteractor extends Interactor {
         void hideRoute(Route model);
     }
 
-    void init(FieldRepository fieldRepository, LoadFieldInteractor.Callback callback, int fieldId);
+    void init(LoadFieldInteractor.Callback callback, int fieldId);
 
 }

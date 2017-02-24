@@ -1,9 +1,8 @@
 package casak.ru.geofencer.di.components;
 
+import casak.ru.geofencer.di.modules.InteractorModule;
 import casak.ru.geofencer.di.modules.RepositoryModule;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
-import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
-import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.di.modules.ActivityModule;
 import casak.ru.geofencer.di.modules.MapModule;
 import casak.ru.geofencer.di.scopes.ActivityScope;
@@ -19,9 +18,13 @@ import dagger.Component;
  */
 
 @ActivityScope
-@Component(modules = {ActivityModule.class, MapModule.class, RepositoryModule.class},
+@Component(modules = {
+        ActivityModule.class,
+        MapModule.class,
+        RepositoryModule.class,
+        InteractorModule.class},
         dependencies = AppComponent.class)
-public interface MapComponent extends AbstractActivityComponent {
+public interface MapComponent extends AbstractActivityComponent, InteractorComponent {
     void inject(GoogleMapFragment fragment);
 
     void inject(MapButtonFragment fragment);
@@ -33,12 +36,6 @@ public interface MapComponent extends AbstractActivityComponent {
     GoogleMapPresenter getPresenter();
 
     CameraPresenter getCameraPresenter();
-
-    CreateFieldInteractor getCreateFieldInteractor();
-
-    LoadFieldInteractor getLoadFieldInteractor();
-
-    LocationInteractor getLocationInteractor();
 
     CreateFieldInteractor.Callback getCreateFieldInteractorCallback();
 

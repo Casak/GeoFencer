@@ -23,21 +23,22 @@ public class LoadFieldInteractorImpl extends AbstractInteractor implements LoadF
     private int mFieldId;
 
     @Inject
-    public LoadFieldInteractorImpl(Executor threadExecutor, MainThread mainThread) {
+    public LoadFieldInteractorImpl(Executor threadExecutor, MainThread mainThread,
+                                   FieldRepository fieldRepository) {
         super(threadExecutor, mainThread);
+
+        mFieldRepository = fieldRepository;
     }
 
     @Override
-    public void init(FieldRepository fieldRepository, LoadFieldInteractor.Callback callback,
-                     int fieldId) {
-        mFieldRepository = fieldRepository;
+    public void init(LoadFieldInteractor.Callback callback, int fieldId) {
         mFieldId = fieldId;
         mCallback = callback;
     }
 
     @Override
     public void run() {
-        if (mFieldRepository == null) {
+        if (mCallback == null || mFieldId == 0) {
             throw new NullPointerException("LoadFieldInteractor was not initialized!");
         }
 

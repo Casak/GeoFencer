@@ -1,6 +1,8 @@
 package casak.ru.geofencer.domain.interactors.impl;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,9 +27,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoadFieldInteractorImplTest {
-
-    class Called extends RuntimeException {
-
+    static class Called extends RuntimeException {
     }
 
     @Mock
@@ -37,7 +37,6 @@ public class LoadFieldInteractorImplTest {
     @Mock
     public static ThreadExecutor mMockThreadExecutor;
 
-
     public static LoadFieldInteractorImpl mInteractor;
     public static LoadFieldInteractor.Callback mCallback;
     public static List<Point> mFieldPoints;
@@ -45,16 +44,25 @@ public class LoadFieldInteractorImplTest {
     public static int mFieldId;
 
 
-    @Before
-    public void init() {
+    @BeforeClass
+    public static void fieldInit() {
         mFieldPoints = new ArrayList<>();
         mFieldPoints.add(new Point(50, 50));
         mFieldPoints.add(new Point(50, 51));
         mFieldPoints.add(new Point(51, 51));
         mFieldPoints.add(new Point(51, 50));
 
-        mInteractor = spy(new LoadFieldInteractorImpl(mMockThreadExecutor, mMockMainThread));
+        mFieldId = 9000;
 
+        mField = new Field(mFieldId, mFieldPoints);
+
+        for (int i = 0; i < 5; i++) {
+            mField.addRoute(new Route(i, mFieldId, Route.Type.COMPUTED));
+        }
+    }
+
+    @Before
+    public void init() {
         mCallback = spy(new LoadFieldInteractor.Callback() {
             @Override
             public void showField(Field model) {
@@ -77,29 +85,31 @@ public class LoadFieldInteractorImplTest {
             }
         });
 
-        mFieldId = 9000;
-
-        mField = new Field(mFieldId, mFieldPoints);
-
-        for (int i = 0; i < 5; i++) {
-            mField.addRoute(new Route(i, mFieldId, Route.Type.COMPUTED));
-        }
-
-        mInteractor.init(mMockFieldRepository, mCallback, mFieldId);
-
-
+        mInteractor = spy(new LoadFieldInteractorImpl(mMockThreadExecutor, mMockMainThread, mMockFieldRepository));
+        mInteractor.init(mCallback, mFieldId);
     }
 
     @Test(expected = NullPointerException.class)
     public void beforeExecute_shouldBeInited_orThrowException() {
         mInteractor.run();
 
-        verify(mInteractor).init(mMockFieldRepository, mCallback, mFieldId);
+        verify(mInteractor).init(mCallback, mFieldId);
 
-        mInteractor = new LoadFieldInteractorImpl(mMockThreadExecutor, mMockMainThread);
+        mInteractor = new LoadFieldInteractorImpl(mMockThreadExecutor, mMockMainThread, mMockFieldRepository);
 
         mInteractor.run();
 
-        verify(mInteractor, never()).init(mMockFieldRepository, mCallback, mFieldId);
+        verify(mInteractor, never()).init(mCallback, mFieldId);
+    }
+
+    @Ignore
+    @Test
+    public void run_inited_callsCallback() {
+        when(mMockFieldRepository.getField(anyInt())).thenReturn(mField);
+
+        mInteractor.run();
+
+        verify(mCallback).showField(any(Field.class));
+        verify(mCallback, times(mField.getRoutes().size())).showRoute(any(Route.class));
     }
 }

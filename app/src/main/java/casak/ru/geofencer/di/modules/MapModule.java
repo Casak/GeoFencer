@@ -6,10 +6,6 @@ import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
-import casak.ru.geofencer.domain.interactors.impl.CreateFieldInteractorImpl;
-import casak.ru.geofencer.domain.interactors.impl.LoadFieldInteractorImpl;
-import casak.ru.geofencer.domain.interactors.impl.LocationInteractorImplListener;
-import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
@@ -40,18 +36,18 @@ public class MapModule {
     @ActivityScope
     GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
                                                    MainThread mainThread,
-                                                   FieldRepository fieldRepository,
                                                    AntennaDataProvider provider,
                                                    LocationInteractor locationInteractor,
+                                                   LoadFieldInteractor loadFieldInteractor,
                                                    CreateFieldInteractor createFieldInteractor,
                                                    CameraPresenter cameraPresenter) {
         return new GoogleMapPresenterImpl(
                 threadExecutor,
                 mainThread,
                 createFieldInteractor,
+                loadFieldInteractor,
                 locationInteractor,
                 mapView,
-                fieldRepository,
                 provider,
                 cameraPresenter);
     }
@@ -60,24 +56,6 @@ public class MapModule {
     @ActivityScope
     CameraPresenter providesCameraPresenter(CameraPresenterImpl presenter) {
         return presenter;
-    }
-
-    @Provides
-    @ActivityScope
-    LoadFieldInteractor providesLoadFieldInteractor(LoadFieldInteractorImpl interactor) {
-        return interactor;
-    }
-
-    @Provides
-    @ActivityScope
-    LocationInteractor providesLocationInteractor(LocationInteractorImplListener interactor) {
-        return interactor;
-    }
-
-    @Provides
-    @ActivityScope
-    CreateFieldInteractor providesCreateFieldInteractor(CreateFieldInteractorImpl interactor) {
-        return interactor;
     }
 
     @Provides

@@ -13,13 +13,13 @@ import casak.ru.geofencer.domain.repository.LocationRepository;
  * Created on 20.02.2017.
  */
 
-public class LocationInteractorImplListener extends AbstractInteractor implements LocationInteractor, LocationInteractor.OnLocationChangedListener {
+public class LocationInteractorImpl extends AbstractInteractor implements LocationInteractor, LocationInteractor.OnLocationChangedListener {
     private LocationRepository mLocationRepository;
     private LocationInteractor.Callback mCallback;
 
     @Inject
-    public LocationInteractorImplListener(Executor threadExecutor, MainThread mainThread,
-                                          LocationRepository repository) {
+    public LocationInteractorImpl(Executor threadExecutor, MainThread mainThread,
+                                  LocationRepository repository) {
         super(threadExecutor, mainThread);
 
         mLocationRepository = repository;
