@@ -12,7 +12,9 @@
 
     <!--Preferences-->
     <string name="settings_name">Settings</string>
+    <string name="machinery_width_key">pref_machinery_width</string>
     <string name="pref_machinery_width">What is your machinery width?</string>
     <string name="pref_machinery_width_dialog_title">In meters</string>
+    <string name="default_machinery_width">20</string>
 
 </resources>

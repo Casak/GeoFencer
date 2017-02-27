@@ -4,6 +4,6 @@
         android:dialogTitle="@string/pref_machinery_width_dialog_title"
         android:entries="@array/width"
         android:entryValues="@array/width"
-        android:key="pref_machinery _width"
+        android:key="@string/machinery_width_key"
         android:title="@string/pref_machinery_width" />
 </PreferenceScreen>
