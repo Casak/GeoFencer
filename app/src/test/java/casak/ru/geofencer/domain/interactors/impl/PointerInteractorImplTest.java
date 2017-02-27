@@ -14,6 +14,7 @@ import java.util.List;
 import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.RouteRepository;
@@ -38,109 +39,45 @@ public class PointerInteractorImplTest {
     @Mock
     public RouteRepository mMockRouteRepository;
     @Mock
-    public static Point mMockRealLocation;
+    public Point mMockRealLocation;
+    @Mock
+    public PointerInteractor.Callback mMockCallback;
 
     public PointerInteractorImpl mInteractor;
 
-    public static Route fieldBuildingRoute;
-    public static List<Route> routes;
-    public static List<Route> computedRoutes;
-    public static List<Point> listWithPoint;
-    public static List<Point> routeBuildingRoutePoints;
-    public static List<Point> harvestingRoute;
+    public static Route mRouteBase;
+    public static List<Route> mRoutesList;
+    public static List<Route> mComputedRoutesList;
+    public static List<Point> mPointsList;
+    public static List<Point> mBaseRoutePointsList;
+    public static List<Point> mHarvestingRoute;
 
-    public static Point currentPoint = new Point(50.42, 30.42);
-    public static Point nearPoint = new Point(51.0d, 31.0d);
-    public static Point farPoint = new Point(51.8d, 31.0d);
+    public static Point mCurrentPoint = new Point(50.42, 30.42);
+    public static Point mNearPoint = new Point(51.0d, 31.0d);
+    public static Point mFarPoint = new Point(51.8d, 31.0d);
 
     @BeforeClass
     public static void setUpClass() {
-        routes = new ArrayList<>();
-        listWithPoint = new ArrayList<>();
-        harvestingRoute = new ArrayList<>();
-        routeBuildingRoutePoints = new ArrayList<>();
+        mRoutesList = new ArrayList<>();
+        mPointsList = new ArrayList<>();
+        mHarvestingRoute = new ArrayList<>();
+        mBaseRoutePointsList = new ArrayList<>();
 
-        harvestingRoute.add(new Point(50.421403047796304, 30.425471959874532));
-        harvestingRoute.add(new Point(50.421492947796295, 30.425563359499005));
-        harvestingRoute.add(new Point(50.4215796477963, 30.425650459136847));
-        harvestingRoute.add(new Point(50.4216630477963, 30.42568115878848));
-        harvestingRoute.add(new Point(50.4217475477963, 30.42573765843551));
-        harvestingRoute.add(new Point(50.42183264779631, 30.42579085808003));
-        harvestingRoute.add(new Point(50.421915947796315, 30.425823957732078));
-        harvestingRoute.add(new Point(50.42199704779629, 30.4258847573933));
-        harvestingRoute.add(new Point(50.422077147796294, 30.425945157058703));
-        harvestingRoute.add(new Point(50.42215504779629, 30.42599855673329));
-        harvestingRoute.add(new Point(50.42242494779629, 30.42616205560584));
-        harvestingRoute.add(new Point(50.422517047796305, 30.426176555221105));
-        harvestingRoute.add(new Point(50.4226024477963, 30.42622365486436));
-        harvestingRoute.add(new Point(50.422682847796295, 30.42625355452849));
-        harvestingRoute.add(new Point(50.4227546477963, 30.426359654228563));
-        harvestingRoute.add(new Point(50.4228218477963, 30.426372253947832));
-        harvestingRoute.add(new Point(50.4228876477963, 30.426372153672965));
-        harvestingRoute.add(new Point(50.422950947796274, 30.426433853408525));
-        harvestingRoute.add(new Point(50.423012447796296, 30.42652715315161));
-        harvestingRoute.add(new Point(50.42306504779629, 30.426528752931883));
-        harvestingRoute.add(new Point(50.42311024779629, 30.426541052743065));
-        harvestingRoute.add(new Point(50.42315084779628, 30.426602752573455));
-        harvestingRoute.add(new Point(50.423222247796296, 30.42662315227518));
-        harvestingRoute.add(new Point(50.42324924779629, 30.42659715216239));
-        harvestingRoute.add(new Point(50.42326574779629, 30.42663665209346));
-        harvestingRoute.add(new Point(50.42327484779629, 30.42663695205544));
-        harvestingRoute.add(new Point(50.423281180329916, 30.426680696850383));
+        fillLists();
 
-        listWithPoint.add(nearPoint);
-        listWithPoint.add(new Point(51.1d, 31.0d));
-        listWithPoint.add(new Point(51.2d, 31.0d));
-        listWithPoint.add(new Point(51.3d, 31.0d));
-        listWithPoint.add(new Point(51.4d, 31.0d));
-        listWithPoint.add(new Point(51.5d, 31.0d));
-        listWithPoint.add(new Point(51.6d, 31.0d));
-        listWithPoint.add(new Point(51.7d, 31.0d));
-        listWithPoint.add(farPoint);
-
-        routeBuildingRoutePoints.add(new Point(50.421355, 30.4256428));
-        routeBuildingRoutePoints.add(new Point(50.4214449, 30.4256972));
-        routeBuildingRoutePoints.add(new Point(50.4215316, 30.4257533));
-        routeBuildingRoutePoints.add(new Point(50.421615, 30.425807));
-        routeBuildingRoutePoints.add(new Point(50.4216995, 30.4258595));
-        routeBuildingRoutePoints.add(new Point(50.4217846, 30.4259127));
-        routeBuildingRoutePoints.add(new Point(50.4218679, 30.4259648));
-        routeBuildingRoutePoints.add(new Point(50.421949, 30.4260166));
-        routeBuildingRoutePoints.add(new Point(50.4220291, 30.426066));
-        routeBuildingRoutePoints.add(new Point(50.422107, 30.4261144));
-        routeBuildingRoutePoints.add(new Point(50.4223769, 30.4262649));
-        routeBuildingRoutePoints.add(new Point(50.422469, 30.4263184));
-        routeBuildingRoutePoints.add(new Point(50.4225544, 30.4263715));
-        routeBuildingRoutePoints.add(new Point(50.4226348, 30.4264244));
-        routeBuildingRoutePoints.add(new Point(50.4227066, 30.4264715));
-        routeBuildingRoutePoints.add(new Point(50.4227738, 30.4265161));
-        routeBuildingRoutePoints.add(new Point(50.4228396, 30.426558));
-        routeBuildingRoutePoints.add(new Point(50.4229029, 30.4265987));
-        routeBuildingRoutePoints.add(new Point(50.4229644, 30.426637));
-        routeBuildingRoutePoints.add(new Point(50.423017, 30.4266696));
-        routeBuildingRoutePoints.add(new Point(50.4230622, 30.4266969));
-        routeBuildingRoutePoints.add(new Point(50.4231028, 30.4267206));
-        routeBuildingRoutePoints.add(new Point(50.4231742, 30.42676));
-        routeBuildingRoutePoints.add(new Point(50.4232012, 30.426774));
-        routeBuildingRoutePoints.add(new Point(50.4232177, 30.4267845));
-        routeBuildingRoutePoints.add(new Point(50.4232268, 30.4267898));
-        routeBuildingRoutePoints.add(new Point(50.42323, 30.4267916));
+        mRouteBase = new Route(0, 0, Route.Type.BASE, mBaseRoutePointsList);
+        mComputedRoutesList = computeRouteModels(mRouteBase);
 
         double lat = 50.0d;
         double lng = 30.0d;
-        routes.add(new Route(0, FIELD_ID, Route.Type.COMPUTED, listWithPoint));
+        mRoutesList.add(new Route(0, FIELD_ID, Route.Type.COMPUTED, mPointsList));
         for (int i = 0; i < 5; i++) {
             List<Point> points = new ArrayList<>();
             for (int j = 0; j < 2; j++) {
                 points.add(new Point(lat + j, lng + i));
             }
-            routes.add(new Route(i, FIELD_ID, Route.Type.COMPUTED, points));
+            mRoutesList.add(new Route(i, FIELD_ID, Route.Type.COMPUTED, points));
         }
-
-        fieldBuildingRoute =
-                new Route(0, 0, Route.Type.BASE, routeBuildingRoutePoints);
-        computedRoutes = computeRouteModels(fieldBuildingRoute);
-
     }
 
     @Before
@@ -153,6 +90,21 @@ public class PointerInteractorImplTest {
                 mMockMainThread,
                 mMockRouteRepository
         );
+
+
+        when(mMockRouteRepository.getAll(anyInt()))
+                .thenReturn(mRoutesList);
+        mInteractor.init(mMockCallback, FIELD_ID);
+    }
+
+    @Test
+    public void computeMachineryWidth() {
+        double result = mInteractor.computeMachineryWidth(
+                mComputedRoutesList.get(0),
+                mComputedRoutesList.get(1)
+        );
+
+        assertEquals(10, result, 0.01);
     }
 
     @Test(expected = NullPointerException.class)
@@ -163,9 +115,9 @@ public class PointerInteractorImplTest {
     @Ignore
     @Test
     public void getNearestRoute_mockedRealDataAndNearLocation_nearestRouteModel() {
-        Point firstComputedStart = harvestingRoute.get(0);
-        Point firstComputedEnd = harvestingRoute.get(harvestingRoute.size() - 1);
-        Point firstComputedMiddle = harvestingRoute.get(harvestingRoute.size() / 2);
+        Point firstComputedStart = mHarvestingRoute.get(0);
+        Point firstComputedEnd = mHarvestingRoute.get(mHarvestingRoute.size() - 1);
+        Point firstComputedMiddle = mHarvestingRoute.get(mHarvestingRoute.size() / 2);
 
         Point location = mock(Point.class);
         when(location.getLatitude())
@@ -175,8 +127,8 @@ public class PointerInteractorImplTest {
                 .thenReturn(firstComputedEnd.getLatitude())
                 .thenReturn(firstComputedMiddle.getLatitude())
                 .thenReturn(firstComputedMiddle.getLatitude())
-                .thenReturn(currentPoint.getLatitude())
-                .thenReturn(currentPoint.getLatitude());
+                .thenReturn(mCurrentPoint.getLatitude())
+                .thenReturn(mCurrentPoint.getLatitude());
         when(location.getLongitude())
                 .thenReturn(firstComputedStart.getLongitude())
                 .thenReturn(firstComputedStart.getLongitude())
@@ -184,20 +136,20 @@ public class PointerInteractorImplTest {
                 .thenReturn(firstComputedEnd.getLongitude())
                 .thenReturn(firstComputedMiddle.getLongitude())
                 .thenReturn(firstComputedMiddle.getLongitude())
-                .thenReturn(currentPoint.getLongitude())
-                .thenReturn(currentPoint.getLongitude());
+                .thenReturn(mCurrentPoint.getLongitude())
+                .thenReturn(mCurrentPoint.getLongitude());
 
         Route result = mInteractor.getNearestRoute(location);
-        assertEquals(computedRoutes.get(0), result);
+        assertEquals(mComputedRoutesList.get(0), result);
 
         result = mInteractor.getNearestRoute(location);
-        assertEquals(computedRoutes.get(0), result);
+        assertEquals(mComputedRoutesList.get(0), result);
 
         result = mInteractor.getNearestRoute(location);
-        assertEquals(computedRoutes.get(0), result);
+        assertEquals(mComputedRoutesList.get(0), result);
 
         result = mInteractor.getNearestRoute(location);
-        assertEquals(computedRoutes.get(3), result);
+        assertEquals(mComputedRoutesList.get(3), result);
     }
 
     @Test
@@ -223,12 +175,7 @@ public class PointerInteractorImplTest {
 
     @Test
     public void getNearestRoute_withNullRoutePointsOrRouteSizeSmallerTwo_returnsNull() {
-        List<Route> list = new ArrayList<>();
-        list.add(new Route(0, FIELD_ID, Route.Type.COMPUTED));
-        when(mInteractor.getComputedRoutes(anyInt()))
-                .thenReturn(list);
-
-        Route result = mInteractor.getNearestRoute(mMockRealLocation);
+        Route result = mInteractor.getNearestRoute(new Point());
 
         assertNull(result);
     }
@@ -249,19 +196,22 @@ public class PointerInteractorImplTest {
         assertNull(result);
     }
 
+    //TODO Double check
     @Test
     public void getNearestRoute_fromMockLocation_returnsNearestRouteModel() {
-        when(mInteractor.getComputedRoutes(anyInt())).thenReturn(routes);
+        when(mInteractor.getComputedRoutes(anyInt()))
+                .thenReturn(mRoutesList);
 
-        Route result = mInteractor.getNearestRoute(mMockRealLocation);
 
-        assertEquals(result, routes.get(1));
+        Route result = mInteractor.getNearestRoute(mPointsList.get(1));
+
+        assertEquals(mRoutesList.get(0), result);
     }
 
     @Ignore
     @Test
     public void isStillCurrentRoute_fromLocationOnCurrentRoute_returnTrue() {
-        Route model = computedRoutes.get(0);
+        Route model = mComputedRoutesList.get(0);
         when(mInteractor.getCurrentRoute(any(Point.class))).thenReturn(model);
         mInteractor.setCurrentRoute(model);
 
@@ -272,7 +222,7 @@ public class PointerInteractorImplTest {
 
     @Test
     public void isStillCurrentRoute_fromLocationNotOnRoute_returnFalse() {
-        boolean result = mInteractor.isStillCurrentRoute(currentPoint);
+        boolean result = mInteractor.isStillCurrentRoute(mCurrentPoint);
 
         assertFalse(result);
     }
@@ -280,58 +230,58 @@ public class PointerInteractorImplTest {
     @Test
     public void getNearestPoint_fromOneRoutePointAndCurrentPoint_returnThisPoint() {
         List<Point> listWithPoint = new ArrayList<>();
-        listWithPoint.add(nearPoint);
+        listWithPoint.add(mNearPoint);
 
-        Point result = mInteractor.getNearestPoint(listWithPoint, currentPoint);
+        Point result = mInteractor.getNearestPoint(listWithPoint, mCurrentPoint);
 
-        assertEquals(result, nearPoint);
+        assertEquals(mNearPoint, result);
     }
 
     @Test
     public void getNearestPoint_fromTwoRoutePointAndCurrentPoint_returnNearestPoint() {
         List<Point> listWithPoint = new ArrayList<>();
-        listWithPoint.add(nearPoint);
-        listWithPoint.add(farPoint);
+        listWithPoint.add(mNearPoint);
+        listWithPoint.add(mFarPoint);
 
-        Point result = mInteractor.getNearestPoint(listWithPoint, currentPoint);
+        Point result = mInteractor.getNearestPoint(listWithPoint, mCurrentPoint);
 
-        assertEquals(result, nearPoint);
+        assertEquals(mNearPoint, result);
     }
 
     @Ignore
     @Test
     public void getNearestPoint_fromManyRoutePointAndCurrentPoint_returnNearestPoint() {
-        List<Point> listWithPoints = new ArrayList<>(listWithPoint);
-        Point resultFromOddList = mInteractor.getNearestPoint(listWithPoints, currentPoint);
-        assertEquals(resultFromOddList, nearPoint);
+        List<Point> listWithPoints = new ArrayList<>(mPointsList);
+        Point resultFromOddList = mInteractor.getNearestPoint(listWithPoints, mCurrentPoint);
+        assertEquals(mNearPoint, resultFromOddList);
 
         listWithPoints.remove(5);
-        Point resultFromEvenList = mInteractor.getNearestPoint(listWithPoints, currentPoint);
-        assertEquals(resultFromEvenList, nearPoint);
+        Point resultFromEvenList = mInteractor.getNearestPoint(listWithPoints, mCurrentPoint);
+        assertEquals(mNearPoint, resultFromEvenList);
 
-        Point resultWithFarPoint = mInteractor.getNearestPoint(listWithPoints, farPoint);
-        assertEquals(resultWithFarPoint, farPoint);
+        Point resultWithFarPoint = mInteractor.getNearestPoint(listWithPoints, mFarPoint);
+        assertEquals(mFarPoint, resultWithFarPoint);
 
         Point point = new Point(49d, 32d);
-        for (Route model : routes) {
+        for (Route model : mRoutesList) {
             List<Point> points = model.getRoutePoints();
             Point result = mInteractor.getNearestPoint(points, point);
 
-            assertEquals(result, points.get(0));
+            assertEquals(points.get(0), result);
         }
 
-        List<Point> computedPoints = computedRoutes.get(0).getRoutePoints();
+        List<Point> computedPoints = mComputedRoutesList.get(0).getRoutePoints();
         Point resultFromRealData = mInteractor.getNearestPoint(
                 computedPoints,
-                harvestingRoute.get(harvestingRoute.size() - 1));
+                mHarvestingRoute.get(mHarvestingRoute.size() - 1));
 
-        assertEquals(resultFromRealData, computedPoints.get(computedPoints.size() - 1));
+        assertEquals(computedPoints.get(computedPoints.size() - 1), resultFromRealData);
 
     }
 
     @Test
     public void getNearAndNextPoints_FromEmptyRoute_returnEmptyList() {
-        List<Point> result = mInteractor.getNearAndNextPoints(new ArrayList<Point>(), nearPoint);
+        List<Point> result = mInteractor.getNearAndNextPoints(new ArrayList<Point>(), mNearPoint);
 
         assertTrue(result.isEmpty());
     }
@@ -339,60 +289,60 @@ public class PointerInteractorImplTest {
     @Test
     public void getNearAndNextPoints_FromOnePointRoute_returnThisPoint() {
         List<Point> onePointList = new ArrayList<>();
-        onePointList.add(nearPoint);
-        List<Point> result = mInteractor.getNearAndNextPoints(onePointList, nearPoint);
+        onePointList.add(mNearPoint);
+        List<Point> result = mInteractor.getNearAndNextPoints(onePointList, mNearPoint);
 
         assertNotNull(result);
 
-        assertEquals(result.get(0), nearPoint);
+        assertEquals(mNearPoint, result.get(0));
     }
 
     @Test
     public void getNearAndNextPoints_FromRouteAndPointAtStartOfTheRoute_returnThisPointAndTheNextOne() {
-        List<Point> result = mInteractor.getNearAndNextPoints(listWithPoint, nearPoint);
+        List<Point> result = mInteractor.getNearAndNextPoints(mPointsList, mNearPoint);
 
         assertNotNull(result);
 
-        assertEquals(result.get(0), nearPoint);
-        assertEquals(result.get(1), listWithPoint.get(listWithPoint.indexOf(nearPoint) + 1));
+        assertEquals(mNearPoint, result.get(0));
+        assertEquals(mPointsList.get(mPointsList.indexOf(mNearPoint) + 1), result.get(1));
 
-        List<Point> computedRoutePoints = computedRoutes.get(0).getRoutePoints();
+        List<Point> computedRoutePoints = mComputedRoutesList.get(0).getRoutePoints();
         result = mInteractor.getNearAndNextPoints(
                 computedRoutePoints,
-                harvestingRoute.get(0));
+                mHarvestingRoute.get(0));
 
-        assertEquals(result.get(0), computedRoutePoints.get(1));
-        assertEquals(result.get(1), computedRoutePoints.get(2));
+        assertEquals(computedRoutePoints.get(1), result.get(0));
+        assertEquals(computedRoutePoints.get(2), result.get(1));
     }
 
     @Ignore
     @Test
     public void getNearAndNextPoints_FromRouteAndPointAtEndOfTheRoute_returnThisPoint() {
-        List<Point> result = mInteractor.getNearAndNextPoints(listWithPoint, farPoint);
+        List<Point> result = mInteractor.getNearAndNextPoints(mPointsList, mFarPoint);
 
         assertNotNull(result);
 
-        assertEquals(result.get(0), farPoint);
+        assertEquals(mFarPoint, result.get(0));
 
-        List<Point> computedRoutePoints = computedRoutes.get(0).getRoutePoints();
+        List<Point> computedRoutePoints = mComputedRoutesList.get(0).getRoutePoints();
         result = mInteractor.getNearAndNextPoints(
                 computedRoutePoints,
-                harvestingRoute.get(harvestingRoute.size() - 1));
+                mHarvestingRoute.get(mHarvestingRoute.size() - 1));
 
-        assertEquals(result.get(0), computedRoutePoints.get(computedRoutePoints.size() - 1));
+        assertEquals(computedRoutePoints.get(computedRoutePoints.size() - 1), result.get(0));
     }
 
     @Test
     public void getNearAndNextPoints_FromRouteAndPointAtCenterOfTheRoute_returnThisPointAndTheNextOne() {
-        List<Point> result = mInteractor.getNearAndNextPoints(listWithPoint, listWithPoint.get(5));
+        List<Point> result = mInteractor.getNearAndNextPoints(mPointsList, mPointsList.get(5));
 
-        assertEquals(result.get(0), listWithPoint.get(5));
-        assertEquals(result.get(1), listWithPoint.get(6));
+        assertEquals(mPointsList.get(5), result.get(0));
+        assertEquals(mPointsList.get(6), result.get(1));
 
-        List<Point> computedRoutePoints = computedRoutes.get(0).getRoutePoints();
+        List<Point> computedRoutePoints = mComputedRoutesList.get(0).getRoutePoints();
         result = mInteractor.getNearAndNextPoints(
                 computedRoutePoints,
-                harvestingRoute.get(harvestingRoute.size() / 2));
+                mHarvestingRoute.get(mHarvestingRoute.size() / 2));
 
         Point expected1 = computedRoutePoints.get(computedRoutePoints.size() / 2 + 1);
         Point expected2 = computedRoutePoints.get(computedRoutePoints.size() / 2 + 2);
@@ -442,5 +392,73 @@ public class PointerInteractorImplTest {
         }
 
         return result;
+    }
+
+    private static void fillLists() {
+        mHarvestingRoute.add(new Point(50.421403047796304, 30.425471959874532));
+        mHarvestingRoute.add(new Point(50.421492947796295, 30.425563359499005));
+        mHarvestingRoute.add(new Point(50.4215796477963, 30.425650459136847));
+        mHarvestingRoute.add(new Point(50.4216630477963, 30.42568115878848));
+        mHarvestingRoute.add(new Point(50.4217475477963, 30.42573765843551));
+        mHarvestingRoute.add(new Point(50.42183264779631, 30.42579085808003));
+        mHarvestingRoute.add(new Point(50.421915947796315, 30.425823957732078));
+        mHarvestingRoute.add(new Point(50.42199704779629, 30.4258847573933));
+        mHarvestingRoute.add(new Point(50.422077147796294, 30.425945157058703));
+        mHarvestingRoute.add(new Point(50.42215504779629, 30.42599855673329));
+        mHarvestingRoute.add(new Point(50.42242494779629, 30.42616205560584));
+        mHarvestingRoute.add(new Point(50.422517047796305, 30.426176555221105));
+        mHarvestingRoute.add(new Point(50.4226024477963, 30.42622365486436));
+        mHarvestingRoute.add(new Point(50.422682847796295, 30.42625355452849));
+        mHarvestingRoute.add(new Point(50.4227546477963, 30.426359654228563));
+        mHarvestingRoute.add(new Point(50.4228218477963, 30.426372253947832));
+        mHarvestingRoute.add(new Point(50.4228876477963, 30.426372153672965));
+        mHarvestingRoute.add(new Point(50.422950947796274, 30.426433853408525));
+        mHarvestingRoute.add(new Point(50.423012447796296, 30.42652715315161));
+        mHarvestingRoute.add(new Point(50.42306504779629, 30.426528752931883));
+        mHarvestingRoute.add(new Point(50.42311024779629, 30.426541052743065));
+        mHarvestingRoute.add(new Point(50.42315084779628, 30.426602752573455));
+        mHarvestingRoute.add(new Point(50.423222247796296, 30.42662315227518));
+        mHarvestingRoute.add(new Point(50.42324924779629, 30.42659715216239));
+        mHarvestingRoute.add(new Point(50.42326574779629, 30.42663665209346));
+        mHarvestingRoute.add(new Point(50.42327484779629, 30.42663695205544));
+        mHarvestingRoute.add(new Point(50.423281180329916, 30.426680696850383));
+
+        mPointsList.add(mNearPoint);
+        mPointsList.add(new Point(51.1d, 31.0d));
+        mPointsList.add(new Point(51.2d, 31.0d));
+        mPointsList.add(new Point(51.3d, 31.0d));
+        mPointsList.add(new Point(51.4d, 31.0d));
+        mPointsList.add(new Point(51.5d, 31.0d));
+        mPointsList.add(new Point(51.6d, 31.0d));
+        mPointsList.add(new Point(51.7d, 31.0d));
+        mPointsList.add(mFarPoint);
+
+        mBaseRoutePointsList.add(new Point(50.421355, 30.4256428));
+        mBaseRoutePointsList.add(new Point(50.4214449, 30.4256972));
+        mBaseRoutePointsList.add(new Point(50.4215316, 30.4257533));
+        mBaseRoutePointsList.add(new Point(50.421615, 30.425807));
+        mBaseRoutePointsList.add(new Point(50.4216995, 30.4258595));
+        mBaseRoutePointsList.add(new Point(50.4217846, 30.4259127));
+        mBaseRoutePointsList.add(new Point(50.4218679, 30.4259648));
+        mBaseRoutePointsList.add(new Point(50.421949, 30.4260166));
+        mBaseRoutePointsList.add(new Point(50.4220291, 30.426066));
+        mBaseRoutePointsList.add(new Point(50.422107, 30.4261144));
+        mBaseRoutePointsList.add(new Point(50.4223769, 30.4262649));
+        mBaseRoutePointsList.add(new Point(50.422469, 30.4263184));
+        mBaseRoutePointsList.add(new Point(50.4225544, 30.4263715));
+        mBaseRoutePointsList.add(new Point(50.4226348, 30.4264244));
+        mBaseRoutePointsList.add(new Point(50.4227066, 30.4264715));
+        mBaseRoutePointsList.add(new Point(50.4227738, 30.4265161));
+        mBaseRoutePointsList.add(new Point(50.4228396, 30.426558));
+        mBaseRoutePointsList.add(new Point(50.4229029, 30.4265987));
+        mBaseRoutePointsList.add(new Point(50.4229644, 30.426637));
+        mBaseRoutePointsList.add(new Point(50.423017, 30.4266696));
+        mBaseRoutePointsList.add(new Point(50.4230622, 30.4266969));
+        mBaseRoutePointsList.add(new Point(50.4231028, 30.4267206));
+        mBaseRoutePointsList.add(new Point(50.4231742, 30.42676));
+        mBaseRoutePointsList.add(new Point(50.4232012, 30.426774));
+        mBaseRoutePointsList.add(new Point(50.4232177, 30.4267845));
+        mBaseRoutePointsList.add(new Point(50.4232268, 30.4267898));
+        mBaseRoutePointsList.add(new Point(50.42323, 30.4267916));
     }
 }

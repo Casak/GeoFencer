@@ -11,5 +11,5 @@ public interface PointerInteractor extends Interactor, LocationInteractor.OnLoca
         void showPointer(double value);
     }
 
-    void init(PointerInteractor.Callback callback, int width, int fieldId);
+    void init(PointerInteractor.Callback callback, int fieldId);
 }

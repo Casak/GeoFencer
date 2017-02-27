@@ -10,4 +10,6 @@ public interface FieldRepository {
     boolean addField(Field field);
 
     boolean updateField(Field field);
+
+    Integer getCurrentFieldId();
 }

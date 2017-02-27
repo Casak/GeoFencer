@@ -1,14 +1,12 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
-import android.content.SharedPreferences;
-
 import javax.inject.Inject;
 
-import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
+import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.presenters.MapPointerPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 import casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment;
@@ -22,14 +20,17 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     private PointerInteractor mInteractor;
     private AntennaDataProvider mAntennaDataProvider;
+    private FieldRepository mFieldRepository;
     private MapPointerPresenter.View mView;
 
     @Inject
     public MapPointerPresenterImpl(Executor executor, MainThread mainThread,
-                                   PointerInteractor interactor, AntennaDataProvider provider) {
+                                   PointerInteractor interactor, AntennaDataProvider provider,
+                                   FieldRepository fieldRepository) {
         super(executor, mainThread);
         mInteractor = interactor;
         mAntennaDataProvider = provider;
+        mFieldRepository = fieldRepository;
     }
 
     //TODO Improve logic
@@ -81,10 +82,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
-        int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
-        //TODO Obtain field id
-        mInteractor.init(this, width, 1011);
+        mInteractor.init(this, mFieldRepository.getCurrentFieldId());
         mAntennaDataProvider.registerObserver(mInteractor);
         mInteractor.execute();
     }

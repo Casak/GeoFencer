@@ -31,9 +31,9 @@ public interface MapComponent extends AbstractActivityComponent, InteractorCompo
 
     void inject(GoogleMapPresenterImpl presenter);
 
-    GoogleMapPresenter.View getView();
+    GoogleMapPresenter.View getGoogleMapPresenterView();
 
-    GoogleMapPresenter getPresenter();
+    GoogleMapPresenter getGoogleMapPresenter();
 
     CameraPresenter getCameraPresenter();
 

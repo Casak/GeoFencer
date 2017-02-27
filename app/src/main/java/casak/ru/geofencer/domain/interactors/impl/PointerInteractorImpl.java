@@ -2,6 +2,7 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import javax.inject.Inject;
 
@@ -18,12 +19,17 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
  */
 
 public class PointerInteractorImpl extends AbstractInteractor implements PointerInteractor {
+    private static final String TAG = PointerInteractorImpl.class.getSimpleName();
+    private static final int ROUTE_START = 0;
+    private static final int ROUTE_NEXT_FROM_START = 1;
+
 
     private Route mCurrentRoute;
     private RouteRepository mRepository;
     private PointerInteractor.Callback mCallback;
+    private WeakHashMap<Integer, List<Route>> mComputedRoutesCache;
     private int mFieldId;
-    private int mMachineryWidth;
+    private double mMachineryWidth;
 
     @Inject
     public PointerInteractorImpl(Executor threadExecutor,
@@ -34,15 +40,16 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     }
 
     @Override
-    public void init(PointerInteractor.Callback callback, int width, int fieldId) {
+    public void init(PointerInteractor.Callback callback, int fieldId) {
         mCallback = callback;
         mFieldId = fieldId;
-        mMachineryWidth = width;
+        mComputedRoutesCache = new WeakHashMap<>();
+        mComputedRoutesCache.put(fieldId, getComputedRoutes(mFieldId));
     }
 
     @Override
     public void run() {
-        if (mCallback == null || mFieldId == 0 || mMachineryWidth == 0)
+        if (mCallback == null || mFieldId == 0)
             throw new NullPointerException("PointerInteractor was not initialized!");
     }
 
@@ -119,11 +126,18 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
             case 0:
                 break;
             case 1:
-                result = crossTrackError(nearestPoints.get(0), nearestPoints.get(0), pointPosition);
-
+                result = crossTrackError(
+                        nearestPoints.get(ROUTE_START),
+                        nearestPoints.get(ROUTE_START),
+                        pointPosition
+                );
                 break;
             case 2:
-                result = crossTrackError(nearestPoints.get(0), nearestPoints.get(1), pointPosition);
+                result = crossTrackError(
+                        nearestPoints.get(ROUTE_START),
+                        nearestPoints.get(ROUTE_NEXT_FROM_START),
+                        pointPosition
+                );
 
         }
         return result;
@@ -136,7 +150,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
                 return null;
             double distanceToStart = MapUtils.computeDistanceBetween(
                     pointPosition,
-                    result.getRoutePoints().get(0)
+                    result.getRoutePoints().get(ROUTE_START)
             );
             double distanceToEnd = MapUtils.computeDistanceBetween(
                     pointPosition,
@@ -167,8 +181,13 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
 
         List<Route> computedRoutes = getComputedRoutes(mFieldId);
 
-        if (computedRoutes == null || computedRoutes.size() == 0)
+        if (computedRoutes == null || computedRoutes.size() == 0) {
             return null;
+        }
+
+        if (mMachineryWidth == 0) {
+            mMachineryWidth = computeMachineryWidth(computedRoutes.get(0), computedRoutes.get(1));
+        }
 
         for (Route model : computedRoutes) {
             if (MapUtils.isLocationOnPath(position, model.getRoutePoints(), true, mMachineryWidth / 2)) {
@@ -178,14 +197,27 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         return null;
     }
 
+    double computeMachineryWidth(Route current, Route next) {
+        return MapUtils.computeDistanceBetween(
+                current.getRoutePoints().get(ROUTE_START),
+                next.getRoutePoints().get(ROUTE_START));
+    }
+
     //TODO Check implementation
-    List<Route> getComputedRoutes(int fieldId) {
-        List<Route> result = mRepository.getAll(fieldId);
+    List<Route> getComputedRoutes(Integer fieldId) {
+        List<Route> result = mComputedRoutesCache.get(fieldId);
+        if (result != null) {
+            return result;
+        }
+
+        result = mRepository.getAll(fieldId);
         for (int i = 0; i < result.size(); i++) {
             if (result.get(i).getType() != Route.Type.COMPUTED) {
                 result.remove(i);
             }
         }
+
+        mComputedRoutesCache.put(fieldId, result);
         return result;
     }
 
@@ -197,12 +229,12 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         int routeSize = routePoints.size();
 
         if (routeSize == 1) {
-            return routePoints.get(0);
+            return routePoints.get(ROUTE_START);
         }
 
         if (routeSize == 2) {
-            Point start = routePoints.get(0);
-            Point end = routePoints.get(1);
+            Point start = routePoints.get(ROUTE_START);
+            Point end = routePoints.get(ROUTE_NEXT_FROM_START);
             return getNearestPoint(start, end, current);
         }
 
@@ -220,7 +252,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
                     return start;
                 }
             }
-        return routePoints.get(0);
+        return routePoints.get(ROUTE_START);
     }
 
     Point getNearestPoint(Point start, Point end, Point current) {
