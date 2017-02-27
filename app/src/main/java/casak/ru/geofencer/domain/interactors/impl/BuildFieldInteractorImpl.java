@@ -72,7 +72,7 @@ public class BuildFieldInteractorImpl extends AbstractInteractor implements Buil
         List<Point> points = route.getRoutePoints();
         Point start = points.get(0);
         Point end = points.get(points.size() - 1);
-        boolean toLeft = mArrowChosen.isChosen();
+        boolean toLeft = mArrowChosen.getType() == Arrow.Type.LEFT;
 
         //TODO Possibly compute "bottom" and "top" edges as route
         mField.setPoints(computeCorners(start,
