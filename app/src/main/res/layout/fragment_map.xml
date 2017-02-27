@@ -1,26 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <View
-        android:id="@+id/touch_listener_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        map:cameraTargetLat="48.9592699"
-        map:cameraTargetLng=" 32.8723257"
-        map:cameraZoom="6"
+        map:cameraTargetLat="50.421355"
+        map:cameraTargetLng="30.4256428"
+        map:cameraZoom="16"
         map:mapType="satellite"
         map:uiCompass="false"
         map:uiZoomControls="false" />
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

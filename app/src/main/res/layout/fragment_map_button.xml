@@ -16,11 +16,20 @@
         android:textSize="30sp" />
 
     <Button
+        android:id="@+id/button_follow_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#B3FAFAFA"
+        android:text="Non-Follow"
+        android:textColor="#424242"
+        android:textSize="30sp" />
+
+    <Button
         android:id="@+id/button_change_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
-        android:text="Change\ntype"
+        android:text="MapType"
         android:textColor="#424242"
         android:textSize="30sp" />
 
@@ -31,7 +40,7 @@
         android:background="#B3FAFAFA"
         android:text="3D"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_2d"
@@ -40,7 +49,7 @@
         android:background="#B3FAFAFA"
         android:text="2D"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_tilt_more"
@@ -49,7 +58,7 @@
         android:background="#B3FAFAFA"
         android:text="Tilt+"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_tilt_less"
@@ -58,7 +67,7 @@
         android:background="#B3FAFAFA"
         android:text="Tilt−"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_zoom_more"
@@ -67,7 +76,7 @@
         android:background="#B3FAFAFA"
         android:text="Zoom+"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_zoom_less"
@@ -76,7 +85,7 @@
         android:background="#B3FAFAFA"
         android:text="Zoom−"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 
     <Button
         android:id="@+id/button_load"
@@ -85,5 +94,5 @@
         android:background="#B3FAFAFA"
         android:text="LOAD"
         android:textColor="#424242"
-        android:textSize="40sp" />
+        android:textSize="@dimen/text_size" />
 </LinearLayout>
