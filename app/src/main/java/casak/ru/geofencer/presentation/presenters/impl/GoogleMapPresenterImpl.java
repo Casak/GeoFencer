@@ -1,5 +1,6 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
@@ -20,6 +21,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
@@ -88,7 +90,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
             firstBuild = false;
 
             SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
-            int width = Integer.parseInt(preferences.getString("pref_machinery _width", null));
+            Context context = AndroidApplication.getComponent().getContext();
+
+            String defaultWidth = context.getString(R.string.default_machinery_width);
+            String key = context.getString(R.string.machinery_width_key);
+            int width = Integer.parseInt(preferences.getString(key, defaultWidth));
 
             mCreateFieldInteractor.init(this, width);
 
