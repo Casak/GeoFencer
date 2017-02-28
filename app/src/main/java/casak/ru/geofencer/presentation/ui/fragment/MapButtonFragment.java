@@ -96,7 +96,7 @@ public class MapButtonFragment extends Fragment {
     @OnClick(R.id.button_load)
     public void onLoadClicked() {
         //TODO move to shared prefs
-        mGoogleMapPresenter.onFieldLoad(6);
+        mGoogleMapPresenter.onFieldLoad(1);
     }
 
     @OnClick(R.id.button_follow_type)

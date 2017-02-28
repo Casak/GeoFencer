@@ -83,7 +83,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
         }
 
         //TODO Fetch fieldId
-        mInteractor.init(this, 6);
+        mInteractor.init(this, 1);
         mAntennaDataProvider.registerObserver(mInteractor);
         mInteractor.execute();
     }
