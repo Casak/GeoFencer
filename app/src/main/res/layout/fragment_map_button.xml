@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
-        android:text="Non-Follow"
+        android:text="NonFollow"
         android:textColor="#424242"
         android:textSize="30sp" />
 

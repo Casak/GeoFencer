@@ -37,29 +37,27 @@ import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View {
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
-    private static MapComponent mapComponent;
-    private static MapModule mapModule;
+    private static MapComponent mMapComponent;
+    private static MapModule mMapModule;
 
-    private GoogleMap map;
+    private GoogleMap mMap;
 
     @Inject
-    GoogleMapPresenter presenter;
+    GoogleMapPresenter mGoogleMapPresenter;
     @Inject
-    CameraPresenter cameraPresenter;
+    CameraPresenter mCameraPresenter;
     @BindView(R.id.mapView)
-    MapView mapView;
-    @BindView(R.id.touch_listener_view)
-    View touchListenerView;
+    MapView mMapView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (mapModule == null)
-            mapModule = new MapModule(this);
+        if (mMapModule == null)
+            mMapModule = new MapModule(this);
 
-        if (mapComponent == null)
-            mapComponent = DaggerMapComponent.builder()
+        if (mMapComponent == null)
+            mMapComponent = DaggerMapComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
                     .activityModule(BaseActivity.getActivityModule())
                     .mapModule(getMapModule())
@@ -74,14 +72,12 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
         ButterKnife.bind(this, rootView);
 
-        touchListenerView.setOnTouchListener(cameraPresenter);
-
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
+        mMapView.onCreate(savedInstanceState);
+        mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                map = googleMap;
-                map.setOnPolylineClickListener(presenter);
+                mMap = googleMap;
+                mMap.setOnPolylineClickListener(mGoogleMapPresenter);
             }
         });
 
@@ -90,101 +86,101 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
     @OnClick(R.id.temp_button)
     public void buildField() {
-        if (!presenter.isFieldBuilding()) {
-            presenter.startBuildField();
+        if (!mGoogleMapPresenter.isFieldBuilding()) {
+            mGoogleMapPresenter.startBuildField();
         } else {
-            presenter.finishBuildField();
+            mGoogleMapPresenter.finishBuildField();
         }
     }
 
     @Override
     public void changeCamera(CameraUpdate update) {
         checkMapReady();
-        map.moveCamera(update);
+        mMap.animateCamera(update);
     }
 
     @Override
     public void changeMapType(int type) {
         checkMapReady();
-        map.setMapType(type);
+        mMap.setMapType(type);
     }
 
     @Override
     public Polyline showPolyline(PolylineOptions options) {
         checkMapReady();
-        return map.addPolyline(options);
+        return mMap.addPolyline(options);
     }
 
     @Override
     public Polygon showPolygon(PolygonOptions options) {
         checkMapReady();
-        return map.addPolygon(options);
+        return mMap.addPolygon(options);
     }
 
     @Override
     public CameraPosition getCurrentCameraPosition() {
         checkMapReady();
-        return map.getCameraPosition();
+        return mMap.getCameraPosition();
     }
 
     @Override
     public int getCurrentMapType() {
         checkMapReady();
-        return map.getMapType();
+        return mMap.getMapType();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mapView.onStart();
+        mMapView.onStart();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        mMapView.onPause();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mapView.onStop();
+        mMapView.onStop();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        mMapView.onDestroy();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        mMapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        mMapView.onLowMemory();
     }
 
     public static MapModule getMapModule() {
-        return mapModule;
+        return mMapModule;
     }
 
     public static MapComponent getMapComponent() {
-        return mapComponent;
+        return mMapComponent;
     }
 
     private boolean checkMapReady() {
-        if (map == null) {
+        if (mMap == null) {
             throw new NullPointerException("Map is not ready!");
         }
         return true;

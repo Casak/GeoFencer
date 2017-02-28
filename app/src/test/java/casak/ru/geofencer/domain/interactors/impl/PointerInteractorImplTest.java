@@ -109,6 +109,12 @@ public class PointerInteractorImplTest {
 
     @Test(expected = NullPointerException.class)
     public void beforeRun_shouldBeInited() {
+        mInteractor = new PointerInteractorImpl(
+                mMockExecutor,
+                mMockMainThread,
+                mMockRouteRepository
+        );
+
         mInteractor.run();
     }
 

@@ -82,7 +82,8 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        mInteractor.init(this, mFieldRepository.getCurrentFieldId());
+        //TODO Fetch fieldId
+        mInteractor.init(this, 6);
         mAntennaDataProvider.registerObserver(mInteractor);
         mInteractor.execute();
     }

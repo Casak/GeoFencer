@@ -9,13 +9,13 @@ import casak.ru.geofencer.storage.converters.PointConverter;
 import casak.ru.geofencer.storage.model.Point;
 import casak.ru.geofencer.storage.model.Point_Table;
 
-public class LocationRepositoryImpl implements LocationRepository{
+public class LocationRepositoryImpl implements LocationRepository {
 
     @Override
     public boolean insert(casak.ru.geofencer.domain.model.Point point) {
         Point result = PointConverter.convertToStorage(point);
 
-        result.insert();
+        result.async().insert();
 
         return true;
     }

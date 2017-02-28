@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.activities.SettingsActivity;
 
@@ -24,7 +27,13 @@ public class MapButtonFragment extends Fragment {
     private final int MAP_2D = 0;
 
     @Inject
-    GoogleMapPresenter presenter;
+    GoogleMapPresenter mGoogleMapPresenter;
+    @Inject
+    CameraPresenter mCameraPresenter;
+    @BindView(R.id.button_follow_type)
+    Button mButtonFollow;
+
+    private boolean mFollow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,37 +53,37 @@ public class MapButtonFragment extends Fragment {
 
     @OnClick(R.id.button_tilt_more)
     public void onTiltMoreClicked() {
-        presenter.onTiltMore();
+        mGoogleMapPresenter.onTiltMore();
     }
 
     @OnClick(R.id.button_tilt_less)
     public void onTiltLessClicked() {
-        presenter.onTiltLess();
+        mGoogleMapPresenter.onTiltLess();
     }
 
     @OnClick(R.id.button_2d)
     public void on2DClicked() {
-        presenter.changeTilt(MAP_2D);
+        mGoogleMapPresenter.changeTilt(MAP_2D);
     }
 
     @OnClick(R.id.button_3d)
     public void on3DClicked() {
-        presenter.changeTilt(MAP_3D);
+        mGoogleMapPresenter.changeTilt(MAP_3D);
     }
 
     @OnClick(R.id.button_change_type)
     public void onChangeTypeClicked() {
-        presenter.changeMapType();
+        mGoogleMapPresenter.changeMapType();
     }
 
     @OnClick(R.id.button_zoom_more)
     public void onZoomMoreClicked() {
-        presenter.onZoomMore();
+        mGoogleMapPresenter.onZoomMore();
     }
 
     @OnClick(R.id.button_zoom_less)
     public void onZoomLessClicked() {
-        presenter.onZoomLess();
+        mGoogleMapPresenter.onZoomLess();
     }
 
     @OnClick(R.id.button_settings)
@@ -83,9 +92,35 @@ public class MapButtonFragment extends Fragment {
         startActivity(intent);
     }
 
+    //TODO Create dialog(?) for choosing ID
     @OnClick(R.id.button_load)
     public void onLoadClicked() {
         //TODO move to shared prefs
-        presenter.onFieldLoad(1000);
+        mGoogleMapPresenter.onFieldLoad(6);
+    }
+
+    @OnClick(R.id.button_follow_type)
+    public void onFollowClicked() {
+        if (mFollow) {
+            switch (mButtonFollow.getText().toString()) {
+                case "NonFollow":
+                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_POINT);
+                    mButtonFollow.setText("PntFollow");
+                    break;
+                case "PntFollow":
+                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_ROUTE);
+                    mButtonFollow.setText("RtFollow");
+                    break;
+                case "RtFollow":
+                default:
+                    mFollow = false;
+                    mButtonFollow.setText("NonFollow");
+                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.NON_FOLLOW);
+            }
+        } else {
+            mFollow = true;
+            mButtonFollow.setText("PntFollow");
+            mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_POINT);
+        }
     }
 }

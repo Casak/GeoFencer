@@ -30,6 +30,8 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     private WeakHashMap<Integer, List<Route>> mComputedRoutesCache;
     private int mFieldId;
     private double mMachineryWidth;
+    private double mCurrentRouteBearing;
+    private Point mNearestPoint;
 
     @Inject
     public PointerInteractorImpl(Executor threadExecutor,
@@ -62,6 +64,16 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
                 mCallback.showPointer(result);
             }
         });
+    }
+
+    @Override
+    public double getCurrentRouteBearing() {
+        return mCurrentRouteBearing;
+    }
+
+    @Override
+    public Point getNearestPoint() {
+        return mNearestPoint;
     }
 
     //TODO Probably move to presenter or somewhere else at presentation layer
@@ -222,9 +234,13 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     }
 
     void setCurrentRoute(Route route) {
+        List<Point> points = route.getRoutePoints();
+        mCurrentRouteBearing = MapUtils.computeHeading(points.get(0), points.get(points.size() - 1));
+
         mCurrentRoute = route;
     }
 
+    //TODO Check usage
     Point getNearestPoint(List<Point> routePoints, Point current) {
         int routeSize = routePoints.size();
 
@@ -268,12 +284,12 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         if (routeSize == 0 || routeSize == 1)
             return routePoints;
 
-        Point nearestPoint = getNearestPoint(routePoints, current);
-        int indexNearest = routePoints.indexOf(nearestPoint);
+        mNearestPoint = getNearestPoint(routePoints, current);
+        int indexNearest = routePoints.indexOf(mNearestPoint);
         int indexNext = indexNearest + 1;
 
         List<Point> result = new ArrayList<>();
-        result.add(nearestPoint);
+        result.add(mNearestPoint);
 
         if (indexNext != routeSize)
             result.add(routePoints.get(indexNext));

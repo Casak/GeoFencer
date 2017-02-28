@@ -49,14 +49,17 @@ import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleMapPresenter {
     private static final String TAG = GoogleMapPresenterImpl.class.getSimpleName();
 
-    private boolean isFieldBuilding;
+    private boolean mIsFieldBuilding;
 
     private GoogleMapPresenter.View mMapView;
     private CreateFieldInteractor mCreateFieldInteractor;
-    private LocationInteractor mLocationInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
-
     private AntennaDataProvider mDataProvider;
+    private CameraPresenter mCameraPresenter;
+    //TODO Move that logic somewhere
+    private Polyline mSessionRoute;
+    private List<LatLng> mSessionLatLngs;
+
 
     @Inject
     public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
@@ -70,22 +73,22 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         mCreateFieldInteractor = createFieldInteractor;
         mLoadFieldInteractor = loadFieldInteractor;
-        mLocationInteractor = locationInteractor;
         mMapView = mapView;
         mDataProvider = provider;
         mCameraPresenter = cameraPresenter;
 
-        isFieldBuilding = false;
-        mLocationInteractor.init(this);
-        mDataProvider.registerObserver(mLocationInteractor.getListener());
-        mLocationInteractor.execute();
+        mIsFieldBuilding = false;
+
+        locationInteractor.init(this);
+        mDataProvider.registerObserver(locationInteractor.getListener());
+        locationInteractor.execute();
     }
 
     boolean firstBuild = true;
 
     @Override
     public void startBuildField() {
-        isFieldBuilding = true;
+        mIsFieldBuilding = true;
         if (firstBuild) {
             firstBuild = false;
 
@@ -110,7 +113,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void finishBuildField() {
-        isFieldBuilding = false;
+        mIsFieldBuilding = false;
         mDataProvider.removeObserver(mCreateFieldInteractor.getOnLocationChangedListener());
         mCreateFieldInteractor.onFinishCreatingRoute();
     }
@@ -129,7 +132,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public boolean isFieldBuilding() {
-        return isFieldBuilding;
+        return mIsFieldBuilding;
     }
 
     @Override
@@ -288,23 +291,20 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mDataProvider.startHarvesting();
     }
 
-    //TODO Get normal IDs
-    Route sessionRoute = new Route(1, 1011, Route.Type.BASE);
-
-    CameraPresenter mCameraPresenter;
-
     @Override
     public void addToSessionRoute(Point point) {
-        if (routes.get(sessionRoute.getId()) == null) {
+        if (mSessionRoute == null) {
+            //TODO Get normal IDs
+            Route sessionRoute = new Route(-1, -1, Route.Type.BASE);
             showRoute(sessionRoute);
+            mSessionRoute = routes.get(-1);
+            mSessionLatLngs = mSessionRoute.getPoints();
         }
 
-        Polyline polyline = routes.get(sessionRoute.getId());
+        mSessionLatLngs.add(LatLngConverter.convertToLatLng(point));
+        mSessionRoute.setPoints(mSessionLatLngs);
 
-        List<LatLng> points = polyline.getPoints();
-        points.add(LatLngConverter.convertToLatLng(point));
-        polyline.setPoints(points);
-
+        //TODO Move it
         mCameraPresenter.onLocationChanged(point);
     }
 

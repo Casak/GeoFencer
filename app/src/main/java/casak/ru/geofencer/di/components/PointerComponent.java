@@ -7,7 +7,6 @@ import casak.ru.geofencer.di.modules.RepositoryModule;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.presentation.presenters.MapPointerPresenter;
-import casak.ru.geofencer.presentation.presenters.impl.MapPointerPresenterImpl;
 import casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment;
 import dagger.Component;
 
@@ -20,8 +19,6 @@ import dagger.Component;
         dependencies = AppComponent.class)
 public interface PointerComponent extends AbstractActivityComponent {
     void inject(MapPointerFragment fragment);
-
-    void inject(MapPointerPresenterImpl presenter);
 
     MapPointerPresenter.View getPointerView();
 
