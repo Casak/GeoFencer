@@ -108,6 +108,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
             //TODO Delete
             mDataProvider.startPassingRouteBuildingPoints();
+            finishBuildField();
         }
     }
 
