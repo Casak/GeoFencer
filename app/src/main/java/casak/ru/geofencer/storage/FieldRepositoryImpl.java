@@ -1,5 +1,7 @@
 package casak.ru.geofencer.storage;
 
+import android.database.Cursor;
+
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import casak.ru.geofencer.domain.model.Field;
@@ -65,6 +67,25 @@ public class FieldRepositoryImpl implements FieldRepository {
 
         mFieldId = result.id;
         return true;
+    }
+
+    @Override
+    public int[] getAllFieldIds() {
+        Cursor cursor = SQLite.select(Field_Table.id)
+                .from(casak.ru.geofencer.storage.model.Field.class)
+                .query();
+        if (cursor == null)
+            return null;
+        int[] result = new int[cursor.getCount()];
+
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            result[i] = cursor.getInt(0);
+
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return result;
     }
 
     @Override

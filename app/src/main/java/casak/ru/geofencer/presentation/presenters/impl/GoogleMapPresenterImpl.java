@@ -49,13 +49,15 @@ import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
 public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleMapPresenter {
     private static final String TAG = GoogleMapPresenterImpl.class.getSimpleName();
 
-    private boolean mIsFieldBuilding;
-
     private GoogleMapPresenter.View mMapView;
     private CreateFieldInteractor mCreateFieldInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
     private AntennaDataProvider mDataProvider;
     private CameraPresenter mCameraPresenter;
+    private Map<Arrow, Polyline> mArrows;
+    private SparseArray<Polygon> mFields;
+    private LongSparseArray<Polyline> mRoutes;
+    private boolean mIsFieldBuilding;
     //TODO Move that logic somewhere
     private Polyline mSessionRoute;
     private List<LatLng> mSessionLatLngs;
@@ -78,38 +80,35 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mCameraPresenter = cameraPresenter;
 
         mIsFieldBuilding = false;
+        mArrows = new HashMap<>();
+        mFields = new SparseArray<>();
+        mRoutes = new LongSparseArray<>();
 
         locationInteractor.init(this);
         mDataProvider.registerObserver(locationInteractor.getListener());
         locationInteractor.execute();
     }
 
-    boolean firstBuild = true;
-
     @Override
     public void startBuildField() {
         mIsFieldBuilding = true;
-        if (firstBuild) {
-            firstBuild = false;
+        SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
+        Context context = AndroidApplication.getComponent().getContext();
 
-            SharedPreferences preferences = AndroidApplication.getComponent().getSharedPreferences();
-            Context context = AndroidApplication.getComponent().getContext();
+        String defaultWidth = context.getString(R.string.default_machinery_width);
+        String key = context.getString(R.string.machinery_width_key);
+        int width = Integer.parseInt(preferences.getString(key, defaultWidth));
 
-            String defaultWidth = context.getString(R.string.default_machinery_width);
-            String key = context.getString(R.string.machinery_width_key);
-            int width = Integer.parseInt(preferences.getString(key, defaultWidth));
+        mCreateFieldInteractor.init(this, width);
 
-            mCreateFieldInteractor.init(this, width);
+        mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
 
-            mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
+        mCreateFieldInteractor.execute();
+        mCreateFieldInteractor.onStartCreatingRoute();
 
-            mCreateFieldInteractor.execute();
-            mCreateFieldInteractor.onStartCreatingRoute();
-
-            //TODO Delete
-            mDataProvider.startPassingRouteBuildingPoints();
-            finishBuildField();
-        }
+        //TODO Delete
+        mDataProvider.startPassingRouteBuildingPoints();
+        finishBuildField();
     }
 
     @Override
@@ -121,7 +120,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void onPolylineClick(Polyline polyline) {
-        for (Map.Entry<Arrow, Polyline> e : arrowsMap.entrySet()) {
+        for (Map.Entry<Arrow, Polyline> e : mArrows.entrySet()) {
             Arrow key = e.getKey();
             Polyline value = e.getValue();
             if (value.equals(polyline)) {
@@ -162,25 +161,21 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     }
 
     //TODO Refactor and check incoming data
-    Map<Arrow, Polyline> arrowsMap = new HashMap<>();
-
     @Override
     public void showArrow(Arrow model) {
         PolylineOptions arrowOptions = ArrowConverter.convertToPresentationModel(model);
         Polyline polyline = mMapView.showPolyline(arrowOptions);
-        arrowsMap.put(model, polyline);
+        mArrows.put(model, polyline);
     }
 
     //TODO Check
     @Override
     public void hideArrow(Arrow model) {
-        Polyline polyline = arrowsMap.get(model);
+        Polyline polyline = mArrows.get(model);
         polyline.setVisible(false);
         polyline.remove();
-        arrowsMap.remove(model);
+        mArrows.remove(model);
     }
-
-    SparseArray<Polygon> fields = new SparseArray<>();
 
     @Override
     public void showField(Field model) {
@@ -188,21 +183,19 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         Polygon polygon = mMapView.showPolygon(fieldOptions);
 
-        fields.append(model.getId(), polygon);
+        mFields.append(model.getId(), polygon);
     }
 
     @Override
     public void hideField(Field model) {
         int fieldId = model.getId();
-        Polygon polygon = fields.get(fieldId);
+        Polygon polygon = mFields.get(fieldId);
 
         polygon.setVisible(false);
         polygon.remove();
 
-        fields.remove(fieldId);
+        mFields.remove(fieldId);
     }
-
-    LongSparseArray<Polyline> routes = new LongSparseArray<>();
 
     @Override
     public void showRoute(Route model) {
@@ -210,18 +203,18 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         Polyline polyline = mMapView.showPolyline(routeOptions);
 
-        routes.append(model.getId(), polyline);
+        mRoutes.append(model.getId(), polyline);
     }
 
     @Override
     public void hideRoute(Route model) {
         long routeId = model.getId();
-        Polyline polyline = routes.get(routeId);
+        Polyline polyline = mRoutes.get(routeId);
 
         polyline.setVisible(false);
         polyline.remove();
 
-        routes.remove(routeId);
+        mRoutes.remove(routeId);
     }
 
     @Override
@@ -298,7 +291,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
             //TODO Get normal IDs
             Route sessionRoute = new Route(-1, -1, Route.Type.BASE);
             showRoute(sessionRoute);
-            mSessionRoute = routes.get(-1);
+            mSessionRoute = mRoutes.get(-1);
             mSessionLatLngs = mSessionRoute.getPoints();
         }
 
@@ -311,5 +304,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     private float getCurrentCameraTilt() {
         return mMapView.getCurrentCameraPosition().tilt;
+    }
+
+    //For debugging
+    @Override
+    public LongSparseArray<Polyline> getRoutes() {
+        return mRoutes;
     }
 }

@@ -76,48 +76,10 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         return mNearestPoint;
     }
 
-    //TODO Probably move to presenter or somewhere else at presentation layer
-   /* private Circle currentDot;
-    private Circle nextDot;
-
-    public void updatePointerVisualization(long routeId, Point current, Point next) {
-        if (currentRouteId != routeId) {
-            currentRouteId = routeId;
-            for (Polyline polyline : notHarvestedRoutes) {
-                int id = -1;
-                try {
-                    id = Integer.parseInt(polyline.getId());
-                } catch (NumberFormatException e) {
-                    Log.d(TAG, "Invalid polyline. It is not computed one");
-                }
-                if (polyline.getColor() == Color.RED &&
-                        id != currentRouteId)
-                    polyline.setColor(Color.BLUE);
-            }
-            notHarvestedRoutes.get((int)currentRouteId).setColor(Color.RED);
-        }
-
-        CircleOptions currentOptions = new CircleOptions()
-                .center(new LatLng(current.getLatitude(), current.getLongitude()))
-                .radius(0.5)
-                .fillColor(Color.GRAY);
-        CircleOptions nextOptions = new CircleOptions()
-                .center(new LatLng(next.getLatitude(), next.getLongitude()))
-                .radius(0.5)
-                .fillColor(Color.DKGRAY);
-
-        if (currentDot != null && nextDot != null) {
-            removeCircle(currentDot);
-            removeCircle(nextDot);
-            currentDot = null;
-            nextDot = null;
-        }
-
-        if (currentDot == null && nextDot == null) {
-            currentDot = showCircle(currentOptions);
-            nextDot = showCircle(nextOptions);
-        }
-    }*/
+    @Override
+    public long getCurrentRouteId() {
+        return mCurrentRoute == null ? -1 : mCurrentRoute.getId();
+    }
 
     double computePointerNew(Point pointPosition) {
         Route nearestRoute = getCurrentRoute(pointPosition);

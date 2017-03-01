@@ -1,8 +1,12 @@
 package casak.ru.geofencer.presentation.presenters;
 
+import android.util.LongSparseArray;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -29,6 +33,9 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
 
         Polygon showPolygon(PolygonOptions options);
 
+        //For debugging
+        Circle showCircle(CircleOptions options);
+
         CameraPosition getCurrentCameraPosition();
 
         int getCurrentMapType();
@@ -53,4 +60,7 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
     void changeMapType();
 
     void onFieldLoad(int fieldId);
+
+    //For debugging
+    LongSparseArray<Polyline> getRoutes();
 }

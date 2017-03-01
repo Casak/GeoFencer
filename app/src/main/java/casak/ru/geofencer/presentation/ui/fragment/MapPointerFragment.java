@@ -29,19 +29,8 @@ import casak.ru.geofencer.presentation.ui.base.BaseActivity;
  */
 
 public class MapPointerFragment extends Fragment implements MapPointerPresenter.View {
-    private static PointerComponent pointerComponent;
-    private static PointerModule pointerModule;
-
-    private List<ImageView> right;
-    private List<ImageView> left;
-
-    private Drawable red;
-    private Drawable yellow;
-    private Drawable green;
-    private Drawable off;
-
     @Inject
-    MapPointerPresenter presenter;
+    MapPointerPresenter mPresenter;
 
     @BindView(R.id.pointer_left_red_far)
     ImageView leftRedFar;
@@ -69,20 +58,29 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
     @BindView(R.id.pointer_right_red_far)
     ImageView rightRedFar;
 
+    private List<ImageView> right;
+    private List<ImageView> left;
+    private Drawable red;
+    private Drawable yellow;
+    private Drawable green;
+    private Drawable off;
+
+    private static PointerComponent mComponent;
+    private static PointerModule mModule;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (pointerModule == null) {
-            pointerModule = new PointerModule(this);
+        if (mModule == null) {
+            mModule = new PointerModule(this);
         }
 
-        if (pointerComponent == null) {
-            pointerComponent = DaggerPointerComponent.builder()
+        if (mComponent == null) {
+            mComponent = DaggerPointerComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
                     .activityModule(BaseActivity.getActivityModule())
-                    .mapModule(GoogleMapFragment.getMapModule())
-                    .pointerModule(pointerModule)
+                    .pointerModule(mModule)
                     .build();
         }
 
@@ -98,7 +96,7 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
         init();
 
         //TODO Create listener for starting pointer computing
-        presenter.resume();
+        mPresenter.resume();
 
         return rootView;
     }
@@ -181,10 +179,10 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
     }
 
     public static PointerModule getPointerModule() {
-        return pointerModule;
+        return mModule;
     }
 
     public static PointerComponent getPointerComponent() {
-        return pointerComponent;
+        return mComponent;
     }
 }

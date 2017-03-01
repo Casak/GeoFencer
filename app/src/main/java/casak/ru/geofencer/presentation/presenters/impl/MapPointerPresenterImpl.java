@@ -1,14 +1,27 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.LongSparseArray;
+
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+
 import javax.inject.Inject;
 
+import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
-import casak.ru.geofencer.domain.repository.FieldRepository;
+import casak.ru.geofencer.domain.model.Point;
+import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.MapPointerPresenter;
 import casak.ru.geofencer.presentation.presenters.base.AbstractPresenter;
+import casak.ru.geofencer.presentation.ui.activities.MainActivity;
+import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 import casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment;
 
 /**
@@ -20,17 +33,14 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     private PointerInteractor mInteractor;
     private AntennaDataProvider mAntennaDataProvider;
-    private FieldRepository mFieldRepository;
     private MapPointerPresenter.View mView;
 
     @Inject
     public MapPointerPresenterImpl(Executor executor, MainThread mainThread,
-                                   PointerInteractor interactor, AntennaDataProvider provider,
-                                   FieldRepository fieldRepository) {
+                                   PointerInteractor interactor, AntennaDataProvider provider) {
         super(executor, mainThread);
         mInteractor = interactor;
         mAntennaDataProvider = provider;
-        mFieldRepository = fieldRepository;
     }
 
     //TODO Improve logic
@@ -74,6 +84,10 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
                 mView.turnOn(View.TO_GREEN_CLOSE, View.Type.LEFT);
             }
         }
+
+
+        //Debug
+        updatePointerVisualization();
     }
 
     @Override
@@ -107,5 +121,79 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     @Override
     public void onError(String message) {
 
+    }
+
+
+    //Pointer work visualization
+    private PointerInteractor mPointerInteractor;
+    private GoogleMapPresenter mGoogleMapPresenter;
+    private GoogleMapPresenter.View mGoogleMapPresenterView;
+    private Resources mResources;
+    private long routeId;
+
+    public void updatePointerVisualization() {
+        if (mGoogleMapPresenter == null) {
+            mGoogleMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+        } else if (mGoogleMapPresenterView == null) {
+            mGoogleMapPresenterView = GoogleMapFragment.getMapComponent().getGoogleMapPresenterView();
+        } else if (mPointerInteractor == null) {
+            mPointerInteractor = MapPointerFragment.getPointerComponent().getPointerInteractor();
+        } else if (mResources == null) {
+            Context context = MainActivity.getAbstractActivityComponent().getActivityContext();
+            mResources = context.getResources();
+        }
+
+        if (mPointerInteractor == null || mGoogleMapPresenter == null ||
+                mGoogleMapPresenterView == null || mResources == null) {
+            return;
+        }
+
+        if (mPointerInteractor.getCurrentRouteId() != routeId) {
+            routeId = mPointerInteractor.getCurrentRouteId();
+            updateRoutes(routeId);
+        }
+
+        updateCircles();
+    }
+
+    private void updateRoutes(long currentRouteId) {
+        LongSparseArray<Polyline> routes = mGoogleMapPresenter.getRoutes();
+        for (int i = 0; i < routes.size(); i++) {
+            Polyline route = routes.valueAt(i);
+
+            if (route.getColor() == mResources.getColor(R.color.debug_route_current) &&
+                    routes.keyAt(i) != currentRouteId) {
+                route.setColor(mResources.getColor(R.color.debug_route_used));
+            } else if (routes.keyAt(i) == currentRouteId) {
+                route.setColor(mResources.getColor(R.color.debug_route_current));
+            }
+        }
+    }
+
+    private Circle currentDot;
+    private Point currentPoint;
+
+    private void updateCircles() {
+        Point current = mPointerInteractor.getNearestPoint();
+        if (currentPoint == current) {
+            return;
+        }
+
+        currentPoint = current;
+
+        if (currentDot != null) {
+            currentDot.remove();
+        }
+
+        currentDot = showCircle();
+    }
+
+    private Circle showCircle() {
+        CircleOptions options = new CircleOptions()
+                .center(new LatLng(currentPoint.getLatitude(), currentPoint.getLongitude()))
+                .radius(0.5)
+                .fillColor(mResources.getColor(R.color.debug_point_current));
+
+        return mGoogleMapPresenterView.showCircle(options);
     }
 }

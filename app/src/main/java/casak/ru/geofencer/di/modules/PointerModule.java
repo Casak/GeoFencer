@@ -6,7 +6,6 @@ import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.interactors.impl.PointerInteractorImpl;
-import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.presenters.MapPointerPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.MapPointerPresenterImpl;
 import dagger.Module;
@@ -35,14 +34,12 @@ public class PointerModule {
     MapPointerPresenter providesMapPointerPresenter(Executor threadExecutor,
                                                     MainThread mainThread,
                                                     PointerInteractor interactor,
-                                                    AntennaDataProvider provider,
-                                                    FieldRepository fieldRepository) {
+                                                    AntennaDataProvider provider) {
         return new MapPointerPresenterImpl(
                 threadExecutor,
                 mainThread,
                 interactor,
-                provider,
-                fieldRepository
+                provider
         );
     }
 

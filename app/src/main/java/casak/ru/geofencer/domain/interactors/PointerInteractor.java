@@ -17,4 +17,6 @@ public interface PointerInteractor extends Interactor, LocationInteractor.OnLoca
     double getCurrentRouteBearing();
 
     Point getNearestPoint();
+
+    long getCurrentRouteId();
 }

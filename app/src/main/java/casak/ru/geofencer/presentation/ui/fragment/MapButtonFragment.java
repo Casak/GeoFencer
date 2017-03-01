@@ -1,6 +1,8 @@
 package casak.ru.geofencer.presentation.ui.fragment;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.domain.repository.FieldRepository;
 import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.activities.SettingsActivity;
@@ -30,6 +33,8 @@ public class MapButtonFragment extends Fragment {
     GoogleMapPresenter mGoogleMapPresenter;
     @Inject
     CameraPresenter mCameraPresenter;
+    @Inject
+    FieldRepository mFieldRepository;
     @BindView(R.id.button_follow_type)
     Button mButtonFollow;
 
@@ -92,11 +97,28 @@ public class MapButtonFragment extends Fragment {
         startActivity(intent);
     }
 
-    //TODO Create dialog(?) for choosing ID
     @OnClick(R.id.button_load)
     public void onLoadClicked() {
-        //TODO move to shared prefs
-        mGoogleMapPresenter.onFieldLoad(1);
+        final int[] ids = mFieldRepository.getAllFieldIds();
+        CharSequence[] idsString = new CharSequence[ids.length];
+
+        //TODO Map field names instead (create field name column too)
+        for (int i = 0; i < ids.length; i++) {
+            idsString[i] = ids[i] + "";
+        }
+
+        AlertDialog alert = new AlertDialog.Builder(getActivity())
+                .setTitle("Please, choose Field!")
+                .setItems(idsString,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mGoogleMapPresenter.onFieldLoad(ids[which]);
+                            }
+                        })
+                .create();
+
+        alert.show();
     }
 
     @OnClick(R.id.button_follow_type)
