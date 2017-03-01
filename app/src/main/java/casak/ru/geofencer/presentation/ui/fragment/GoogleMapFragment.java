@@ -28,7 +28,6 @@ import casak.ru.geofencer.R;
 import casak.ru.geofencer.di.components.DaggerMapComponent;
 import casak.ru.geofencer.di.components.MapComponent;
 import casak.ru.geofencer.di.modules.MapModule;
-import casak.ru.geofencer.presentation.presenters.CameraPresenter;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
@@ -46,8 +45,6 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
 
     @Inject
     GoogleMapPresenter mGoogleMapPresenter;
-    @Inject
-    CameraPresenter mCameraPresenter;
     @BindView(R.id.mapView)
     MapView mMapView;
 
