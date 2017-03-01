@@ -3,7 +3,6 @@ package casak.ru.geofencer.domain.interactors.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
@@ -18,6 +17,9 @@ import casak.ru.geofencer.domain.repository.RouteRepository;
 //TODO Callbacks
 public class RouteBuilderInteractorImpl extends AbstractInteractor implements RouteBuilderInteractor {
     private static final String TAG = RouteBuilderInteractorImpl.class.getSimpleName();
+
+    public static final double HEADING_TO_LEFT = -90;
+    public static final double HEADING_TO_RIGHT = 90;
 
     private RouteBuilderInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
@@ -94,7 +96,7 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         Point start = fieldBuildingPoints.get(0);
         Point end = fieldBuildingPoints.get(fieldBuildingPoints.size() - 1);
 
-        double arrowHeading = toLeft ? Constants.HEADING_TO_LEFT : Constants.HEADING_TO_RIGHT;
+        double arrowHeading = toLeft ? HEADING_TO_LEFT : HEADING_TO_RIGHT;
 
         double computedHeading = MapUtils.computeHeading(start, end);
         double normalHeading = computedHeading + arrowHeading;

@@ -11,7 +11,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
@@ -29,6 +28,7 @@ import static org.junit.Assert.*;
 public class PointerInteractorImplTest {
 
     static final int FIELD_ID = 1;
+    static final int WIDTH_METERS = 10;
 
     @Mock
     public Point mMockLocation;
@@ -369,14 +369,14 @@ public class PointerInteractorImplTest {
         Point start = fieldBuildingPoints.get(0);
         Point end = fieldBuildingPoints.get(fieldBuildingPoints.size() - 1);
 
-        double arrowHeading = Constants.HEADING_TO_LEFT;
+        double arrowHeading = -90;
 
         double computedHeading = MapUtils.computeHeading(start, end);
         double normalHeading = computedHeading + arrowHeading;
 
         for (int i = 0; i < 4; i++) {
             List<Point> routePoints = computeNewPath(result.get(i).getRoutePoints(),
-                    Constants.WIDTH_METERS,
+                    WIDTH_METERS,
                     normalHeading);
 
             Route route = new Route(i + 1,

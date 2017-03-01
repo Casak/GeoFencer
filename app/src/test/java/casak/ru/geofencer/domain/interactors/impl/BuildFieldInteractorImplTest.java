@@ -10,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
@@ -34,6 +33,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class BuildFieldInteractorImplTest {
     static final int FIELD_ID = 1;
+    static final int WIDTH_METERS = 10;
 
     @Mock
     static Executor mMockExecutor;
@@ -95,7 +95,7 @@ public class BuildFieldInteractorImplTest {
                 mMockedCallback,
                 mMockRouteRepository,
                 mMockFieldRepository,
-                Constants.WIDTH_METERS
+                WIDTH_METERS
         );
 
         mField = new Field(FIELD_ID, points);

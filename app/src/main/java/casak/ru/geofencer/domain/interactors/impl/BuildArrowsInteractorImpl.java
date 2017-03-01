@@ -3,7 +3,6 @@ package casak.ru.geofencer.domain.interactors.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.Constants;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
@@ -21,6 +20,8 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
 
     private static final boolean LEFT = true;
     private static final boolean RIGHT = false;
+    public static final double HEADING_TO_LEFT = -90;
+    public static final double HEADING_TO_RIGHT = 90;
 
     private CreateFieldInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
@@ -122,9 +123,9 @@ public class BuildArrowsInteractorImpl extends AbstractInteractor implements Bui
         double headingArrowToTop;
 
         if (toLeft) {
-            headingArrowToTop = routeHeading + Constants.HEADING_TO_LEFT;
+            headingArrowToTop = routeHeading + HEADING_TO_LEFT;
         } else {
-            headingArrowToTop = routeHeading + Constants.HEADING_TO_RIGHT;
+            headingArrowToTop = routeHeading + HEADING_TO_RIGHT;
         }
 
         double headingArrowToLeft = headingArrowToTop + 180 + 30;
