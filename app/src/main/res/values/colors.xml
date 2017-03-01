@@ -7,11 +7,16 @@
     <color name="black_overlay">#66000000</color>
 
     <!--Map elements colors-->
-    <color name="field_fill">#7F00FF00</color>
+    <color name="field_fill">#7f64dd17</color>
     <color name="field_stroke">#7F00F000</color>
     <color name="harvested_fill">#7f0061ff</color>
     <color name="harvested_stroke">#8f0061ff</color>
     <color name="arrow">#9FF4F142</color>
-    <color name="route_base">#edff00ff</color>
-    <color name="route_computed">#9FFF00FF</color>
+    <color name="route_base">#d50000</color>
+    <color name="route_computed">#b4ffea00</color>
+
+    <color name="debug_route_current">#d50000</color>
+    <color name="debug_route_used">#64dd17</color>
+    <color name="debug_point_current">#6200ea</color>
+    <color name="debug_point_used">#1de9b6</color>
 </resources>

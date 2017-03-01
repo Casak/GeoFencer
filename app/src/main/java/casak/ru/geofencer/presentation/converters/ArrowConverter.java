@@ -1,9 +1,10 @@
 package casak.ru.geofencer.presentation.converters;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.domain.model.Arrow;
 
@@ -13,10 +14,12 @@ import casak.ru.geofencer.domain.model.Arrow;
 
 public class ArrowConverter {
     public static PolylineOptions convertToPresentationModel(Arrow arrow) {
+        Resources resources = AndroidApplication.getComponent().getContext().getResources();
+
         PolylineOptions result = new PolylineOptions();
 
         result.clickable(true);
-        result.color(R.color.arrow);
+        result.color(resources.getColor(R.color.arrow));
         result.geodesic(true);
 
         result.addAll(LatLngConverter.convertToLatLng(arrow.getArrowPoints()));
