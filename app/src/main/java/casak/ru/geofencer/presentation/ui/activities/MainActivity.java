@@ -9,12 +9,13 @@ import android.widget.Toast;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
+import static casak.ru.geofencer.bluetooth.BluetoothReceiver.REQUEST_CODE;
+
 /**
  * Created on 08.02.2017.
  */
 
 public class MainActivity extends BaseActivity {
-    private final static int REQUEST_CODE = 802;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,10 +29,12 @@ public class MainActivity extends BaseActivity {
             finish();
         } else {
             if (bluetoothAdapter.isEnabled()) {
+                if (bluetoothAdapter.isDiscovering()) {
+                    bluetoothAdapter.cancelDiscovery();
+                }
                 bluetoothAdapter.startDiscovery();
             } else {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_CODE);
+                enableBluetooth();
             }
         }
     }
@@ -40,7 +43,11 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                BluetoothAdapter.getDefaultAdapter().startDiscovery();
+                BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (btAdapter.isDiscovering()) {
+                    btAdapter.cancelDiscovery();
+                }
+                btAdapter.startDiscovery();
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(
                         this,
@@ -49,5 +56,10 @@ public class MainActivity extends BaseActivity {
                 finish();
             }
         }
+    }
+
+    private void enableBluetooth() {
+        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBtIntent, REQUEST_CODE);
     }
 }

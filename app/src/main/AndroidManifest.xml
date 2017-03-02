@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="casak.ru.geofencer">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
@@ -35,12 +34,13 @@
             android:theme="@style/AppTheme" />
 
         <receiver
-            android:name=".bluetooth.old.BluetoothReceiver"
+            android:name=".bluetooth.BluetoothReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.FOUND" />
-                <action android:name="android.bluetooth.device.action.DISAPPEARED" />
+                <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
 

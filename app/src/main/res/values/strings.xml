@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">GeoFencer</string>
 
+    <!--MainActivity-->
+    <string name="no_bluetooth">Your device does not have bluetooth!</string>
+    <string name="bluetooth_disabled">Bluetooth is disabled!</string>
+
+    <!--BluetoothReceiver-->
+    <string name="antenna_lost">We have lost the antenna!</string>
+
     <!--Misc-->
     <string name="yes">Yes</string>
     <string name="no">No</string>
