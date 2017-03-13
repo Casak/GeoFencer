@@ -37,7 +37,7 @@ public class CameraPresenterImpl extends AbstractPresenter implements CameraPres
     }
 
     @Override
-    public void onLocationChanged(Point point) {
+    public void onChange(Point point) {
         if (mPointPrevious == null) {
             mPointPrevious = point;
         }

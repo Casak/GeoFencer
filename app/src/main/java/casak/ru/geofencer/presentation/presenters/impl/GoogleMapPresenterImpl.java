@@ -22,7 +22,8 @@ import javax.inject.Inject;
 
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.bluetooth.AntennaDataProvider;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
+import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
@@ -52,8 +53,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     private GoogleMapPresenter.View mMapView;
     private CreateFieldInteractor mCreateFieldInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
-    private AntennaDataProvider mDataProvider;
-    private CameraPresenter mCameraPresenter;
+    private AntennaDataObservable mAntennaDataObservable;
     private Map<Arrow, Polyline> mArrows;
     private SparseArray<Polygon> mFields;
     private LongSparseArray<Polyline> mRoutes;
@@ -69,15 +69,14 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
                                   LoadFieldInteractor loadFieldInteractor,
                                   LocationInteractor locationInteractor,
                                   GoogleMapPresenter.View mapView,
-                                  AntennaDataProvider provider,
+                                  AntennaDataObservable observable,
                                   CameraPresenter cameraPresenter) {
         super(executor, mainThread);
 
         mCreateFieldInteractor = createFieldInteractor;
         mLoadFieldInteractor = loadFieldInteractor;
         mMapView = mapView;
-        mDataProvider = provider;
-        mCameraPresenter = cameraPresenter;
+        mAntennaDataObservable = observable;
 
         mIsFieldBuilding = false;
         mArrows = new HashMap<>();
@@ -85,7 +84,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mRoutes = new LongSparseArray<>();
 
         locationInteractor.init(this);
-        mDataProvider.registerObserver(locationInteractor.getListener());
+        mAntennaDataObservable.registerObserver(locationInteractor.getListener());
+        mAntennaDataObservable.registerObserver(cameraPresenter);
         locationInteractor.execute();
     }
 
@@ -101,20 +101,24 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         mCreateFieldInteractor.init(this, width);
 
-        mDataProvider.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
+        mAntennaDataObservable.registerObserver(mCreateFieldInteractor.getOnLocationChangedListener());
 
         mCreateFieldInteractor.execute();
         mCreateFieldInteractor.onStartCreatingRoute();
 
         //TODO Delete
-        mDataProvider.startPassingRouteBuildingPoints();
+        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+            ((AntennaDataObservableImpl) mAntennaDataObservable).startPassingRouteBuildingPoints();
+        }
+
+
         finishBuildField();
     }
 
     @Override
     public void finishBuildField() {
         mIsFieldBuilding = false;
-        mDataProvider.removeObserver(mCreateFieldInteractor.getOnLocationChangedListener());
+        mAntennaDataObservable.removeObserver(mCreateFieldInteractor.getOnLocationChangedListener());
         mCreateFieldInteractor.onFinishCreatingRoute();
     }
 
@@ -282,7 +286,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mLoadFieldInteractor.execute();
 
         //TODO Delete
-        mDataProvider.startHarvesting();
+        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+            ((AntennaDataObservableImpl) mAntennaDataObservable).startHarvesting();
+        }
     }
 
     @Override
@@ -297,9 +303,6 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         mSessionLatLngs.add(LatLngConverter.convertToLatLng(point));
         mSessionRoute.setPoints(mSessionLatLngs);
-
-        //TODO Move it
-        mCameraPresenter.onLocationChanged(point);
     }
 
     private float getCurrentCameraTilt() {

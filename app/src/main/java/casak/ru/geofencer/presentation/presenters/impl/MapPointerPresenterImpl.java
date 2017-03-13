@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.Polyline;
 import javax.inject.Inject;
 
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.bluetooth.AntennaDataProvider;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
@@ -32,15 +32,15 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     private static final String TAG = MapPointerPresenterImpl.class.getSimpleName();
 
     private PointerInteractor mInteractor;
-    private AntennaDataProvider mAntennaDataProvider;
+    private AntennaDataObservable mAntennaDataObservable;
     private MapPointerPresenter.View mView;
 
     @Inject
     public MapPointerPresenterImpl(Executor executor, MainThread mainThread,
-                                   PointerInteractor interactor, AntennaDataProvider provider) {
+                                   PointerInteractor interactor, AntennaDataObservable observable) {
         super(executor, mainThread);
         mInteractor = interactor;
-        mAntennaDataProvider = provider;
+        mAntennaDataObservable = observable;
     }
 
     //TODO Improve logic
@@ -98,7 +98,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
         //TODO Fetch fieldId
         mInteractor.init(this, 1);
-        mAntennaDataProvider.registerObserver(mInteractor);
+        mAntennaDataObservable.registerObserver(mInteractor);
         mInteractor.execute();
     }
 

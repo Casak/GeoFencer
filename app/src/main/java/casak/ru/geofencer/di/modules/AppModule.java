@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import javax.inject.Singleton;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
+import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
@@ -53,7 +55,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    AntennaDataProvider providesAntennaDataProvider() {
-        return new AntennaDataProvider();
+    AntennaDataProvider providesAntennaDataProvider(AntennaDataObservable observable) {
+        return new AntennaDataProvider(observable);
+    }
+
+    @Provides
+    @Singleton
+    AntennaDataObservable providesAntennaDataObservable() {
+        return new AntennaDataObservableImpl();
     }
 }

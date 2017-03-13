@@ -1,199 +1,273 @@
 package casak.ru.geofencer.bluetooth;
 
-import android.os.AsyncTask;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
-import casak.ru.geofencer.domain.interactors.LocationInteractor;
+import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.storage.converters.Util;
 
 /**
  * Created on 17.02.2017.
  */
 
-public class AntennaDataProvider implements AntennaDataObservable {
+public class AntennaDataProvider {
     private static final String TAG = AntennaDataProvider.class.getSimpleName();
 
-    private List<LocationInteractor.OnLocationChangedListener> observers;
+    public static final int STATE_NONE = 0;
+    public static final int STATE_CONNECTING = 1;
+    public static final int STATE_CONNECTED = 2;
 
-    public AntennaDataProvider() {
-        observers = new LinkedList<>();
+    public static final String BLUETOOTH_GPS_ANTENNA_HARDWARE_ADDRESS = "98:D3:31:80:3A:26";
+
+    private static final String ANTENNA_UUID = "00001101-0000-1000-8000-00805f9b34fb";
+
+    private static final int ONE_SECOND = 1000;
+
+    private final BluetoothAdapter mAdapter;
+    private final AntennaDataObservable mObservable;
+    private ConnectThread mConnectThread;
+    private AntennaDataTransferThread mAntennaDataTransferThread;
+    private int mState;
+
+    public AntennaDataProvider(AntennaDataObservable observable) {
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        mObservable = observable;
+        mState = STATE_NONE;
     }
 
-    @Override
-    public void registerObserver(LocationInteractor.OnLocationChangedListener observer) {
-        observers.add(observer);
+    public synchronized int getState() {
+        return mState;
     }
 
-    @Override
-    public void removeObserver(LocationInteractor.OnLocationChangedListener observer) {
-        observers.remove(observer);
-    }
+    public synchronized void connect(BluetoothDevice device) {
+        Log.d(TAG, "connecting to antenna. Name: " + device.getName());
 
-    @Override
-    public void passLocation(Point point) {
-        notifyObservers(point);
-    }
-
-    private void notifyObservers(Point point) {
-        for (LocationInteractor.OnLocationChangedListener observer : observers)
-            observer.onChange(point);
-    }
-
-
-    String locationsString = "50.421355,30.4256428;" +
-            "50.4214449,30.4256972;" +
-            "50.4215316,30.4257533;" +
-            "50.421615,30.425807;" +
-            "50.4216995,30.4258595;" +
-            "50.4217846,30.4259127;" +
-            "50.4218679,30.4259648;" +
-            "50.421949,30.4260166;" +
-            "50.4220291,30.426066;" +
-            "50.422107,30.4261144;" +
-            "50.4223769,30.4262649;" +
-            "50.422469,30.4263184;" +
-            "50.4225544,30.4263715;" +
-            "50.4226348,30.4264244;" +
-            "50.4227066,30.4264715;" +
-            "50.4227738,30.4265161;" +
-            "50.4228396,30.426558;" +
-            "50.4229029,30.4265987;" +
-            "50.4229644,30.426637;" +
-            "50.423017,30.4266696;" +
-            "50.4230622,30.4266969;" +
-            "50.4231028,30.4267206;" +
-            "50.4231742,30.42676;" +
-            "50.4232012,30.426774;" +
-            "50.4232177,30.4267845;" +
-            "50.4232268,30.4267898;" +
-            "50.42323,30.4267916";
-
-    public void startPassingRouteBuildingPoints() {
-        String[] locationArray = locationsString.split(";");
-        for (String aLocationArray : locationArray) {
-            String[] locationSting = aLocationArray.split(",");
-            Point location = new Point(Double.parseDouble(locationSting[0]),
-                    Double.parseDouble(locationSting[1]));
-            passLocation(location);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (mState == STATE_CONNECTING) {
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+                mConnectThread = null;
             }
         }
-        Log.d(TAG, "Fake locations passed");
-    }
 
-    public void startHarvesting() {
-        List<Point> list15 = offsetList(15);
-        List<Point> list45 = reverseLatLngList(offsetList(45));
-        List<Point> list25 = offsetList(25);
-        List<Point> list35 = reverseLatLngList(offsetList(35));
-
-        final List<Point> list = new ArrayList<>();
-        list.addAll(list35);
-        list.addAll(list25);
-        list.addAll(list45);
-        list.addAll(list15);
-
-        new MockLocationAsyncTask(this, 1000).execute(list.toArray(new Point[list.size()]));
-    }
-
-    private static class MockLocationAsyncTask extends AsyncTask<Point, Point, String> {
-        List<Point> locations = new LinkedList<>();
-        AntennaDataProvider listener;
-        int timeout;
-
-        public MockLocationAsyncTask(AntennaDataProvider dataProvider, int timeout) {
-            listener = dataProvider;
-            this.timeout = timeout;
+        if (mAntennaDataTransferThread != null) {
+            mAntennaDataTransferThread.cancel();
+            mAntennaDataTransferThread = null;
         }
 
-        @Override
-        protected String doInBackground(Point... locationArray) {
-            for (Point point : locationArray) {
-                publishProgress(point);
+        mConnectThread = new ConnectThread(device);
+        mConnectThread.start();
+    }
+
+    private synchronized void connected(BluetoothSocket socket) {
+        Log.d(TAG, "connected to antenna");
+
+        if (mConnectThread != null) {
+            mConnectThread.cancel();
+            mConnectThread = null;
+        }
+
+        if (mAntennaDataTransferThread != null) {
+            mAntennaDataTransferThread.cancel();
+            mAntennaDataTransferThread = null;
+        }
+
+        mAntennaDataTransferThread = new AntennaDataTransferThread(socket);
+        mAntennaDataTransferThread.start();
+    }
+
+    private void connectionFailed() {
+        mState = STATE_NONE;
+        mAdapter.startDiscovery();
+    }
+
+    private void connectionLost() {
+        mState = STATE_NONE;
+        mAdapter.startDiscovery();
+    }
+
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private boolean mCanceled;
+        private boolean mConnected;
+
+        ConnectThread(BluetoothDevice device) {
+            BluetoothSocket tmp = null;
+            mCanceled = false;
+            mConnected = false;
+
+            try {
+                tmp = device.createInsecureRfcommSocketToServiceRecord(UUID.fromString(ANTENNA_UUID));
+            } catch (IOException e) {
+                Log.e(TAG, "Socket's create() method failed", e);
+            }
+            mmSocket = tmp;
+
+            mState = STATE_CONNECTING;
+        }
+
+        public void run() {
+            setName("AntennaConnectThread");
+
+            if (mAdapter.isDiscovering()) {
+                mAdapter.cancelDiscovery();
+            }
+
+            int i = 0;
+            while (!mCanceled && !mConnected && i < 30) {
+                i++;
                 try {
-                    Thread.sleep(timeout);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    mmSocket.connect();
+                    mConnected = true;
+                } catch (IOException connectException) {
+                    Log.e(TAG, "Could not connect to the antenna socket", connectException);
+                    try {
+                        sleep(ONE_SECOND);
+                        mmSocket.close();
+                    } catch (IOException closeException) {
+                        Log.e(TAG, "Could not close the antenna socket", closeException);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            return null;
+
+            synchronized (AntennaDataProvider.this) {
+                mConnectThread = null;
+                if (mConnected) {
+                    connected(mmSocket);
+                } else {
+                    connectionFailed();
+                }
+            }
+        }
+
+        void cancel() {
+            mCanceled = true;
+        }
+    }
+
+    //TODO Refactor this shit, man, and double check
+    private class AntennaDataTransferThread extends Thread {
+        private BluetoothSocket socket;
+        private InputStream in;
+        private MainThread mainThread;
+
+        AntennaDataTransferThread(BluetoothSocket bluetoothSocket) {
+            mainThread = AndroidApplication.getComponent().getMainThread();
+            socket = bluetoothSocket;
+            try {
+                in = socket.getInputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "Can`t obtain InputStream from socket", e);
+            }
+
+            mState = STATE_CONNECTED;
         }
 
         @Override
-        protected void onProgressUpdate(Point... point) {
-            listener.passLocation(point[0]);
+        public void run() {
+            setName("AntennaDataTransferThread");
+            mAdapter.cancelDiscovery();
+
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4800];
+            int length;
+
+            while (mState == STATE_CONNECTED) {
+                try {
+                    if ((length = in.read(buffer)) != -1) {
+                        result.write(buffer, 0, length);
+                        Log.d(TAG, "Read from GPS antenna: " + result.toString("UTF-8"));
+                        final Point point = parse(result.toString("UTF-8"));
+
+                        if (point != null) {
+                            mainThread.post(new Runnable() {
+                                @Override
+                                public void run() {
+//                                    mObservable.passLocation(point);
+                                }
+                            });
+                        }
+
+                        result.reset();
+                        sleep(ONE_SECOND);
+                    }
+                } catch (IOException | InterruptedException e) {
+                    Log.e(TAG, "Bluetooth socket is closed!", e);
+                    connectionLost();
+                }
+            }
         }
 
-        @Override
-        protected void onPostExecute(String s) {
-            Log.d("All mocked locations ", "are passed to the app");
+        @Nullable
+        private Point parse(String data) {
+            if (!data.startsWith("$"))
+                return null;
+            Point result = new Point();
+
+            String[] messages = data.split("\r\n");
+            for (String line : messages) {
+                if (line.startsWith("$GPGSA")) {
+                    int startIndex = line.indexOf(",");
+                    int endIndex = line.indexOf("*");
+//                    String[] locationData = line.substring(startIndex, endIndex).split(",");
+                }
+                if (line.startsWith("$GPGGA")) {
+                    String[] locationData = line.split(",");
+                    if (locationData.length > 12) {
+                        String time = locationData[1];
+
+                        String tmp = locationData[2];
+                        String latitude = "".intern();
+                        if (tmp.length() > 5) {
+                            int deg = Integer.parseInt(tmp.substring(0, 2));
+                            double min = Double.parseDouble(tmp.substring(2));
+                            latitude = (deg + (min / 60)) + "";
+                        }
+
+                        String latitudeAngle = locationData[3];
+
+                        tmp = locationData[4];
+                        String longitude = "".intern();
+                        if (tmp.length() > 5) {
+                            int deg = Integer.parseInt(tmp.substring(0, 3));
+                            double min = Double.parseDouble(tmp.substring(3));
+                            longitude = (deg + (min / 60)) + "";
+                        }
+
+                        String longitudeAngle = locationData[5];
+                        String fixQuality = locationData[6];
+                        String satellites = locationData[7];
+                        String dilution = locationData[8];
+                        String altitude = locationData[9];
+                        String altitudeMeasure = locationData[10];
+                        String seaLevel = locationData[11].concat(locationData[12]);
+
+
+                        result.setLatitude(Double.parseDouble(latitude.isEmpty() ? "0" : latitude));
+                        result.setLongitude(Double.parseDouble(longitude.isEmpty() ? "0" : longitude));
+                        result.setAltitude(Double.parseDouble(altitude.isEmpty() ? "0" : altitude));
+                    }
+                }
+            }
+            return result.getLatitude() != 0.0 ? result : null;
+        }
+
+        void cancel() {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the connect socket", e);
+            }
         }
     }
-
-    private List<Point> reverseLatLngList(List<Point> list) {
-        List<Point> result = new LinkedList<>();
-        for (int i = list.size() - 1; i >= 0; i--)
-            result.add(list.get(i));
-
-        return result;
-    }
-
-    public List<Point> offsetList(double offset) {
-        List<Point> newList = new ArrayList<>();
-        Random random = new Random(Double.doubleToLongBits(offset));
-
-        List<Point> old = Util.stringToPoints(locationsString);
-
-        for (Point p : old) {
-            Point point = new Point(p.getLatitude(), p.getLongitude() +
-                    Double.parseDouble("0.0000" + random.nextInt(100)));
-            newList.add(computeOffset(point, offset,
-                    computeHeading(old.get(0),
-                            old.get(old.size() - 1)) - 90));
-        }
-        return newList;
-    }
-
-    static double mod(double x, double m) {
-        return (x % m + m) % m;
-    }
-
-    static double wrap(double n, double min, double max) {
-        return n >= min && n < max ? n : mod(n - min, max - min) + min;
-    }
-
-    public static double computeHeading(Point from, Point to) {
-        double fromLat = Math.toRadians(from.getLatitude());
-        double fromLng = Math.toRadians(from.getLongitude());
-        double toLat = Math.toRadians(to.getLatitude());
-        double toLng = Math.toRadians(to.getLongitude());
-        double dLng = toLng - fromLng;
-        double heading = Math.atan2(Math.sin(dLng) * Math.cos(toLat), Math.cos(fromLat) * Math.sin(toLat) - Math.sin(fromLat) * Math.cos(toLat) * Math.cos(dLng));
-        return wrap(Math.toDegrees(heading), -180.0D, 180.0D);
-    }
-
-    public static Point computeOffset(Point from, double distance, double heading) {
-        distance /= 6371009.0D;
-        heading = Math.toRadians(heading);
-        double fromLat = Math.toRadians(from.getLatitude());
-        double fromLng = Math.toRadians(from.getLongitude());
-        double cosDistance = Math.cos(distance);
-        double sinDistance = Math.sin(distance);
-        double sinFromLat = Math.sin(fromLat);
-        double cosFromLat = Math.cos(fromLat);
-        double sinLat = cosDistance * sinFromLat + sinDistance * cosFromLat * Math.cos(heading);
-        double dLng = Math.atan2(sinDistance * cosFromLat * Math.sin(heading), cosDistance - sinFromLat * sinLat);
-        return new Point(Math.toDegrees(Math.asin(sinLat)), Math.toDegrees(fromLng + dLng));
-    }
-
-
 }

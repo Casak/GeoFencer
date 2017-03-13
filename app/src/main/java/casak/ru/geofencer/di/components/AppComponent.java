@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import javax.inject.Singleton;
 
 import casak.ru.geofencer.AndroidApplication;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
@@ -30,4 +31,6 @@ public interface AppComponent {
     SharedPreferences getSharedPreferences();
 
     AntennaDataProvider getAntennaDataProvider();
+
+    AntennaDataObservable getAntennaDataObservable();
 }

@@ -1,6 +1,6 @@
 package casak.ru.geofencer.di.modules;
 
-import casak.ru.geofencer.bluetooth.AntennaDataProvider;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
@@ -36,7 +36,7 @@ public class MapModule {
     @ActivityScope
     GoogleMapPresenter providesGoogleMapsPresenter(Executor threadExecutor,
                                                    MainThread mainThread,
-                                                   AntennaDataProvider provider,
+                                                   AntennaDataObservable observable,
                                                    LocationInteractor locationInteractor,
                                                    LoadFieldInteractor loadFieldInteractor,
                                                    CreateFieldInteractor createFieldInteractor,
@@ -48,7 +48,7 @@ public class MapModule {
                 loadFieldInteractor,
                 locationInteractor,
                 mapView,
-                provider,
+                observable,
                 cameraPresenter);
     }
 

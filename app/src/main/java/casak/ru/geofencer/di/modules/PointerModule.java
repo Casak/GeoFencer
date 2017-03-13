@@ -1,6 +1,6 @@
 package casak.ru.geofencer.di.modules;
 
-import casak.ru.geofencer.bluetooth.AntennaDataProvider;
+import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.di.scopes.ActivityScope;
 import casak.ru.geofencer.domain.executor.Executor;
 import casak.ru.geofencer.domain.executor.MainThread;
@@ -34,12 +34,12 @@ public class PointerModule {
     MapPointerPresenter providesMapPointerPresenter(Executor threadExecutor,
                                                     MainThread mainThread,
                                                     PointerInteractor interactor,
-                                                    AntennaDataProvider provider) {
+                                                    AntennaDataObservable observable) {
         return new MapPointerPresenterImpl(
                 threadExecutor,
                 mainThread,
                 interactor,
-                provider
+                observable
         );
     }
 
