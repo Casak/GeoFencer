@@ -6,8 +6,8 @@ import java.util.WeakHashMap;
 
 import javax.inject.Inject;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;
@@ -22,7 +22,6 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     private static final String TAG = PointerInteractorImpl.class.getSimpleName();
     private static final int ROUTE_START = 0;
     private static final int ROUTE_NEXT_FROM_START = 1;
-
 
     private Route mCurrentRoute;
     private RouteRepository mRepository;

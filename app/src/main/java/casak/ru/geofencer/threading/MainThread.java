@@ -1,4 +1,4 @@
-package casak.ru.geofencer.domain.executor;
+package casak.ru.geofencer.threading;
 
 /**
  * This interface will define a class that will enable interactors to run certain operations on the main (UI) thread. For example,

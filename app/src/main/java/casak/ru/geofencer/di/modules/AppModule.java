@@ -10,10 +10,10 @@ import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
-import casak.ru.geofencer.threading.MainThreadImpl;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
+import casak.ru.geofencer.threading.impl.ThreadExecutor;
+import casak.ru.geofencer.threading.impl.MainThreadImpl;
 import dagger.Module;
 import dagger.Provides;
 

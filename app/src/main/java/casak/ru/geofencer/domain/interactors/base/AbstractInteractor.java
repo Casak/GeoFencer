@@ -1,6 +1,7 @@
 package casak.ru.geofencer.domain.interactors.base;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 
 /**
  * <p/>
@@ -13,7 +14,7 @@ import casak.ru.geofencer.domain.executor.MainThread;
  */
 public abstract class AbstractInteractor implements Interactor {
 
-    protected Executor   mThreadExecutor;
+    protected Executor mThreadExecutor;
     protected MainThread mMainThread;
 
     protected volatile boolean mIsCanceled;

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import casak.ru.geofencer.AndroidApplication;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.model.Point;
 
 /**
@@ -193,7 +193,7 @@ public class AntennaDataProvider {
                             mainThread.post(new Runnable() {
                                 @Override
                                 public void run() {
-//                                    mObservable.passLocation(point);
+                                    mObservable.passLocation(point);
                                 }
                             });
                         }

@@ -24,8 +24,8 @@ import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
@@ -107,12 +107,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mCreateFieldInteractor.onStartCreatingRoute();
 
         //TODO Delete
-        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startPassingRouteBuildingPoints();
         }
-
-
         finishBuildField();
+        */
     }
 
     @Override
@@ -286,9 +285,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mLoadFieldInteractor.execute();
 
         //TODO Delete
-        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startHarvesting();
-        }
+        }*/
     }
 
     @Override

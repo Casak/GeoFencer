@@ -13,8 +13,8 @@ import javax.inject.Inject;
 
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;

@@ -1,6 +1,6 @@
-package casak.ru.geofencer.domain.executor.impl;
+package casak.ru.geofencer.threading.impl;
 
-import casak.ru.geofencer.domain.executor.Executor;
+import casak.ru.geofencer.threading.Executor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 
 import java.util.concurrent.BlockingQueue;
@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadExecutor implements Executor {
 
-    private static final int                     CORE_POOL_SIZE  = 3;
-    private static final int                     MAX_POOL_SIZE   = 5;
-    private static final int                     KEEP_ALIVE_TIME = 120;
-    private static final TimeUnit                TIME_UNIT       = TimeUnit.SECONDS;
-    private static final BlockingQueue<Runnable> WORK_QUEUE      = new LinkedBlockingQueue<>();
+    private static final int CORE_POOL_SIZE = 3;
+    private static final int MAX_POOL_SIZE = 5;
+    private static final int KEEP_ALIVE_TIME = 120;
+    private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
+    private static final BlockingQueue<Runnable> WORK_QUEUE = new LinkedBlockingQueue<>();
 
     private ThreadPoolExecutor mThreadPoolExecutor;
 

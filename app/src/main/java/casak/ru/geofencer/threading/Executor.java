@@ -1,4 +1,4 @@
-package casak.ru.geofencer.domain.executor;
+package casak.ru.geofencer.threading;
 
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 

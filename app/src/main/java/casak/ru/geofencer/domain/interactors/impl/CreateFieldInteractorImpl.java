@@ -2,8 +2,8 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import javax.inject.Inject;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
 import casak.ru.geofencer.domain.interactors.BuildFieldInteractor;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;

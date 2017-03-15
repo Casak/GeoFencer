@@ -11,13 +11,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
+import casak.ru.geofencer.threading.impl.ThreadExecutor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.model.Field;
 import casak.ru.geofencer.domain.model.Point;
 import casak.ru.geofencer.domain.model.Route;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.threading.MainThreadImpl;
+import casak.ru.geofencer.threading.impl.MainThreadImpl;
 
 import static org.mockito.Mockito.*;
 
