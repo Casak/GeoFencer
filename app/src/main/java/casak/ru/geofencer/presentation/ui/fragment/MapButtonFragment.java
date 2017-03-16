@@ -37,6 +37,8 @@ public class MapButtonFragment extends Fragment {
     FieldRepository mFieldRepository;
     @BindView(R.id.button_follow_type)
     Button mButtonFollow;
+    @BindView(R.id.button_3d_2d)
+    Button mButton3d2d;
 
     private boolean mFollow;
 
@@ -66,14 +68,18 @@ public class MapButtonFragment extends Fragment {
         mGoogleMapPresenter.onTiltLess();
     }
 
-    @OnClick(R.id.button_2d)
-    public void on2DClicked() {
-        mGoogleMapPresenter.changeTilt(MAP_2D);
-    }
-
-    @OnClick(R.id.button_3d)
+    @OnClick(R.id.button_3d_2d)
     public void on3DClicked() {
-        mGoogleMapPresenter.changeTilt(MAP_3D);
+        switch (mButton3d2d.getText().toString()) {
+            case "3D":
+                mGoogleMapPresenter.changeTilt(MAP_3D);
+                mButton3d2d.setText("2D");
+                break;
+            case "2D":
+            default:
+                mGoogleMapPresenter.changeTilt(MAP_2D);
+                mButton3d2d.setText("3D");
+        }
     }
 
     @OnClick(R.id.button_change_type)
