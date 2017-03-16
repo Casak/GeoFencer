@@ -216,10 +216,11 @@ public class AntennaDataProvider {
 
             String[] messages = data.split("\r\n");
             for (String line : messages) {
-                if (line.startsWith("$GPGSA")) {
-                    int startIndex = line.indexOf(",");
-                    int endIndex = line.indexOf("*");
-//                    String[] locationData = line.substring(startIndex, endIndex).split(",");
+                if (line.startsWith("$GPVTG")) {
+                    String[] locationData = line.split(",");
+                    if (locationData.length > 7) {
+                        result.setSpeed(Double.parseDouble(locationData[7]));
+                    }
                 }
                 if (line.startsWith("$GPGGA")) {
                     String[] locationData = line.split(",");
