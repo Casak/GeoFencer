@@ -61,6 +61,8 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
 
     void onFieldLoad(int fieldId);
 
+    int getCurrentFieldId();
+
     //For debugging
     LongSparseArray<Polyline> getRoutes();
 }

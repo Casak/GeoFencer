@@ -1,9 +1,9 @@
-package casak.ru.geofencer.threading;
+package casak.ru.geofencer.threading.impl;
 
 import android.os.Handler;
 import android.os.Looper;
 
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.MainThread;
 
 /**
  * This class makes sure that the runnable we provide will be run on the main UI thread.

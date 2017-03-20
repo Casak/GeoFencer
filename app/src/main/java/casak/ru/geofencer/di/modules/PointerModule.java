@@ -2,8 +2,8 @@ package casak.ru.geofencer.di.modules;
 
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.di.scopes.ActivityScope;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.interactors.impl.PointerInteractorImpl;
 import casak.ru.geofencer.presentation.presenters.MapPointerPresenter;

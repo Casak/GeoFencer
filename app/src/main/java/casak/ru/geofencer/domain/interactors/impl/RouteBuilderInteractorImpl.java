@@ -3,8 +3,8 @@ package casak.ru.geofencer.domain.interactors.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.RouteBuilderInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;
@@ -24,9 +24,9 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
     private RouteBuilderInteractor.Callback mCallback;
     private RouteRepository mRouteRepository;
     private Route mFieldBuildingRoute;
-    private int fieldId;
-    private int machineryWidth;
-    private boolean isBuildingRoute;
+    private int mFieldId;
+    private int mMachineryWidth;
+    private boolean mIsBuildingRoute;
 
     public RouteBuilderInteractorImpl(Executor threadExecutor,
                                       MainThread mainThread,
@@ -38,26 +38,26 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
 
         mCallback = callback;
         mRouteRepository = routeRepository;
-        this.fieldId = fieldId;
-        this.machineryWidth = machineryWidth;
+        mFieldId = fieldId;
+        mMachineryWidth = machineryWidth;
     }
 
     @Override
     public void run() {
-        mFieldBuildingRoute = mRouteRepository.create(fieldId, Route.Type.BASE);
+        mFieldBuildingRoute = mRouteRepository.create(mFieldId, Route.Type.BASE);
 
-        isBuildingRoute = true;
+        mIsBuildingRoute = true;
     }
 
     @Override
     public void onChange(Point point) {
-        if (mFieldBuildingRoute != null && isBuildingRoute)
+        if (mFieldBuildingRoute != null && mIsBuildingRoute)
             mFieldBuildingRoute.addRoutePoint(point);
     }
 
     @Override
     public void finish() {
-        isBuildingRoute = false;
+        mIsBuildingRoute = false;
 
         if (mFieldBuildingRoute == null || mFieldBuildingRoute.getRoutePoints().isEmpty()) {
             throw new NullPointerException(TAG + ": Can`t create route for building field!");
@@ -105,10 +105,10 @@ public class RouteBuilderInteractorImpl extends AbstractInteractor implements Ro
         int offset = 0;
         for (int i = 0; i < 4; i++) {
             List<Point> routePoints = computeNewPath(fieldBuildingPoints,
-                    offset += machineryWidth,
+                    offset += mMachineryWidth,
                     normalHeading);
 
-            Route route = mRouteRepository.create(fieldId, Route.Type.COMPUTED);
+            Route route = mRouteRepository.create(mFieldId, Route.Type.COMPUTED);
             route.setRoutePoints(routePoints);
             result.add(route);
         }

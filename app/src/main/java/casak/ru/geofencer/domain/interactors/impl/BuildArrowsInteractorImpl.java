@@ -3,8 +3,8 @@ package casak.ru.geofencer.domain.interactors.impl;
 import java.util.LinkedList;
 import java.util.List;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.BuildArrowsInteractor;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;

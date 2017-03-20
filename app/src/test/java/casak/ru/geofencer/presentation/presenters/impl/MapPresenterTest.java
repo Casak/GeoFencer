@@ -1,29 +1,8 @@
 package casak.ru.geofencer.presentation.presenters.impl;
 
-import android.location.Location;
 
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import casak.ru.geofencer.domain.Constants;
-import casak.ru.geofencer.domain.executor.MainThread;
-import casak.ru.geofencer.domain.interactors.impl.MapUtils;
-import casak.ru.geofencer.domain.model.Point;
-import casak.ru.geofencer.domain.model.Route;
-import casak.ru.geofencer.domain.repository.RouteRepository;
-
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 /**
  * Created on 13.01.2017.

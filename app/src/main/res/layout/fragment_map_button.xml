@@ -34,20 +34,11 @@
         android:textSize="30sp" />
 
     <Button
-        android:id="@+id/button_3d"
+        android:id="@+id/button_3d_2d"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#B3FAFAFA"
         android:text="3D"
-        android:textColor="#424242"
-        android:textSize="@dimen/text_size" />
-
-    <Button
-        android:id="@+id/button_2d"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#B3FAFAFA"
-        android:text="2D"
         android:textColor="#424242"
         android:textSize="@dimen/text_size" />
 

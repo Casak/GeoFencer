@@ -23,9 +23,9 @@ import javax.inject.Inject;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
-import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
@@ -107,12 +107,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mCreateFieldInteractor.onStartCreatingRoute();
 
         //TODO Delete
-        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startPassingRouteBuildingPoints();
         }
-
-
         finishBuildField();
+        */
     }
 
     @Override
@@ -188,6 +187,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         Polygon polygon = mMapView.showPolygon(fieldOptions);
 
         mFields.append(model.getId(), polygon);
+
+        MapPointerFragment.getPointerComponent().getMapPointerPresenter().resume();
     }
 
     @Override
@@ -282,15 +283,13 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void onFieldLoad(int fieldId) {
-        clearFields();
-
         mLoadFieldInteractor.init(this, fieldId);
         mLoadFieldInteractor.execute();
 
         //TODO Delete
-        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startHarvesting();
-        }
+        }*/
     }
 
     @Override
@@ -307,22 +306,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mSessionRoute.setPoints(mSessionLatLngs);
     }
 
-    private void clearFields() {
-        Field[] fields = new Field[mFields.size()];
-        for (int i = 0; i < mFields.size(); i++) {
-            fields[i] = new Field(mFields.keyAt(i));
-        }
-        for (Field field : fields) {
-            hideField(field);
-        }
-
-        Route[] routes = new Route[mRoutes.size()];
-        for (int i = 0; i < mRoutes.size(); i++) {
-            routes[i] = new Route(mRoutes.keyAt(i), -1, Route.Type.COMPUTED);
-        }
-        for (Route route : routes) {
-            hideRoute(route);
-        }
+    @Override
+    public int getCurrentFieldId() {
+        return mFields.keyAt(mFields.size());
     }
 
     private float getCurrentCameraTilt() {
