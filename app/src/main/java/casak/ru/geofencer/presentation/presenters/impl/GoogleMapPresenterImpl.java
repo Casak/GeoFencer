@@ -185,7 +185,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         PolygonOptions fieldOptions = FieldConverter.convertToPresentation(model);
 
         //TODO Create toast, snackbar etc
-        if(fieldOptions == null){
+        if (fieldOptions == null) {
             return;
         }
 
@@ -333,7 +333,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public int getCurrentFieldId() {
-        return mFields.keyAt(mFields.size());
+        return mFields.keyAt(mFields.size() - 1);
     }
 
     private float getCurrentCameraTilt() {

@@ -12,9 +12,10 @@ import casak.ru.geofencer.storage.model.RouteType;
 
 public class RouteConverter {
 
-    public static casak.ru.geofencer.storage.model.Route convertToStorageModel(Route model){
-        if(model == null)
+    public static casak.ru.geofencer.storage.model.Route convertToStorageModel(Route model) {
+        if (model == null) {
             return null;
+        }
         casak.ru.geofencer.storage.model.Route result = new casak.ru.geofencer.storage.model.Route();
         result.id = model.getId();
         result.fieldId = model.getFieldId();
@@ -25,9 +26,10 @@ public class RouteConverter {
     }
 
 
-    public static Route convertToDomainModel(casak.ru.geofencer.storage.model.Route model){
-        if(model == null)
+    public static Route convertToDomainModel(casak.ru.geofencer.storage.model.Route model) {
+        if (model == null) {
             return null;
+        }
         RouteType type = new RouteType();
         type.id = model.type;
         Route result = new Route(
@@ -38,12 +40,13 @@ public class RouteConverter {
         return result;
     }
 
-    public static List<casak.ru.geofencer.storage.model.Route> convertToStorageModel(List<Route> routes){
+    public static List<casak.ru.geofencer.storage.model.Route> convertToStorageModel(List<Route> routes) {
         List<casak.ru.geofencer.storage.model.Route> result = new ArrayList<>();
-        if(routes == null || routes.size() == 0)
+        if (routes == null || routes.size() == 0) {
             return result;
+        }
 
-        for(Route model : routes){
+        for (Route model : routes) {
             casak.ru.geofencer.storage.model.Route route = new casak.ru.geofencer.storage.model.Route();
             route.id = model.getId();
             route.fieldId = model.getFieldId();
@@ -56,12 +59,13 @@ public class RouteConverter {
         return result;
     }
 
-    public static List<Route> convertToDomainModel(List<casak.ru.geofencer.storage.model.Route> routes){
+    public static List<Route> convertToDomainModel(List<casak.ru.geofencer.storage.model.Route> routes) {
         List<Route> result = new ArrayList<>();
-        if(routes == null || routes.size() == 0)
+        if (routes == null || routes.size() == 0) {
             return result;
+        }
 
-        for(casak.ru.geofencer.storage.model.Route model : routes){
+        for (casak.ru.geofencer.storage.model.Route model : routes) {
             RouteType type = new RouteType();
             type.id = model.type;
 

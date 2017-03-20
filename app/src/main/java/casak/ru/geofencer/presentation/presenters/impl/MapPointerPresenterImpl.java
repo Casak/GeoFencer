@@ -47,6 +47,10 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     //TODO Improve logic
     @Override
     public void showPointer(double value) {
+        if (mView == null) {
+            mView = MapPointerFragment.getPointerComponent().getPointerView();
+        }
+
         mView.turnOff(View.ALL_SEMAPHORES, View.Type.ALL);
         if (Math.abs(value) > 1.8D) {
             if (value > 0) {
