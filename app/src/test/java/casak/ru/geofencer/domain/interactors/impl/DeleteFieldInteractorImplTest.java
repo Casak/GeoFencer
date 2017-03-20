@@ -6,9 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import casak.ru.geofencer.domain.executor.impl.ThreadExecutor;
+import casak.ru.geofencer.threading.impl.ThreadExecutor;
 import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.threading.MainThreadImpl;
+import casak.ru.geofencer.threading.impl.MainThreadImpl;
 
 import static org.mockito.Mockito.*;
 
