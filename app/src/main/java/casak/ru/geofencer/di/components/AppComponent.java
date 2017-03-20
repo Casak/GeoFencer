@@ -8,8 +8,8 @@ import javax.inject.Singleton;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
 import casak.ru.geofencer.bluetooth.AntennaDataProvider;
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.di.modules.AppModule;
 import dagger.Component;
 

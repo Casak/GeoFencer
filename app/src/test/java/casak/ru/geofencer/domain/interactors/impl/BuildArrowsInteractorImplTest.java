@@ -14,8 +14,8 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.domain.model.Field;

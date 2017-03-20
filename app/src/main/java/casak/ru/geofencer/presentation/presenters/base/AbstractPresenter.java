@@ -1,8 +1,8 @@
 package casak.ru.geofencer.presentation.presenters.base;
 
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 
 /**
  * This is a base class for all presenters which are communicating with interactors. This base class will hold a

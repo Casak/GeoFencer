@@ -2,8 +2,8 @@ package casak.ru.geofencer.domain.interactors.impl;
 
 import javax.inject.Inject;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
 import casak.ru.geofencer.domain.interactors.base.AbstractInteractor;
 import casak.ru.geofencer.domain.model.Point;

@@ -6,8 +6,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 
 import javax.inject.Inject;
 
-import casak.ru.geofencer.domain.executor.Executor;
-import casak.ru.geofencer.domain.executor.MainThread;
+import casak.ru.geofencer.threading.Executor;
+import casak.ru.geofencer.threading.MainThread;
 import casak.ru.geofencer.domain.interactors.PointerInteractor;
 import casak.ru.geofencer.domain.interactors.impl.MapUtils;
 import casak.ru.geofencer.domain.model.Point;
