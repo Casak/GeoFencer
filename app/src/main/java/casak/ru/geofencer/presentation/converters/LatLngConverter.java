@@ -19,7 +19,13 @@ public class LatLngConverter {
     }
 
     public static List<LatLng> convertToLatLng(List<Point> points) {
-        List<LatLng> result = new ArrayList<>(points.size());
+        int size = points.size();
+
+        List<LatLng> result = new ArrayList<>(size);
+
+        if (size == 0) {
+            return result;
+        }
 
         for (Point point : points) {
             result.add(convertToLatLng(point));

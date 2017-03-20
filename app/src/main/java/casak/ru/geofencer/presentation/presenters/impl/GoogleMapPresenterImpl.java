@@ -184,6 +184,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     public void showField(Field model) {
         PolygonOptions fieldOptions = FieldConverter.convertToPresentation(model);
 
+        //TODO Create toast, snackbar etc
+        if(fieldOptions == null){
+            return;
+        }
+
         Polygon polygon = mMapView.showPolygon(fieldOptions);
 
         mFields.append(model.getId(), polygon);
