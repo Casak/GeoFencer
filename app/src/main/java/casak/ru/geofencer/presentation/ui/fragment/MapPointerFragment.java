@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import casak.ru.geofencer.AndroidApplication;
@@ -29,9 +27,6 @@ import casak.ru.geofencer.presentation.ui.base.BaseActivity;
  */
 
 public class MapPointerFragment extends Fragment implements MapPointerPresenter.View {
-    @Inject
-    MapPointerPresenter mPresenter;
-
     @BindView(R.id.pointer_left_red_far)
     ImageView leftRedFar;
     @BindView(R.id.pointer_left_red_close)
@@ -94,9 +89,6 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
         ButterKnife.bind(this, rootView);
 
         init();
-
-        //TODO Create listener for starting pointer computing
-        mPresenter.resume();
 
         return rootView;
     }

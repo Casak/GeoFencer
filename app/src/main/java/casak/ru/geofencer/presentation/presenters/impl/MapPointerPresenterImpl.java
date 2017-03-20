@@ -32,6 +32,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     private static final String TAG = MapPointerPresenterImpl.class.getSimpleName();
 
     private PointerInteractor mInteractor;
+    private GoogleMapPresenter mGoogleMapPresenter;
     private AntennaDataObservable mAntennaDataObservable;
     private MapPointerPresenter.View mView;
 
@@ -92,20 +93,20 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     @Override
     public void resume() {
-        if (mView == null) {
+        if (mGoogleMapPresenter == null) {
+            mGoogleMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+        } else if (mView == null) {
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        //TODO Fetch fieldId
-        mInteractor.init(this, 1);
+        mInteractor.init(this, mGoogleMapPresenter.getCurrentFieldId());
         mAntennaDataObservable.registerObserver(mInteractor);
         mInteractor.execute();
     }
 
-
     @Override
     public void pause() {
-
+        mAntennaDataObservable.removeObserver(mInteractor);
     }
 
     @Override
@@ -126,7 +127,6 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     //Pointer work visualization
     private PointerInteractor mPointerInteractor;
-    private GoogleMapPresenter mGoogleMapPresenter;
     private GoogleMapPresenter.View mGoogleMapPresenterView;
     private Resources mResources;
     private long routeId;

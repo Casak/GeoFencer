@@ -18,7 +18,7 @@ import casak.ru.geofencer.storage.converters.Util;
 
 public class AntennaDataObservableImpl implements AntennaDataObservable {
     private static final String TAG = AntennaDataObservableImpl.class.getSimpleName();
-
+    //TODO think about Set here
     private final List<LocationInteractor.OnLocationChangedListener> mObservers;
 
     public AntennaDataObservableImpl() {
@@ -27,7 +27,9 @@ public class AntennaDataObservableImpl implements AntennaDataObservable {
 
     @Override
     public synchronized void registerObserver(LocationInteractor.OnLocationChangedListener observer) {
-        mObservers.add(observer);
+        if (!mObservers.contains(observer)) {
+            mObservers.add(observer);
+        }
     }
 
     @Override
