@@ -14,15 +14,14 @@ import casak.ru.geofencer.storage.model.Field_Table;
 /**
  * Created on 05.01.2017.
  */
+
+//TODO Store storage models here, instead of fetching them every time
 public class FieldRepositoryImpl implements FieldRepository {
-    private int mFieldId;
 
     @Override
     public Field createField() {
         casak.ru.geofencer.storage.model.Field result = new casak.ru.geofencer.storage.model.Field();
         result.insert();
-
-        mFieldId = result.id;
 
         return FieldConverter.convertToDomainModel(result);
     }
@@ -33,15 +32,11 @@ public class FieldRepositoryImpl implements FieldRepository {
 
         result.insert();
 
-        mFieldId = result.id;
-
         return true;
     }
 
     @Override
     public Field getField(Integer id) {
-        mFieldId = id;
-
         casak.ru.geofencer.storage.model.Field result = SQLite.select()
                 .from(casak.ru.geofencer.storage.model.Field.class)
                 .where(Field_Table.id.eq(id))
@@ -65,7 +60,6 @@ public class FieldRepositoryImpl implements FieldRepository {
 
         result.update();
 
-        mFieldId = result.id;
         return true;
     }
 
@@ -89,7 +83,12 @@ public class FieldRepositoryImpl implements FieldRepository {
     }
 
     @Override
-    public Integer getCurrentFieldId() {
-        return mFieldId;
+    public boolean deleteField(Integer id) {
+        SQLite.delete()
+                .from(casak.ru.geofencer.storage.model.Field.class)
+                .where(Field_Table.id.eq(id))
+                .execute();
+
+        return getField(id) == null;
     }
 }

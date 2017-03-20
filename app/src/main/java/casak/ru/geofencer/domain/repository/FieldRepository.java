@@ -11,7 +11,7 @@ public interface FieldRepository {
 
     boolean updateField(Field field);
 
-    Integer getCurrentFieldId();
-
     int[] getAllFieldIds();
+
+    boolean deleteField(Integer id);
 }

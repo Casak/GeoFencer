@@ -70,17 +70,7 @@ public class LoadFieldInteractorImplTest {
             }
 
             @Override
-            public void hideField(Field model) {
-                throw new Called();
-            }
-
-            @Override
             public void showRoute(Route model) {
-                throw new Called();
-            }
-
-            @Override
-            public void hideRoute(Route model) {
                 throw new Called();
             }
         });
