@@ -219,7 +219,10 @@ public class AntennaDataProvider {
                 if (line.startsWith("$GPVTG")) {
                     String[] locationData = line.split(",");
                     if (locationData.length > 7) {
-                        result.setSpeed(Double.parseDouble(locationData[7]));
+                        String speed = locationData[7];
+                        if (!speed.equals("")) {
+                            result.setSpeed(Double.parseDouble(speed));
+                        }
                     }
                 }
                 if (line.startsWith("$GPGGA")) {
