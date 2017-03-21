@@ -184,6 +184,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     public void showField(Field model) {
         PolygonOptions fieldOptions = FieldConverter.convertToPresentation(model);
 
+        //TODO Create toast, snackbar etc
+        if (fieldOptions == null) {
+            return;
+        }
+
         Polygon polygon = mMapView.showPolygon(fieldOptions);
 
         mFields.append(model.getId(), polygon);
@@ -283,6 +288,8 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
     @Override
     public void onFieldLoad(int fieldId) {
+        clearFields();
+
         mLoadFieldInteractor.init(this, fieldId);
         mLoadFieldInteractor.execute();
 
@@ -306,9 +313,27 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mSessionRoute.setPoints(mSessionLatLngs);
     }
 
+    private void clearFields() {
+        Field[] fields = new Field[mFields.size()];
+        for (int i = 0; i < mFields.size(); i++) {
+            fields[i] = new Field(mFields.keyAt(i));
+        }
+        for (Field field : fields) {
+            hideField(field);
+        }
+
+        Route[] routes = new Route[mRoutes.size()];
+        for (int i = 0; i < mRoutes.size(); i++) {
+            routes[i] = new Route(mRoutes.keyAt(i), -1, Route.Type.COMPUTED);
+        }
+        for (Route route : routes) {
+            hideRoute(route);
+        }
+    }
+
     @Override
     public int getCurrentFieldId() {
-        return mFields.keyAt(mFields.size());
+        return mFields.keyAt(mFields.size() - 1);
     }
 
     private float getCurrentCameraTilt() {

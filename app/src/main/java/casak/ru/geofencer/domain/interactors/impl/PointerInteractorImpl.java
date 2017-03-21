@@ -179,7 +179,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     //TODO Check implementation
     List<Route> getComputedRoutes(Integer fieldId) {
         List<Route> result = mComputedRoutesCache.get(fieldId);
-        if (result != null) {
+        if (result != null && result.size() != 0) {
             return result;
         }
 
