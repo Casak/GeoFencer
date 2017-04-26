@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/slider_background_primary"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/slider_accent"
+        android:gravity="center_horizontal"
+        android:text="@string/harvested"
+        android:textColor="@color/slider_primary"
+        android:textSize="@dimen/text_values_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/slider_accent"
+        android:gravity="center_horizontal"
+        android:text="@string/harvested_sign"
+        android:textColor="@color/slider_primary"
+        android:textSize="@dimen/text_values_sign_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/slider_background_primary"
+        android:gravity="center_horizontal"
+        android:includeFontPadding="false"
+        android:text="@string/speed"
+        android:textColor="@color/slider_primary"
+        android:textSize="@dimen/text_values_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/slider_background_primary"
+        android:gravity="center_horizontal"
+        android:includeFontPadding="false"
+        android:text="@string/speed_units"
+        android:textColor="@color/slider_primary"
+        android:textSize="@dimen/text_speed_unit_sign_size"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/button_zoom_in"
+        android:layout_width="@dimen/button_zoom_in_width"
+        android:layout_height="@dimen/button_zoom_in_height"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="@dimen/button_zoom_in_top_margin"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/button_zoom_in" />
+
+    <casak.ru.geofencer.presentation.ui.view.VerticalSeekBar
+        android:id="@+id/seekbar_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/seekbar_height"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:progressDrawable="@drawable/map_seekbar_zoom_progress"
+        android:thumb="@drawable/map_seekbar_zoom_thumb"
+        android:max="19"
+        android:layout_marginTop="@dimen/button_zoom_in_top_margin"
+        android:layout_marginBottom="@dimen/button_zoom_in_top_margin"
+        />
+
+    <ImageButton
+        android:id="@+id/button_zoom_out"
+        android:layout_width="@dimen/button_zoom_out_width"
+        android:layout_height="@dimen/button_zoom_out_height"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/button_zoom_out" />
+
+    <ImageButton
+        android:id="@+id/button_2d3d"
+        android:layout_width="@dimen/button_2d3d_width"
+        android:layout_height="@dimen/button_2d3d_height"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/button_2d3d" />
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/slider_background_primary"
+        android:paddingEnd="@dimen/button_close_padding_end"
+        android:paddingStart="@dimen/zero_padding"
+        android:rotation="180"
+        android:scaleType="fitEnd"
+        android:src="@drawable/button_open_close" />
+
+</LinearLayout>

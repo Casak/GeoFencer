@@ -1,0 +1,4 @@
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/map_seekbar_zoom_progress_background"
+    android:insetLeft="-15dp"
+    android:insetRight="-15dp" />
