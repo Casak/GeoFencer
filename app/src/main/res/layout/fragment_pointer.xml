@@ -5,81 +5,121 @@
     android:orientation="horizontal">
 
     <ImageView
+        android:layout_width="@dimen/pointer_drawable_width"
+        android:layout_height="@dimen/pointer_drawable_height"
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_red" />
+
+    <ImageView
         android:id="@+id/pointer_left_red_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_orange_dark" />
 
     <ImageView
         android:id="@+id/pointer_left_red_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_orange" />
 
     <ImageView
         android:id="@+id/pointer_left_yellow_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_yellow_dark" />
 
     <ImageView
         android:id="@+id/pointer_left_yellow_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_yellow" />
 
     <ImageView
         android:id="@+id/pointer_left_green_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_green_dark" />
 
     <ImageView
         android:id="@+id/pointer_left_green_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_green" />
 
     <ImageView
         android:id="@+id/pointer_center"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
         android:src="@drawable/pointer_center" />
 
     <ImageView
         android:id="@+id/pointer_right_green_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_green" />
 
     <ImageView
         android:id="@+id/pointer_right_green_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_green_dark" />
 
     <ImageView
         android:id="@+id/pointer_right_yellow_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_yellow" />
 
     <ImageView
         android:id="@+id/pointer_right_yellow_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_yellow_dark" />
 
     <ImageView
         android:id="@+id/pointer_right_red_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_orange" />
 
     <ImageView
         android:id="@+id/pointer_right_red_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
-        android:src="@drawable/pointer_off" />
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_orange_dark" />
+
+    <ImageView
+        android:layout_width="@dimen/pointer_drawable_width"
+        android:layout_height="@dimen/pointer_drawable_height"
+        android:layout_marginTop="@dimen/pointer_margin_top"
+        android:layout_marginRight="@dimen/pointer_margin_right"
+        android:src="@drawable/pointer_red" />
 
 </LinearLayout>
