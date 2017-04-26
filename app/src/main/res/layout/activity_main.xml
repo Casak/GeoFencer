@@ -14,9 +14,9 @@
     <fragment
         android:id="@+id/map_button_fragment"
         android:name="casak.ru.geofencer.presentation.ui.fragment.MapButtonFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|center"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
         tools:layout="@layout/fragment_map_button" />
 
     <fragment

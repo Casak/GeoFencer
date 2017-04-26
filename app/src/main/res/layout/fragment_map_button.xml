@@ -2,14 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/slider_background_primary">
 
     <!--TODO STRING RESOURCES, @colors, bastard-->
+    <include layout="@layout/fragment_map_slider_right"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="match_parent"
+        />
+
+
+
 
     <Button
         android:id="@+id/button_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="Settings"
         android:textColor="#424242"
@@ -17,8 +25,8 @@
 
     <Button
         android:id="@+id/button_follow_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="NonFollow"
         android:textColor="#424242"
@@ -26,8 +34,8 @@
 
     <Button
         android:id="@+id/button_change_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="MapType"
         android:textColor="#424242"
@@ -35,8 +43,8 @@
 
     <Button
         android:id="@+id/button_3d_2d"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="3D"
         android:textColor="#424242"
@@ -44,8 +52,8 @@
 
     <Button
         android:id="@+id/button_tilt_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="Tilt+"
         android:textColor="#424242"
@@ -53,8 +61,8 @@
 
     <Button
         android:id="@+id/button_tilt_less"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="Tilt−"
         android:textColor="#424242"
@@ -62,8 +70,8 @@
 
     <Button
         android:id="@+id/button_zoom_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="Zoom+"
         android:textColor="#424242"
@@ -71,8 +79,8 @@
 
     <Button
         android:id="@+id/button_zoom_less"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="Zoom−"
         android:textColor="#424242"
@@ -80,8 +88,8 @@
 
     <Button
         android:id="@+id/button_load"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#B3FAFAFA"
         android:text="LOAD"
         android:textColor="#424242"

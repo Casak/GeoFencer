@@ -15,14 +15,19 @@
         map:uiCompass="false"
         map:uiZoomControls="false" />
 
+    <include layout="@layout/fragment_map_slider_left"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="match_parent"
+        />
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/temp_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/common_full_open_on_phone"
             app:elevation="4dp" />
 
