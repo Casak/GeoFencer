@@ -24,4 +24,12 @@
     <string name="pref_machinery_width_dialog_title">In meters</string>
     <string name="default_machinery_width">10</string>
 
+    <!--MapFragment-->
+    <!--Sliders-->
+    <string name="work_sign">РОБОТА</string>
+    <string name="speed">10,1</string>
+    <string name="speed_units">км/год.</string>
+    <string name="harvested">15%</string>
+    <string name="harvested_sign">оброблено</string>
+
 </resources>

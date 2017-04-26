@@ -1,9 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="pointer_drawable_height">70dp</dimen>
-    <dimen name="pointer_drawable_width">70dp</dimen>
+    <!--MapFragment Pointer-->
+    <dimen name="pointer_margin_top">10dp</dimen>
+    <dimen name="pointer_margin_right">15dp</dimen>
+    <dimen name="pointer_drawable_height">30dp</dimen>
+    <dimen name="pointer_drawable_width">30dp</dimen>
 
     <!--Map Buttons-->
     <dimen name="text_size">30sp</dimen>
+
+    <!--Misc-->
+    <dimen name="zero_padding">0dp</dimen>
+
+    <!--MapFragment Sliders Common-->
+    <dimen name="slider_width">120dp</dimen>
+
+
+    <!--MapFragment RightSlider-->
+    <dimen name="text_work_size">14sp</dimen>
+    <dimen name="text_work_padding">2dp</dimen>
+    <dimen name="text_work_padding_left">5dp</dimen>
+    <dimen name="button_width">90dp</dimen>
+    <dimen name="button_height">90dp</dimen>
+    <dimen name="button_margin">10dp</dimen>
+    <dimen name="button_close_padding_end">10dp</dimen>
+
+    <!--MapFragment LeftSlider-->
+    <dimen name="text_values_size">42sp</dimen>
+    <dimen name="text_values_sign_size">22sp</dimen>
+    <dimen name="text_speed_unit_sign_size">32sp</dimen>
+    <dimen name="button_zoom_in_width">20dp</dimen>
+    <dimen name="button_zoom_in_height">20dp</dimen>
+    <dimen name="button_zoom_in_top_margin">10dp</dimen>
+    <dimen name="seekbar_height">150dp</dimen>
+    <dimen name="button_zoom_out_width">20dp</dimen>
+    <dimen name="button_zoom_out_height">20dp</dimen>
+    <dimen name="button_2d3d_width">80dp</dimen>
+    <dimen name="button_2d3d_height">80dp</dimen>
+
+
 
 </resources>

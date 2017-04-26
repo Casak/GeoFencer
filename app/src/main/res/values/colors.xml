@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="color_primary">#575756</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
@@ -15,6 +15,22 @@
     <color name="route_base">#d50000</color>
     <color name="route_computed">#b4ffea00</color>
 
+    <!--Slider colors-->
+    <color name="slider_primary">#575756</color>
+    <color name="slider_accent">#FFCB00</color>
+    <color name="slider_background_primary">#3f575756</color>
+
+    <!--Pointer colors-->
+    <color name="pointer_red">#FF0000</color>
+    <color name="pointer_orange_dark">#FF5E00</color>
+    <color name="pointer_orange">#FF8800</color>
+    <color name="pointer_yellow_dark">#FFA900</color>
+    <color name="pointer_yellow">#FFC700</color>
+    <color name="pointer_green_dark">#578556</color>
+    <color name="pointer_green">#57B556</color>
+
+
+    <!--Debug-->
     <color name="debug_route_current">#d50000</color>
     <color name="debug_route_used">#64dd17</color>
     <color name="debug_point_current">#6200ea</color>
