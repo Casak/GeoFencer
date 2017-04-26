@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/slider_background_primary"
+android:orientation="vertical">
+
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/slider_accent"
+    android:gravity="center_vertical"
+    android:paddingBottom="@dimen/text_work_padding"
+    android:paddingEnd="@dimen/text_work_padding_left"
+    android:paddingStart="@dimen/text_work_padding_left"
+    android:paddingTop="@dimen/text_work_padding"
+    android:text="@string/work_sign"
+    android:textAllCaps="true"
+    android:textColor="@color/slider_primary"
+    android:textSize="@dimen/text_work_size"
+    android:textStyle="bold" />
+
+<ImageButton
+    android:id="@+id/button_navigation"
+    android:layout_width="@dimen/button_width"
+    android:layout_height="@dimen/button_height"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:layout_margin="@dimen/button_margin"
+    android:padding="@dimen/zero_padding"
+    android:scaleType="fitCenter"
+    android:background="@null"
+    android:src="@drawable/button_nav" />
+
+<ImageButton
+    android:id="@+id/button_messages"
+    android:layout_width="@dimen/button_width"
+    android:layout_height="@dimen/button_height"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:layout_margin="@dimen/button_margin"
+    android:padding="@dimen/zero_padding"
+    android:scaleType="fitCenter"
+    android:background="@null"
+    android:src="@drawable/button_msg" />
+
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1" />
+
+<ImageButton
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/slider_background_primary"
+    android:paddingStart="@dimen/zero_padding"
+    android:paddingEnd="@dimen/button_close_padding_end"
+    android:scaleType="fitEnd"
+    android:src="@drawable/button_open_close" />
+
+</LinearLayout>
