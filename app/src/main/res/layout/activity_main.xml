@@ -12,6 +12,13 @@
         tools:layout="@layout/fragment_map" />
 
     <fragment
+        android:id="@+id/slider_left_fragment"
+        android:name="casak.ru.geofencer.presentation.ui.fragment.SliderLeftFragment"
+        android:layout_width="@dimen/slider_width"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_map_slider_left" />
+
+    <fragment
         android:id="@+id/map_button_fragment"
         android:name="casak.ru.geofencer.presentation.ui.fragment.MapButtonFragment"
         android:layout_width="@dimen/slider_width"
