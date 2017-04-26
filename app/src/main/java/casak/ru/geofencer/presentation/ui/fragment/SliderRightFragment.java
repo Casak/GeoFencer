@@ -12,10 +12,13 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import casak.ru.geofencer.R;
+import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 
 /**
  * Created on 15.02.2017.
@@ -23,6 +26,8 @@ import casak.ru.geofencer.R;
 
 public class SliderRightFragment extends Fragment {
 
+    @Inject
+    GoogleMapPresenter mGoogleMapPresenter;
     @BindView(R.id.button_open_close_right)
     ImageButton mButtonOpenClose;
     @BindView(R.id.textview_harvested)
@@ -45,7 +50,7 @@ public class SliderRightFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //GoogleMapFragment.getMapComponent().inject(this);
+        GoogleMapFragment.getMapComponent().inject(this);
     }
 
     @Override
@@ -55,14 +60,34 @@ public class SliderRightFragment extends Fragment {
         mIsSliderOpen = true;
         ButterKnife.bind(this, mRootView);
 
+        mSeekBarZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(progress == 0){
+                    progress++;
+                }
+                mGoogleMapPresenter.changeZoom(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         return mRootView;
     }
 
 
     @OnClick(R.id.button_open_close_right)
     public void openCloseSlider() {
-        if(mIsSliderOpen) {
-            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX()+140);
+        if (mIsSliderOpen) {
+            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX() + 140);
             ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
             ObjectAnimator harvestedAnimator = ObjectAnimator.ofFloat(mTextViewHarvested, "scaleY", 0);
             ObjectAnimator harvestedSignAnimator = ObjectAnimator.ofFloat(mTextViewHarvestedSign, "scaleY", 0);
@@ -85,9 +110,8 @@ public class SliderRightFragment extends Fragment {
 
             mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
             mIsSliderOpen = false;
-        }
-        else {
-            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX()-140);
+        } else {
+            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX() - 140);
             ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
             ObjectAnimator harvestedAnimator = ObjectAnimator.ofFloat(mTextViewHarvested, "scaleY", 1);
             ObjectAnimator harvestedSignAnimator = ObjectAnimator.ofFloat(mTextViewHarvestedSign, "scaleY", 1);
@@ -111,4 +135,16 @@ public class SliderRightFragment extends Fragment {
             mIsSliderOpen = true;
         }
     }
+
+    @OnClick(R.id.button_zoom_in)
+    public void onZoomMoreClicked() {
+        mSeekBarZoom.incrementProgressBy(1);
+    }
+
+    @OnClick(R.id.button_zoom_out)
+    public void onZoomLessClicked() {
+        mSeekBarZoom.incrementProgressBy(-1);
+    }
+
+
 }

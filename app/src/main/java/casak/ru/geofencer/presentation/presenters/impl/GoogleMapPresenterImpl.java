@@ -238,6 +238,11 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     }
 
     @Override
+    public void changeZoom(float to) {
+        mMapView.changeCamera(CameraUpdateFactory.zoomTo(to));
+    }
+
+    @Override
     public void onTiltMore() {
         float currentTilt = getCurrentCameraTilt();
         float newTilt = currentTilt + 10;

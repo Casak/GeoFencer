@@ -11,6 +11,7 @@ import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
 import casak.ru.geofencer.presentation.presenters.impl.GoogleMapPresenterImpl;
 import casak.ru.geofencer.presentation.ui.fragment.GoogleMapFragment;
 import casak.ru.geofencer.presentation.ui.fragment.MapButtonFragment;
+import casak.ru.geofencer.presentation.ui.fragment.SliderRightFragment;
 import dagger.Component;
 
 /**
@@ -28,6 +29,8 @@ public interface MapComponent extends AbstractActivityComponent, InteractorCompo
     void inject(GoogleMapFragment fragment);
 
     void inject(MapButtonFragment fragment);
+
+    void inject(SliderRightFragment fragment);
 
     void inject(GoogleMapPresenterImpl presenter);
 

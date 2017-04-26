@@ -11,6 +11,7 @@ import android.widget.SeekBar;
  */
 
 public class VerticalSeekBar extends SeekBar {
+    int lastProgress;
 
     public VerticalSeekBar(Context context) {
         super(context);
@@ -42,6 +43,12 @@ public class VerticalSeekBar extends SeekBar {
     }
 
     @Override
+    public synchronized void setProgress(int progress) {
+        super.setProgress(progress);
+        onSizeChanged(getWidth(), getHeight(), 0, 0);
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled()) {
             return false;
@@ -51,8 +58,12 @@ public class VerticalSeekBar extends SeekBar {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
-                setProgress(getMax() - (int) (getMax() * event.getY() / getHeight()));
-                onSizeChanged(getWidth(), getHeight(), 0, 0);
+                int progress = getMax() - (int) (getMax() * (event.getY() - getPaddingRight()) / (getHeight() - getPaddingRight() - getPaddingLeft()));
+                if(progress != lastProgress) {
+                    lastProgress = progress;
+                    setProgress(progress);
+                    onSizeChanged(getWidth(), getHeight(), 0, 0);
+                }
                 break;
 
             case MotionEvent.ACTION_CANCEL:
