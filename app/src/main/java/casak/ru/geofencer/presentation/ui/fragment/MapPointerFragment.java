@@ -28,38 +28,35 @@ import casak.ru.geofencer.presentation.ui.base.BaseActivity;
  */
 
 public class MapPointerFragment extends Fragment implements MapPointerPresenter.View {
-    @BindView(R.id.pointer_left_red_far)
-    TextView leftRedFar;
-    @BindView(R.id.pointer_left_red_close)
-    TextView leftRedClose;
-    @BindView(R.id.pointer_left_yellow_far)
-    TextView leftYellowFar;
-    @BindView(R.id.pointer_left_yellow_close)
-    TextView leftYellowClose;
-    @BindView(R.id.pointer_left_green_far)
-    TextView leftGreenFar;
-    @BindView(R.id.pointer_left_green_close)
-    TextView leftGreenClose;
+    @BindView(R.id.pointer_left_red)
+    TextView mTextViewLeftRed;
+    @BindView(R.id.pointer_left_orange_dark)
+    TextView mTextViewLeftOrangeDark;
+    @BindView(R.id.pointer_left_orange)
+    TextView mTextViewLeftOrange;
+    @BindView(R.id.pointer_left_yellow_dark)
+    TextView mTextViewLeftYellowDark;
+    @BindView(R.id.pointer_left_yellow)
+    TextView mTextViewLeftYellow;
+    @BindView(R.id.pointer_left_green_dark)
+    TextView mTextViewLeftGreenDark;
+    @BindView(R.id.pointer_left_green)
+    TextView mTextViewLeftGreen;
 
-    @BindView(R.id.pointer_right_green_close)
-    TextView rightGreenClose;
-    @BindView(R.id.pointer_right_green_far)
-    TextView rightGreenFar;
-    @BindView(R.id.pointer_right_yellow_close)
-    TextView rightYellowClose;
-    @BindView(R.id.pointer_right_yellow_far)
-    TextView rightYellowFar;
-    @BindView(R.id.pointer_right_red_close)
-    TextView rightRedClose;
-    @BindView(R.id.pointer_right_red_far)
-    TextView rightRedFar;
-
-    private List<TextView> right;
-    private List<TextView> left;
-    private Drawable red;
-    private Drawable yellow;
-    private Drawable green;
-    private Drawable off;
+    @BindView(R.id.pointer_right_red)
+    TextView mTextViewRightRed;
+    @BindView(R.id.pointer_right_orange_dark)
+    TextView mTextViewRightOrangeDark;
+    @BindView(R.id.pointer_right_orange)
+    TextView mTextViewRightOrange;
+    @BindView(R.id.pointer_right_yellow_dark)
+    TextView mTextViewRightYellowDark;
+    @BindView(R.id.pointer_right_yellow)
+    TextView mTextViewRightYellow;
+    @BindView(R.id.pointer_right_green_dark)
+    TextView mTextViewRightGreenDark;
+    @BindView(R.id.pointer_right_green)
+    TextView mTextViewRightGreen;
 
     private static PointerComponent mComponent;
     private static PointerModule mModule;
@@ -89,14 +86,12 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
 
         ButterKnife.bind(this, rootView);
 
-        init();
-
         return rootView;
     }
 
     @Override
     public void turnOff(int count, Type side) {
-        for (int i = 0; i <= count; i++) {
+        /*for (int i = 0; i <= count; i++) {
             switch (side) {
                 case LEFT:
                     left.get(i).setBackground(off);
@@ -109,12 +104,12 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
                     left.get(i).setBackground(off);
                     right.get(i).setBackground(off);
             }
-        }
+        }*/
     }
 
     @Override
     public void turnOn(int count, Type side) {
-        switch (side) {
+        /*switch (side) {
             case LEFT:
                 fill(count, left);
                 break;
@@ -126,11 +121,11 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
                 fill(count, right);
             default:
                 turnOff(MapPointerPresenter.View.ALL_SEMAPHORES, Type.ALL);
-        }
+        }*/
     }
 
     private void fill(int count, List<TextView> list) {
-        switch (count) {
+        /*switch (count) {
             case MapPointerPresenter.View.ALL_SEMAPHORES:
                 list.get(MapPointerPresenter.View.ALL_SEMAPHORES).setBackground(red);
             case MapPointerPresenter.View.TO_RED_CLOSE:
@@ -143,32 +138,7 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
                 list.get(MapPointerPresenter.View.TO_GREEN_FAR).setBackground(green);
             case MapPointerPresenter.View.TO_GREEN_CLOSE:
                 list.get(MapPointerPresenter.View.TO_GREEN_CLOSE).setBackground(green);
-        }
-    }
-
-    private void init() {
-        right = new ArrayList<>();
-        left = new ArrayList<>();
-
-        right.add(rightGreenClose);
-        right.add(rightGreenFar);
-        right.add(rightYellowClose);
-        right.add(rightYellowFar);
-        right.add(rightRedClose);
-        right.add(rightRedFar);
-
-        left.add(leftGreenClose);
-        left.add(leftGreenFar);
-        left.add(leftYellowClose);
-        left.add(leftYellowFar);
-        left.add(leftRedClose);
-        left.add(leftRedFar);
-
-        Resources resources = getResources();
-        red = resources.getDrawable(R.drawable.pointer_red);
-        yellow = resources.getDrawable(R.drawable.pointer_yellow);
-        green = resources.getDrawable(R.drawable.pointer_green);
-        off = resources.getDrawable(R.drawable.pointer_off);
+        }*/
     }
 
     public static PointerModule getPointerModule() {

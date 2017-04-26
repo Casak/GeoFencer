@@ -11,10 +11,10 @@
 
     <!--Misc-->
     <dimen name="zero_padding">0dp</dimen>
+    <dimen name="zero_size">0sp</dimen>
 
     <!--MapFragment Sliders Common-->
     <dimen name="slider_width">120dp</dimen>
-
 
     <!--MapFragment RightSlider-->
     <dimen name="text_work_size">14sp</dimen>
@@ -37,7 +37,5 @@
     <dimen name="button_zoom_out_height">20dp</dimen>
     <dimen name="button_2d3d_width">80dp</dimen>
     <dimen name="button_2d3d_height">80dp</dimen>
-
-
 
 </resources>

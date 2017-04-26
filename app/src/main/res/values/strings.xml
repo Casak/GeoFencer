@@ -19,17 +19,26 @@
 
     <!--Preferences-->
     <string name="settings_name">Settings</string>
-    <string name="machinery_width_key">pref_machinery_width</string>
+    <string name="machinery_width_key" translatable="false">pref_machinery_width</string>
     <string name="pref_machinery_width">What is your machinery width?</string>
     <string name="pref_machinery_width_dialog_title">In meters</string>
-    <string name="default_machinery_width">10</string>
+    <string name="default_machinery_width" translatable="false">10</string>
 
     <!--MapFragment-->
     <!--Sliders-->
     <string name="work_sign">РОБОТА</string>
-    <string name="speed">10,1</string>
+    <string name="speed" translatable="false">10,1</string>
     <string name="speed_units">км/год.</string>
-    <string name="harvested">15%</string>
+    <string name="harvested" translatable="false">15%</string>
     <string name="harvested_sign">оброблено</string>
+
+    <!--Pointer-->
+    <string name="pointer_green">10</string>
+    <string name="pointer_dark_green">20</string>
+    <string name="pointer_yellow">40</string>
+    <string name="pointer_dark_yellow">60</string>
+    <string name="pointer_orange">100</string>
+    <string name="pointer_dark_orange">150</string>
+    <string name="pointer_red">200</string>
 
 </resources>
