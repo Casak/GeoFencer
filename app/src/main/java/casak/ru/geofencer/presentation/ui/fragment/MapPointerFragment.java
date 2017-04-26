@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,33 +29,33 @@ import casak.ru.geofencer.presentation.ui.base.BaseActivity;
 
 public class MapPointerFragment extends Fragment implements MapPointerPresenter.View {
     @BindView(R.id.pointer_left_red_far)
-    ImageView leftRedFar;
+    TextView leftRedFar;
     @BindView(R.id.pointer_left_red_close)
-    ImageView leftRedClose;
+    TextView leftRedClose;
     @BindView(R.id.pointer_left_yellow_far)
-    ImageView leftYellowFar;
+    TextView leftYellowFar;
     @BindView(R.id.pointer_left_yellow_close)
-    ImageView leftYellowClose;
+    TextView leftYellowClose;
     @BindView(R.id.pointer_left_green_far)
-    ImageView leftGreenFar;
+    TextView leftGreenFar;
     @BindView(R.id.pointer_left_green_close)
-    ImageView leftGreenClose;
+    TextView leftGreenClose;
 
     @BindView(R.id.pointer_right_green_close)
-    ImageView rightGreenClose;
+    TextView rightGreenClose;
     @BindView(R.id.pointer_right_green_far)
-    ImageView rightGreenFar;
+    TextView rightGreenFar;
     @BindView(R.id.pointer_right_yellow_close)
-    ImageView rightYellowClose;
+    TextView rightYellowClose;
     @BindView(R.id.pointer_right_yellow_far)
-    ImageView rightYellowFar;
+    TextView rightYellowFar;
     @BindView(R.id.pointer_right_red_close)
-    ImageView rightRedClose;
+    TextView rightRedClose;
     @BindView(R.id.pointer_right_red_far)
-    ImageView rightRedFar;
+    TextView rightRedFar;
 
-    private List<ImageView> right;
-    private List<ImageView> left;
+    private List<TextView> right;
+    private List<TextView> left;
     private Drawable red;
     private Drawable yellow;
     private Drawable green;
@@ -98,15 +99,15 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
         for (int i = 0; i <= count; i++) {
             switch (side) {
                 case LEFT:
-                    left.get(i).setImageDrawable(off);
+                    left.get(i).setBackground(off);
                     break;
                 case RIGHT:
-                    right.get(i).setImageDrawable(off);
+                    right.get(i).setBackground(off);
                     break;
                 case ALL:
                 default:
-                    left.get(i).setImageDrawable(off);
-                    right.get(i).setImageDrawable(off);
+                    left.get(i).setBackground(off);
+                    right.get(i).setBackground(off);
             }
         }
     }
@@ -128,20 +129,20 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
         }
     }
 
-    private void fill(int count, List<ImageView> list) {
+    private void fill(int count, List<TextView> list) {
         switch (count) {
             case MapPointerPresenter.View.ALL_SEMAPHORES:
-                list.get(MapPointerPresenter.View.ALL_SEMAPHORES).setImageDrawable(red);
+                list.get(MapPointerPresenter.View.ALL_SEMAPHORES).setBackground(red);
             case MapPointerPresenter.View.TO_RED_CLOSE:
-                list.get(MapPointerPresenter.View.TO_RED_CLOSE).setImageDrawable(red);
+                list.get(MapPointerPresenter.View.TO_RED_CLOSE).setBackground(red);
             case MapPointerPresenter.View.TO_YELLOW_FAR:
-                list.get(MapPointerPresenter.View.TO_YELLOW_FAR).setImageDrawable(yellow);
+                list.get(MapPointerPresenter.View.TO_YELLOW_FAR).setBackground(yellow);
             case MapPointerPresenter.View.TO_YELLOW_CLOSE:
-                list.get(MapPointerPresenter.View.TO_YELLOW_CLOSE).setImageDrawable(yellow);
+                list.get(MapPointerPresenter.View.TO_YELLOW_CLOSE).setBackground(yellow);
             case MapPointerPresenter.View.TO_GREEN_FAR:
-                list.get(MapPointerPresenter.View.TO_GREEN_FAR).setImageDrawable(green);
+                list.get(MapPointerPresenter.View.TO_GREEN_FAR).setBackground(green);
             case MapPointerPresenter.View.TO_GREEN_CLOSE:
-                list.get(MapPointerPresenter.View.TO_GREEN_CLOSE).setImageDrawable(green);
+                list.get(MapPointerPresenter.View.TO_GREEN_CLOSE).setBackground(green);
         }
     }
 

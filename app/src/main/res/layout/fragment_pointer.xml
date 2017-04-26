@@ -4,122 +4,122 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <ImageView
+    <TextView
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_red" />
+        android:background="@drawable/pointer_red" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_red_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_orange_dark" />
+        android:background="@drawable/pointer_orange_dark" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_red_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_orange" />
+        android:background="@drawable/pointer_orange" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_yellow_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_yellow_dark" />
+        android:background="@drawable/pointer_yellow_dark" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_yellow_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_yellow" />
+        android:background="@drawable/pointer_yellow" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_green_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_green_dark" />
+        android:background="@drawable/pointer_green_dark" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_left_green_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_green" />
+        android:background="@drawable/pointer_green" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_center"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_center" />
+        android:background="@drawable/pointer_center" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_green_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_green" />
+        android:background="@drawable/pointer_green" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_green_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_green_dark" />
+        android:background="@drawable/pointer_green_dark" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_yellow_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_yellow" />
+        android:background="@drawable/pointer_yellow" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_yellow_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_yellow_dark" />
+        android:background="@drawable/pointer_yellow_dark" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_red_close"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_orange" />
+        android:background="@drawable/pointer_orange" />
 
-    <ImageView
+    <TextView
         android:id="@+id/pointer_right_red_far"
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_orange_dark" />
+        android:background="@drawable/pointer_orange_dark" />
 
-    <ImageView
+    <TextView
         android:layout_width="@dimen/pointer_drawable_width"
         android:layout_height="@dimen/pointer_drawable_height"
         android:layout_marginTop="@dimen/pointer_margin_top"
         android:layout_marginRight="@dimen/pointer_margin_right"
-        android:src="@drawable/pointer_red" />
+        android:background="@drawable/pointer_red" />
 
 </LinearLayout>
