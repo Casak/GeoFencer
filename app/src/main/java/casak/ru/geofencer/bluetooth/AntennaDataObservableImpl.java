@@ -78,26 +78,19 @@ public class AntennaDataObservableImpl implements AntennaDataObservable {
             "50.42323,30.4267916";
 
     public void startPassingRouteBuildingPoints() {
-        String[] locationArray = locationsString.split(";");
-        for (String aLocationArray : locationArray) {
-            String[] locationSting = aLocationArray.split(",");
-            Point location = new Point(Double.parseDouble(locationSting[0]),
-                    Double.parseDouble(locationSting[1]));
-            passLocation(location);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
+        List<Point> list = Util.stringToPoints(locationsString);
+
+        new MockLocationAsyncTask(this, 100).execute(list.toArray(new Point[list.size()]));
+
         Log.d(TAG, "Fake locations passed");
     }
 
     public void startHarvesting() {
-        List<Point> list15 = offsetList(15);
-        List<Point> list45 = reverseLatLngList(offsetList(45));
-        List<Point> list25 = offsetList(25);
-        List<Point> list35 = reverseLatLngList(offsetList(35));
+        List<Point> list15 = offsetList(14);
+        List<Point> list45 = reverseLatLngList(offsetList(44));
+        List<Point> list25 = offsetList(24);
+        List<Point> list35 = reverseLatLngList(offsetList(34));
 
         final List<Point> list = new ArrayList<>();
         list.addAll(list35);
@@ -157,7 +150,7 @@ public class AntennaDataObservableImpl implements AntennaDataObservable {
 
         for (Point p : old) {
             Point point = new Point(p.getLatitude(), p.getLongitude() +
-                    Double.parseDouble("0.0000" + random.nextInt(100)));
+                    Double.parseDouble("0.0000" + random.nextInt(50)));
             newList.add(computeOffset(point, offset,
                     computeHeading(old.get(0),
                             old.get(old.size() - 1)) - 90));

@@ -40,6 +40,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         mRepository = routeRepository;
     }
 
+    //TODO Pass machinery width
     @Override
     public void init(PointerInteractor.Callback callback, int fieldId) {
         mCallback = callback;
@@ -116,6 +117,7 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         return result;
     }
 
+    //TODO Compute bearing of the route via heading, not distances
     Route getCurrentRoute(Point pointPosition) {
         if (!isStillCurrentRoute(pointPosition)) {
             Route result = getNearestRoute(pointPosition);
@@ -171,9 +173,10 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
     }
 
     double computeMachineryWidth(Route current, Route next) {
-        return MapUtils.computeDistanceBetween(
+        double result = MapUtils.computeDistanceBetween(
                 current.getRoutePoints().get(ROUTE_START),
                 next.getRoutePoints().get(ROUTE_START));
+        return Math.round(result);
     }
 
     //TODO Check implementation
@@ -219,6 +222,8 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
             for (int i = 0; i < routePoints.size() - 1; i++) {
                 Point start = routePoints.get(i);
                 Point next = routePoints.get(i + 1);
+
+
                 if (getNearestPoint(start, next, current) == start) {
                     double distanceCurrentAndNext = MapUtils.computeDistanceBetween(start, next);
                     double distancePositionAndNext = MapUtils.computeDistanceBetween(current, next);
