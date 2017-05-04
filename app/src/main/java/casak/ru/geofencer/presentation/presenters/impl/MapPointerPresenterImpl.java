@@ -42,54 +42,39 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
         super(executor, mainThread);
         mInteractor = interactor;
         mAntennaDataObservable = observable;
+        //TODO Refactor
+        Context context = MainActivity.getAbstractActivityComponent().getActivityContext();
+        mResources = context.getResources();
     }
 
-    //TODO Improve logic
     @Override
     public void showPointer(double value) {
         if (mView == null) {
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        mView.turnOff(View.ALL_SEMAPHORES, View.Type.ALL);
-        if (Math.abs(value) > 1.8D) {
-            if (value > 0) {
-                mView.turnOn(View.ALL_SEMAPHORES, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.ALL_SEMAPHORES, View.Type.LEFT);
-            }
-        } else if (Math.abs(value) > 1.2D) {
-            if (value > 0) {
-                mView.turnOn(View.TO_RED_CLOSE, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.TO_RED_CLOSE, View.Type.LEFT);
-            }
-        } else if (Math.abs(value) > 0.8D) {
-            if (value > 0) {
-                mView.turnOn(View.TO_YELLOW_FAR, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.TO_YELLOW_FAR, View.Type.LEFT);
-            }
-        } else if (Math.abs(value) > 0.4D) {
-            if (value > 0) {
-                mView.turnOn(View.TO_YELLOW_CLOSE, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.TO_YELLOW_CLOSE, View.Type.LEFT);
-            }
-        } else if (Math.abs(value) > 0.2D) {
-            if (value > 0) {
-                mView.turnOn(View.TO_GREEN_FAR, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.TO_GREEN_FAR, View.Type.LEFT);
-            }
-        } else if (Math.abs(value) > 0.1D) {
-            if (value > 0) {
-                mView.turnOn(View.TO_GREEN_CLOSE, View.Type.RIGHT);
-            } else {
-                mView.turnOn(View.TO_GREEN_CLOSE, View.Type.LEFT);
-            }
-        }
+        View.Type side = value > 0 ? View.Type.LEFT : View.Type.RIGHT;
 
+        //TODO Refactor
+        int centimeterValue = (int) Math.abs(value * 100);
+
+        if (centimeterValue > parseInt(R.string.pointer_red)) {
+            mView.moveAnchor(side, View.RED);
+        } else if (centimeterValue > parseInt(R.string.pointer_dark_orange)) {
+            mView.moveAnchor(side, View.ORANGE_DARK);
+        } else if (centimeterValue > parseInt(R.string.pointer_orange)) {
+            mView.moveAnchor(side, View.ORANGE);
+        } else if (centimeterValue > parseInt(R.string.pointer_dark_yellow)) {
+            mView.moveAnchor(side, View.YELLOW_DARK);
+        } else if (centimeterValue > parseInt(R.string.pointer_yellow)) {
+            mView.moveAnchor(side, View.YELLOW);
+        } else if (centimeterValue > parseInt(R.string.pointer_dark_green)) {
+            mView.moveAnchor(side, View.GREEN_DARK);
+        } else if (centimeterValue > parseInt(R.string.pointer_green)) {
+            mView.moveAnchor(side, View.GREEN);
+        } else {
+            mView.moveAnchor(side, View.NONE);
+        }
 
         //Debug
         updatePointerVisualization();
@@ -128,6 +113,10 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     }
 
+    private int parseInt(int id) {
+        return Integer.parseInt(mResources.getString(id));
+    }
+
 
     //Pointer work visualization
     private PointerInteractor mPointerInteractor;
@@ -135,7 +124,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     private Resources mResources;
     private long routeId;
 
-    public void updatePointerVisualization() {
+    private void updatePointerVisualization() {
         if (mGoogleMapPresenter == null) {
             mGoogleMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
         } else if (mGoogleMapPresenterView == null) {

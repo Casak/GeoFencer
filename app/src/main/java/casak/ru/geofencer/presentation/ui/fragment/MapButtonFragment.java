@@ -26,6 +26,8 @@ import casak.ru.geofencer.presentation.ui.activities.SettingsActivity;
  */
 
 public class MapButtonFragment extends Fragment {
+    private static final String TAG = MapButtonFragment.class.getSimpleName();
+
     private final int MAP_3D = 90;
     private final int MAP_2D = 0;
 

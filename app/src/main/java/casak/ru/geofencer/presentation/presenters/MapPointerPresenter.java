@@ -9,21 +9,20 @@ import casak.ru.geofencer.presentation.presenters.base.BasePresenter;
 
 public interface MapPointerPresenter extends BasePresenter, PointerInteractor.Callback {
     interface View {
-        int ALL_SEMAPHORES = 5;
-        int TO_RED_CLOSE = 4;
-        int TO_YELLOW_FAR = 3;
-        int TO_YELLOW_CLOSE = 2;
-        int TO_GREEN_FAR = 1;
-        int TO_GREEN_CLOSE = 0;
+        int NONE = 0;
+        int GREEN = 1;
+        int GREEN_DARK = 2;
+        int YELLOW = 3;
+        int YELLOW_DARK = 4;
+        int ORANGE = 5;
+        int ORANGE_DARK = 6;
+        int RED = 7;
 
         enum Type {
             LEFT,
-            RIGHT,
-            ALL
+            RIGHT
         }
 
-        void turnOff(int count, Type side);
-
-        void turnOn(int count, Type side);
+        void moveAnchor(Type side, int toPosition);
     }
 }
