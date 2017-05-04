@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.domain.repository.FieldRepository;
-import com.smartagrodriver.core.presentation.presenters.CameraPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
 import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 import com.smartagrodriver.core.presentation.ui.activities.SettingsActivity;
 
@@ -34,7 +34,7 @@ public class MapButtonFragment extends Fragment {
     @Inject
     GoogleMapPresenter mGoogleMapPresenter;
     @Inject
-    CameraPresenter mCameraPresenter;
+    MapCameraPresenter mMapCameraPresenter;
     @Inject
     FieldRepository mFieldRepository;
     @BindView(R.id.button_follow_type)
@@ -134,23 +134,23 @@ public class MapButtonFragment extends Fragment {
         if (mFollow) {
             switch (mButtonFollow.getText().toString()) {
                 case "NonFollow":
-                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_POINT);
+                    mMapCameraPresenter.setFollowType(MapCameraPresenter.FollowType.FOLLOW_POINT);
                     mButtonFollow.setText("PntFollow");
                     break;
                 case "PntFollow":
-                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_ROUTE);
+                    mMapCameraPresenter.setFollowType(MapCameraPresenter.FollowType.FOLLOW_ROUTE);
                     mButtonFollow.setText("RtFollow");
                     break;
                 case "RtFollow":
                 default:
                     mFollow = false;
                     mButtonFollow.setText("NonFollow");
-                    mCameraPresenter.setFollowType(CameraPresenter.FollowType.NON_FOLLOW);
+                    mMapCameraPresenter.setFollowType(MapCameraPresenter.FollowType.NON_FOLLOW);
             }
         } else {
             mFollow = true;
             mButtonFollow.setText("PntFollow");
-            mCameraPresenter.setFollowType(CameraPresenter.FollowType.FOLLOW_POINT);
+            mMapCameraPresenter.setFollowType(MapCameraPresenter.FollowType.FOLLOW_POINT);
         }
     }
 }

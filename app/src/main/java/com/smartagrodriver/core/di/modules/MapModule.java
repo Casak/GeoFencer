@@ -1,15 +1,15 @@
 package com.smartagrodriver.core.di.modules;
 
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
+import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
+import com.smartagrodriver.core.presentation.presenters.impl.MapCameraPresenterImpl;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
 import com.smartagrodriver.core.domain.interactors.CreateFieldInteractor;
 import com.smartagrodriver.core.domain.interactors.LoadFieldInteractor;
 import com.smartagrodriver.core.domain.interactors.LocationInteractor;
 import com.smartagrodriver.core.di.scopes.ActivityScope;
-import com.smartagrodriver.core.presentation.presenters.CameraPresenter;
 import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
-import com.smartagrodriver.core.presentation.presenters.impl.CameraPresenterImpl;
 import com.smartagrodriver.core.presentation.presenters.impl.GoogleMapPresenterImpl;
 import dagger.Module;
 import dagger.Provides;
@@ -40,7 +40,7 @@ public class MapModule {
                                                    LocationInteractor locationInteractor,
                                                    LoadFieldInteractor loadFieldInteractor,
                                                    CreateFieldInteractor createFieldInteractor,
-                                                   CameraPresenter cameraPresenter) {
+                                                   MapCameraPresenter mapCameraPresenter) {
         return new GoogleMapPresenterImpl(
                 threadExecutor,
                 mainThread,
@@ -49,12 +49,12 @@ public class MapModule {
                 locationInteractor,
                 mapView,
                 observable,
-                cameraPresenter);
+                mapCameraPresenter);
     }
 
     @Provides
     @ActivityScope
-    CameraPresenter providesCameraPresenter(CameraPresenterImpl presenter) {
+    MapCameraPresenter providesCameraPresenter(MapCameraPresenterImpl presenter) {
         return presenter;
     }
 

@@ -7,7 +7,7 @@ import com.smartagrodriver.core.presentation.presenters.base.BasePresenter;
  * Created on 21.02.2017.
  */
 
-public interface CameraPresenter extends BasePresenter, LocationInteractor.OnLocationChangedListener {
+public interface MapCameraPresenter extends BasePresenter, LocationInteractor.OnLocationChangedListener {
     enum FollowType {
         NON_FOLLOW,
         FOLLOW_ROUTE,

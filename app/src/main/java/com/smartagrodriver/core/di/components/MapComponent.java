@@ -6,7 +6,7 @@ import com.smartagrodriver.core.domain.interactors.CreateFieldInteractor;
 import com.smartagrodriver.core.di.modules.ActivityModule;
 import com.smartagrodriver.core.di.modules.MapModule;
 import com.smartagrodriver.core.di.scopes.ActivityScope;
-import com.smartagrodriver.core.presentation.presenters.CameraPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
 import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 import com.smartagrodriver.core.presentation.presenters.impl.GoogleMapPresenterImpl;
 import com.smartagrodriver.core.presentation.ui.fragment.GoogleMapFragment;
@@ -38,7 +38,7 @@ public interface MapComponent extends AbstractActivityComponent, InteractorCompo
 
     GoogleMapPresenter getGoogleMapPresenter();
 
-    CameraPresenter getCameraPresenter();
+    MapCameraPresenter getCameraPresenter();
 
     CreateFieldInteractor.Callback getCreateFieldInteractorCallback();
 
