@@ -61,7 +61,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/button_zoom_in" />
 
-    <casak.ru.geofencer.presentation.ui.view.VerticalSeekBar
+    <com.smartagrodriver.core.presentation.ui.view.VerticalSeekBar
         android:id="@+id/seekbar_zoom"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/seekbar_height"
