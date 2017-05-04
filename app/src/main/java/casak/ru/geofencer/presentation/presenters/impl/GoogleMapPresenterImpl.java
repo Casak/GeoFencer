@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.bluetooth.AntennaDataObservable;
+import casak.ru.geofencer.bluetooth.AntennaDataObservableImpl;
 import casak.ru.geofencer.presentation.ui.fragment.MapPointerFragment;
 import casak.ru.geofencer.threading.Executor;
 import casak.ru.geofencer.threading.MainThread;
@@ -107,11 +108,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mCreateFieldInteractor.onStartCreatingRoute();
 
         //TODO Delete
-        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startPassingRouteBuildingPoints();
         }
-        finishBuildField();
-        */
     }
 
     @Override
@@ -299,9 +298,9 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
         mLoadFieldInteractor.execute();
 
         //TODO Delete
-        /*if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
+        if (mAntennaDataObservable instanceof AntennaDataObservableImpl) {
             ((AntennaDataObservableImpl) mAntennaDataObservable).startHarvesting();
-        }*/
+        }
     }
 
     @Override
@@ -332,7 +331,10 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
             routes[i] = new Route(mRoutes.keyAt(i), -1, Route.Type.COMPUTED);
         }
         for (Route route : routes) {
-            hideRoute(route);
+            //TODO Normal id for session route
+            if (route.getId() != -1) {
+                hideRoute(route);
+            }
         }
     }
 
@@ -349,5 +351,10 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
     @Override
     public LongSparseArray<Polyline> getRoutes() {
         return mRoutes;
+    }
+
+    @Override
+    public Map<Arrow, Polyline> getArrows() {
+        return mArrows;
     }
 }

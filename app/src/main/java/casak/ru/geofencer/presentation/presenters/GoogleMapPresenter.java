@@ -12,9 +12,12 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.Map;
+
 import casak.ru.geofencer.domain.interactors.CreateFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LoadFieldInteractor;
 import casak.ru.geofencer.domain.interactors.LocationInteractor;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.presentation.presenters.base.BasePresenter;
 
 /**
@@ -67,4 +70,6 @@ public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor
 
     //For debugging
     LongSparseArray<Polyline> getRoutes();
+
+    Map<Arrow, Polyline> getArrows();
 }

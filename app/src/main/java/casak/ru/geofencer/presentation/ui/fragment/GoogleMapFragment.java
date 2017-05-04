@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
 import casak.ru.geofencer.di.components.DaggerMapComponent;
@@ -81,15 +80,6 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
         });
 
         return rootView;
-    }
-
-    @OnClick(R.id.temp_button)
-    public void buildField() {
-        if (!mGoogleMapPresenter.isFieldBuilding()) {
-            mGoogleMapPresenter.startBuildField();
-        } else {
-            mGoogleMapPresenter.finishBuildField();
-        }
     }
 
     @Override

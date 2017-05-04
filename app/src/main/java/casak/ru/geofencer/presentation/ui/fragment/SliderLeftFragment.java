@@ -2,31 +2,28 @@ package casak.ru.geofencer.presentation.ui.fragment;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.health.PackageHealthStats;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import javax.inject.Inject;
+import com.google.android.gms.maps.model.Polyline;
+
+import java.util.Map;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import casak.ru.geofencer.AndroidApplication;
 import casak.ru.geofencer.R;
-import casak.ru.geofencer.domain.repository.FieldRepository;
-import casak.ru.geofencer.presentation.presenters.CameraPresenter;
+import casak.ru.geofencer.domain.model.Arrow;
 import casak.ru.geofencer.presentation.presenters.GoogleMapPresenter;
-import casak.ru.geofencer.presentation.ui.activities.SettingsActivity;
+import casak.ru.geofencer.storage.FieldRepositoryImpl;
+import casak.ru.geofencer.threading.MainThread;
 
 /**
  * Created on 15.02.2017.
@@ -41,17 +38,8 @@ public class SliderLeftFragment extends Fragment {
     @BindView(R.id.button_messages)
     ImageButton mButtonMessages;
 
-
     View mRootView;
     boolean mIsSliderOpen;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //GoogleMapFragment.getMapComponent().inject(this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,7 +54,7 @@ public class SliderLeftFragment extends Fragment {
 
     @OnClick(R.id.button_open_close_left)
     public void openCloseSlider() {
-        if(mIsSliderOpen) {
+        if (mIsSliderOpen) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -140);
             ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
@@ -86,8 +74,7 @@ public class SliderLeftFragment extends Fragment {
 
             mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
             mIsSliderOpen = false;
-        }
-        else {
+        } else {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", 0);
             ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
@@ -109,4 +96,47 @@ public class SliderLeftFragment extends Fragment {
         }
     }
 
+    //TODO Delete
+    boolean isNotFirstClick;
+    @OnClick(R.id.button_navigation)
+    public void onNavClick() {
+        if (!isNotFirstClick) {
+            isNotFirstClick = true;
+            new Thread(new Runnable() {
+                GoogleMapPresenter presenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+                MainThread mainThread = AndroidApplication.getComponent().getMainThread();
+
+                @Override
+                public void run() {
+                    try {
+                        presenter.startBuildField();
+                        Thread.sleep(5000);
+                        presenter.finishBuildField();
+                        Thread.sleep(1000);
+                        int i = 0;
+                        for (final Map.Entry<Arrow, Polyline> e : presenter.getArrows().entrySet()) {
+                            if (e.getKey().getType() == Arrow.Type.LEFT) {
+                                mainThread.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        presenter.onPolylineClick(e.getValue());
+                                    }
+                                });
+                            }
+                        }
+                        Thread.sleep(10000);
+                        final int[] ids = new FieldRepositoryImpl().getAllFieldIds();
+                        mainThread.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                presenter.onFieldLoad(ids[ids.length - 1]);
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+    }
 }
