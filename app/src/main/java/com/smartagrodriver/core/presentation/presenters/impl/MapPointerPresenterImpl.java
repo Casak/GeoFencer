@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
+import com.smartagrodriver.core.presentation.ui.fragment.MapFragment;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
 import com.smartagrodriver.core.domain.interactors.PointerInteractor;
@@ -21,7 +22,6 @@ import com.smartagrodriver.core.domain.model.Point;
 import com.smartagrodriver.core.presentation.presenters.MapPointerPresenter;
 import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
 import com.smartagrodriver.core.presentation.ui.activities.MainActivity;
-import com.smartagrodriver.core.presentation.ui.fragment.GoogleMapFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.MapPointerFragment;
 
 /**
@@ -83,7 +83,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     @Override
     public void resume() {
         if (mMapPresenter == null) {
-            mMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+            mMapPresenter = MapFragment.getMapComponent().getGoogleMapPresenter();
         } else if (mView == null) {
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
@@ -126,9 +126,9 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     private void updatePointerVisualization() {
         if (mMapPresenter == null) {
-            mMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+            mMapPresenter = MapFragment.getMapComponent().getGoogleMapPresenter();
         } else if (mGoogleMapPresenterView == null) {
-            mGoogleMapPresenterView = GoogleMapFragment.getMapComponent().getGoogleMapPresenterView();
+            mGoogleMapPresenterView = MapFragment.getMapComponent().getGoogleMapPresenterView();
         } else if (mPointerInteractor == null) {
             mPointerInteractor = MapPointerFragment.getPointerComponent().getPointerInteractor();
         } else if (mResources == null) {

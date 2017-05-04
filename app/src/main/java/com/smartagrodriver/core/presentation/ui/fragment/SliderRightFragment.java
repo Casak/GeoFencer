@@ -50,7 +50,7 @@ public class SliderRightFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        GoogleMapFragment.getMapComponent().inject(this);
+        MapFragment.getMapComponent().inject(this);
     }
 
     @Override

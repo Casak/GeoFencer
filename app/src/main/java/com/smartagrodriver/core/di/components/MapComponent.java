@@ -9,7 +9,7 @@ import com.smartagrodriver.core.di.scopes.ActivityScope;
 import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.presenters.impl.MapPresenterImpl;
-import com.smartagrodriver.core.presentation.ui.fragment.GoogleMapFragment;
+import com.smartagrodriver.core.presentation.ui.fragment.MapFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.MapButtonFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.SliderRightFragment;
 import dagger.Component;
@@ -26,7 +26,7 @@ import dagger.Component;
         InteractorModule.class},
         dependencies = AppComponent.class)
 public interface MapComponent extends AbstractActivityComponent, InteractorComponent {
-    void inject(GoogleMapFragment fragment);
+    void inject(MapFragment fragment);
 
     void inject(MapButtonFragment fragment);
 

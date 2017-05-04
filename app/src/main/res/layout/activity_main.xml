@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/map_fragment"
-        android:name="com.smartagrodriver.core.presentation.ui.fragment.GoogleMapFragment"
+        android:name="com.smartagrodriver.core.presentation.ui.fragment.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_map" />

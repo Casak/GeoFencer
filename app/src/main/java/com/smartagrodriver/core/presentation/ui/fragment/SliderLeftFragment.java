@@ -103,7 +103,7 @@ public class SliderLeftFragment extends Fragment {
         if (!isNotFirstClick) {
             isNotFirstClick = true;
             new Thread(new Runnable() {
-                MapPresenter presenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+                MapPresenter presenter = MapFragment.getMapComponent().getGoogleMapPresenter();
                 MainThread mainThread = AndroidApplication.getComponent().getMainThread();
 
                 @Override

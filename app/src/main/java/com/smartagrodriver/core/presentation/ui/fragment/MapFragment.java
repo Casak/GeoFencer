@@ -34,8 +34,8 @@ import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
  * Created on 08.02.2017.
  */
 
-public class GoogleMapFragment extends Fragment implements MapPresenter.View {
-    private static final String TAG = GoogleMapFragment.class.getSimpleName();
+public class MapFragment extends Fragment implements MapPresenter.View {
+    private static final String TAG = MapFragment.class.getSimpleName();
 
     private static MapComponent mMapComponent;
     private static MapModule mMapModule;
