@@ -11,7 +11,7 @@
         map:cameraTargetLat="50.421355"
         map:cameraTargetLng="30.4256428"
         map:cameraZoom="16"
-        map:mapType="satellite"
+        map:mapType="none"
         map:uiCompass="false"
         map:uiZoomControls="false" />
 
