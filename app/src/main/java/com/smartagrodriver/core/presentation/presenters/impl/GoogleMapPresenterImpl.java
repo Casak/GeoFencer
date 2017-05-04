@@ -24,6 +24,7 @@ import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservableImpl;
+import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
 import com.smartagrodriver.core.presentation.ui.fragment.MapPointerFragment;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
@@ -39,7 +40,6 @@ import com.smartagrodriver.core.presentation.converters.ArrowConverter;
 import com.smartagrodriver.core.presentation.converters.FieldConverter;
 import com.smartagrodriver.core.presentation.converters.LatLngConverter;
 import com.smartagrodriver.core.presentation.converters.RouteConverter;
-import com.smartagrodriver.core.presentation.presenters.CameraPresenter;
 import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
 
@@ -71,7 +71,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
                                   LocationInteractor locationInteractor,
                                   GoogleMapPresenter.View mapView,
                                   AntennaDataObservable observable,
-                                  CameraPresenter cameraPresenter) {
+                                  MapCameraPresenter mapCameraPresenter) {
         super(executor, mainThread);
 
         mCreateFieldInteractor = createFieldInteractor;
@@ -86,7 +86,7 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
         locationInteractor.init(this);
         mAntennaDataObservable.registerObserver(locationInteractor.getListener());
-        mAntennaDataObservable.registerObserver(cameraPresenter);
+        mAntennaDataObservable.registerObserver(mapCameraPresenter);
         locationInteractor.execute();
     }
 
