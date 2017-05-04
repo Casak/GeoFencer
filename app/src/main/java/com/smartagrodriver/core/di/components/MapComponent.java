@@ -7,8 +7,8 @@ import com.smartagrodriver.core.di.modules.ActivityModule;
 import com.smartagrodriver.core.di.modules.MapModule;
 import com.smartagrodriver.core.di.scopes.ActivityScope;
 import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
-import com.smartagrodriver.core.presentation.presenters.impl.GoogleMapPresenterImpl;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
+import com.smartagrodriver.core.presentation.presenters.impl.MapPresenterImpl;
 import com.smartagrodriver.core.presentation.ui.fragment.GoogleMapFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.MapButtonFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.SliderRightFragment;
@@ -32,11 +32,11 @@ public interface MapComponent extends AbstractActivityComponent, InteractorCompo
 
     void inject(SliderRightFragment fragment);
 
-    void inject(GoogleMapPresenterImpl presenter);
+    void inject(MapPresenterImpl presenter);
 
-    GoogleMapPresenter.View getGoogleMapPresenterView();
+    MapPresenter.View getGoogleMapPresenterView();
 
-    GoogleMapPresenter getGoogleMapPresenter();
+    MapPresenter getGoogleMapPresenter();
 
     MapCameraPresenter getCameraPresenter();
 

@@ -13,7 +13,7 @@ import com.smartagrodriver.core.domain.interactors.impl.MapUtils;
 import com.smartagrodriver.core.domain.model.Point;
 import com.smartagrodriver.core.presentation.converters.LatLngConverter;
 import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
 import com.smartagrodriver.core.presentation.ui.fragment.MapPointerFragment;
 
@@ -24,12 +24,12 @@ import com.smartagrodriver.core.presentation.ui.fragment.MapPointerFragment;
 public class MapCameraPresenterImpl extends AbstractPresenter implements MapCameraPresenter {
 
     private FollowType mFollowType;
-    private GoogleMapPresenter.View mView;
+    private MapPresenter.View mView;
     private PointerInteractor mPointerInteractor;
     private Point mPointPrevious;
 
     @Inject
-    public MapCameraPresenterImpl(Executor executor, MainThread mainThread, GoogleMapPresenter.View view) {
+    public MapCameraPresenterImpl(Executor executor, MainThread mainThread, MapPresenter.View view) {
         super(executor, mainThread);
 
         mView = view;

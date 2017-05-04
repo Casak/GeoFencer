@@ -25,6 +25,7 @@ import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservableImpl;
 import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.ui.fragment.MapPointerFragment;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
@@ -40,7 +41,6 @@ import com.smartagrodriver.core.presentation.converters.ArrowConverter;
 import com.smartagrodriver.core.presentation.converters.FieldConverter;
 import com.smartagrodriver.core.presentation.converters.LatLngConverter;
 import com.smartagrodriver.core.presentation.converters.RouteConverter;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
 
 /**
@@ -48,10 +48,10 @@ import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
  */
 
 @ActivityScope
-public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleMapPresenter {
-    private static final String TAG = GoogleMapPresenterImpl.class.getSimpleName();
+public class MapPresenterImpl extends AbstractPresenter implements MapPresenter {
+    private static final String TAG = MapPresenterImpl.class.getSimpleName();
 
-    private GoogleMapPresenter.View mMapView;
+    private MapPresenter.View mMapView;
     private CreateFieldInteractor mCreateFieldInteractor;
     private LoadFieldInteractor mLoadFieldInteractor;
     private AntennaDataObservable mAntennaDataObservable;
@@ -65,13 +65,13 @@ public class GoogleMapPresenterImpl extends AbstractPresenter implements GoogleM
 
 
     @Inject
-    public GoogleMapPresenterImpl(Executor executor, MainThread mainThread,
-                                  CreateFieldInteractor createFieldInteractor,
-                                  LoadFieldInteractor loadFieldInteractor,
-                                  LocationInteractor locationInteractor,
-                                  GoogleMapPresenter.View mapView,
-                                  AntennaDataObservable observable,
-                                  MapCameraPresenter mapCameraPresenter) {
+    public MapPresenterImpl(Executor executor, MainThread mainThread,
+                            CreateFieldInteractor createFieldInteractor,
+                            LoadFieldInteractor loadFieldInteractor,
+                            LocationInteractor locationInteractor,
+                            MapPresenter.View mapView,
+                            AntennaDataObservable observable,
+                            MapCameraPresenter mapCameraPresenter) {
         super(executor, mainThread);
 
         mCreateFieldInteractor = createFieldInteractor;

@@ -21,7 +21,7 @@ import butterknife.OnClick;
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.domain.model.Arrow;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.storage.FieldRepositoryImpl;
 import com.smartagrodriver.core.threading.MainThread;
 
@@ -103,7 +103,7 @@ public class SliderLeftFragment extends Fragment {
         if (!isNotFirstClick) {
             isNotFirstClick = true;
             new Thread(new Runnable() {
-                GoogleMapPresenter presenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+                MapPresenter presenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
                 MainThread mainThread = AndroidApplication.getComponent().getMainThread();
 
                 @Override

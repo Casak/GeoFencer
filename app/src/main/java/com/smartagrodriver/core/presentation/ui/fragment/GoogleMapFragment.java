@@ -27,14 +27,14 @@ import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.di.components.DaggerMapComponent;
 import com.smartagrodriver.core.di.components.MapComponent;
 import com.smartagrodriver.core.di.modules.MapModule;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
 
 /**
  * Created on 08.02.2017.
  */
 
-public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.View {
+public class GoogleMapFragment extends Fragment implements MapPresenter.View {
     private static final String TAG = GoogleMapFragment.class.getSimpleName();
 
     private static MapComponent mMapComponent;
@@ -43,7 +43,7 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
     private GoogleMap mMap;
 
     @Inject
-    GoogleMapPresenter mGoogleMapPresenter;
+    MapPresenter mMapPresenter;
     @BindView(R.id.mapView)
     MapView mMapView;
 
@@ -75,7 +75,7 @@ public class GoogleMapFragment extends Fragment implements GoogleMapPresenter.Vi
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
-                mMap.setOnPolylineClickListener(mGoogleMapPresenter);
+                mMap.setOnPolylineClickListener(mMapPresenter);
             }
         });
 

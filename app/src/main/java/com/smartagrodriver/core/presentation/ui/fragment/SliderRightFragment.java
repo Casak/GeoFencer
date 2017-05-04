@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.smartagrodriver.core.R;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 
 /**
  * Created on 15.02.2017.
@@ -27,7 +27,7 @@ import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 public class SliderRightFragment extends Fragment {
 
     @Inject
-    GoogleMapPresenter mGoogleMapPresenter;
+    MapPresenter mMapPresenter;
     @BindView(R.id.button_open_close_right)
     ImageButton mButtonOpenClose;
     @BindView(R.id.textview_harvested)
@@ -66,7 +66,7 @@ public class SliderRightFragment extends Fragment {
                 if(progress == 0){
                     progress++;
                 }
-                mGoogleMapPresenter.changeZoom(progress);
+                mMapPresenter.changeZoom(progress);
             }
 
             @Override

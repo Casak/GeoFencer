@@ -13,11 +13,11 @@ import javax.inject.Inject;
 
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
 import com.smartagrodriver.core.domain.interactors.PointerInteractor;
 import com.smartagrodriver.core.domain.model.Point;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
 import com.smartagrodriver.core.presentation.presenters.MapPointerPresenter;
 import com.smartagrodriver.core.presentation.presenters.base.AbstractPresenter;
 import com.smartagrodriver.core.presentation.ui.activities.MainActivity;
@@ -32,7 +32,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     private static final String TAG = MapPointerPresenterImpl.class.getSimpleName();
 
     private PointerInteractor mInteractor;
-    private GoogleMapPresenter mGoogleMapPresenter;
+    private MapPresenter mMapPresenter;
     private AntennaDataObservable mAntennaDataObservable;
     private MapPointerPresenter.View mView;
 
@@ -82,13 +82,13 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     @Override
     public void resume() {
-        if (mGoogleMapPresenter == null) {
-            mGoogleMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+        if (mMapPresenter == null) {
+            mMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
         } else if (mView == null) {
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        mInteractor.init(this, mGoogleMapPresenter.getCurrentFieldId());
+        mInteractor.init(this, mMapPresenter.getCurrentFieldId());
         mAntennaDataObservable.registerObserver(mInteractor);
         mInteractor.execute();
     }
@@ -120,13 +120,13 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
 
     //Pointer work visualization
     private PointerInteractor mPointerInteractor;
-    private GoogleMapPresenter.View mGoogleMapPresenterView;
+    private MapPresenter.View mGoogleMapPresenterView;
     private Resources mResources;
     private long routeId;
 
     private void updatePointerVisualization() {
-        if (mGoogleMapPresenter == null) {
-            mGoogleMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
+        if (mMapPresenter == null) {
+            mMapPresenter = GoogleMapFragment.getMapComponent().getGoogleMapPresenter();
         } else if (mGoogleMapPresenterView == null) {
             mGoogleMapPresenterView = GoogleMapFragment.getMapComponent().getGoogleMapPresenterView();
         } else if (mPointerInteractor == null) {
@@ -136,7 +136,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
             mResources = context.getResources();
         }
 
-        if (mPointerInteractor == null || mGoogleMapPresenter == null ||
+        if (mPointerInteractor == null || mMapPresenter == null ||
                 mGoogleMapPresenterView == null || mResources == null) {
             return;
         }
@@ -150,7 +150,7 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     }
 
     private void updateRoutes(long currentRouteId) {
-        LongSparseArray<Polyline> routes = mGoogleMapPresenter.getRoutes();
+        LongSparseArray<Polyline> routes = mMapPresenter.getRoutes();
         for (int i = 0; i < routes.size(); i++) {
             Polyline route = routes.valueAt(i);
 

@@ -24,7 +24,7 @@ import com.smartagrodriver.core.presentation.presenters.base.BasePresenter;
  * Created on 09.02.2017.
  */
 
-public interface GoogleMapPresenter extends BasePresenter, CreateFieldInteractor.Callback,
+public interface MapPresenter extends BasePresenter, CreateFieldInteractor.Callback,
         LoadFieldInteractor.Callback, LocationInteractor.Callback,
         GoogleMap.OnPolylineClickListener {
     interface View {

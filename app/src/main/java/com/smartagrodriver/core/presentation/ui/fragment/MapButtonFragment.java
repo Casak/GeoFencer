@@ -18,7 +18,7 @@ import butterknife.OnClick;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.domain.repository.FieldRepository;
 import com.smartagrodriver.core.presentation.presenters.MapCameraPresenter;
-import com.smartagrodriver.core.presentation.presenters.GoogleMapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.ui.activities.SettingsActivity;
 
 /**
@@ -32,7 +32,7 @@ public class MapButtonFragment extends Fragment {
     private final int MAP_2D = 0;
 
     @Inject
-    GoogleMapPresenter mGoogleMapPresenter;
+    MapPresenter mMapPresenter;
     @Inject
     MapCameraPresenter mMapCameraPresenter;
     @Inject
@@ -62,41 +62,41 @@ public class MapButtonFragment extends Fragment {
 
     @OnClick(R.id.button_tilt_more)
     public void onTiltMoreClicked() {
-        mGoogleMapPresenter.onTiltMore();
+        mMapPresenter.onTiltMore();
     }
 
     @OnClick(R.id.button_tilt_less)
     public void onTiltLessClicked() {
-        mGoogleMapPresenter.onTiltLess();
+        mMapPresenter.onTiltLess();
     }
 
     @OnClick(R.id.button_3d_2d)
     public void on3DClicked() {
         switch (mButton3d2d.getText().toString()) {
             case "3D":
-                mGoogleMapPresenter.changeTilt(MAP_3D);
+                mMapPresenter.changeTilt(MAP_3D);
                 mButton3d2d.setText("2D");
                 break;
             case "2D":
             default:
-                mGoogleMapPresenter.changeTilt(MAP_2D);
+                mMapPresenter.changeTilt(MAP_2D);
                 mButton3d2d.setText("3D");
         }
     }
 
     @OnClick(R.id.button_change_type)
     public void onChangeTypeClicked() {
-        mGoogleMapPresenter.changeMapType();
+        mMapPresenter.changeMapType();
     }
 
     @OnClick(R.id.button_zoom_more)
     public void onZoomMoreClicked() {
-        mGoogleMapPresenter.onZoomMore();
+        mMapPresenter.onZoomMore();
     }
 
     @OnClick(R.id.button_zoom_less)
     public void onZoomLessClicked() {
-        mGoogleMapPresenter.onZoomLess();
+        mMapPresenter.onZoomLess();
     }
 
     @OnClick(R.id.button_settings)
@@ -121,7 +121,7 @@ public class MapButtonFragment extends Fragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mGoogleMapPresenter.onFieldLoad(ids[which]);
+                                mMapPresenter.onFieldLoad(ids[which]);
                             }
                         })
                 .create();
