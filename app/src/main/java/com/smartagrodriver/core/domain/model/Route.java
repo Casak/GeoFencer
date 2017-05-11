@@ -7,20 +7,22 @@ public class Route {
     public enum Type {
         BASE,
         COMPUTED,
+        SESSION
     }
+
     private long id;
     private long fieldId;
     private Type type;
     private List<Point> routePoints;
 
-    public Route(long id, long fieldId, Type type){
+    public Route(long id, long fieldId, Type type) {
         this.id = id;
         this.type = type;
         this.fieldId = fieldId;
         routePoints = new ArrayList<>();
     }
 
-    public Route(long id, long fieldId, Type type, List<Point> routePoints){
+    public Route(long id, long fieldId, Type type, List<Point> routePoints) {
         this(id, fieldId, type);
         this.routePoints = routePoints;
     }
@@ -45,7 +47,7 @@ public class Route {
         this.routePoints = routePoints;
     }
 
-    public void addRoutePoint(Point newPoint){
+    public void addRoutePoint(Point newPoint) {
         routePoints.add(newPoint);
     }
 }

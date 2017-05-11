@@ -192,6 +192,7 @@ public class MapPresenterImpl extends AbstractPresenter implements MapPresenter 
 
         mFields.append(model.getId(), polygon);
 
+        //TODO Think about usage
         MapPointerFragment.getPointerComponent().getMapPointerPresenter().resume();
     }
 
@@ -204,6 +205,9 @@ public class MapPresenterImpl extends AbstractPresenter implements MapPresenter 
         polygon.remove();
 
         mFields.remove(fieldId);
+
+        //TODO Think about usage
+        MapPointerFragment.getPointerComponent().getMapPointerPresenter().pause();
     }
 
     @Override
@@ -307,7 +311,7 @@ public class MapPresenterImpl extends AbstractPresenter implements MapPresenter 
     public void addToSessionRoute(Point point) {
         if (mSessionRoute == null) {
             //TODO Get normal IDs
-            Route sessionRoute = new Route(-1, -1, Route.Type.BASE);
+            Route sessionRoute = new Route(-1, -1, Route.Type.SESSION);
             showRoute(sessionRoute);
             mSessionRoute = mRoutes.get(-1);
             mSessionLatLngs = mSessionRoute.getPoints();

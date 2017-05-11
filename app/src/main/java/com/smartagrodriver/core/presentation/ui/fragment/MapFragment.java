@@ -1,6 +1,7 @@
 package com.smartagrodriver.core.presentation.ui.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -22,6 +24,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.di.components.DaggerMapComponent;
@@ -44,6 +47,8 @@ public class MapFragment extends Fragment implements MapPresenter.View {
 
     @Inject
     MapPresenter mMapPresenter;
+    @Inject
+    Context mContext;
     @BindView(R.id.mapView)
     MapView mMapView;
 
@@ -76,6 +81,9 @@ public class MapFragment extends Fragment implements MapPresenter.View {
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
                 mMap.setOnPolylineClickListener(mMapPresenter);
+
+                MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(mContext, R.raw.mapstyle);
+                mMap.setMapStyle(style);
             }
         });
 

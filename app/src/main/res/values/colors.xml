@@ -7,13 +7,14 @@
     <color name="black_overlay">#66000000</color>
 
     <!--Map elements colors-->
-    <color name="field_fill">#7f64dd17</color>
-    <color name="field_stroke">#7F00F000</color>
+    <color name="field_fill">#FFCB00</color>
+    <color name="field_stroke">#FFCB00</color>
     <color name="harvested_fill">#7f0061ff</color>
     <color name="harvested_stroke">#8f0061ff</color>
     <color name="arrow">#9FF4F142</color>
     <color name="route_base">#d50000</color>
     <color name="route_computed">#b4ffea00</color>
+    <color name="route_session">#7fBCBCBB</color>
 
     <!--Slider colors-->
     <color name="slider_primary">#575756</color>
