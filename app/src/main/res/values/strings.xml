@@ -27,7 +27,7 @@
     <!--MapFragment-->
     <!--Sliders-->
     <string name="work_sign">РОБОТА</string>
-    <string name="speed" translatable="false">10,1</string>
+    <string name="speed" translatable="false">0,0</string>
     <string name="speed_units">км/год.</string>
     <string name="harvested" translatable="false">15%</string>
     <string name="harvested_sign">оброблено</string>

@@ -69,6 +69,7 @@
         android:progressDrawable="@drawable/map_seekbar_zoom_progress"
         android:thumb="@drawable/map_seekbar_zoom_thumb"
         android:max="19"
+        android:progress="16"
         android:layout_marginTop="@dimen/button_zoom_in_top_margin"
         android:layout_marginBottom="@dimen/button_zoom_in_top_margin"
         />

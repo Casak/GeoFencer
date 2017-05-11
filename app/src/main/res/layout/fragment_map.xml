@@ -13,6 +13,7 @@
         map:cameraZoom="16"
         map:mapType="normal"
         map:uiCompass="false"
+        map:uiZoomGestures="false"
         map:uiZoomControls="false" />
 
     <RelativeLayout
