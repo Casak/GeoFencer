@@ -42,16 +42,17 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
 
     //TODO Pass machinery width
     @Override
-    public void init(PointerInteractor.Callback callback, int fieldId) {
+    public void init(PointerInteractor.Callback callback, int fieldId, int machineryWidth) {
         mCallback = callback;
         mFieldId = fieldId;
+        mMachineryWidth = machineryWidth;
         mComputedRoutesCache = new WeakHashMap<>();
         mComputedRoutesCache.put(fieldId, getComputedRoutes(mFieldId));
     }
 
     @Override
     public void run() {
-        if (mCallback == null || mFieldId == 0)
+        if (mCallback == null || mFieldId == 0 || mMachineryWidth == 0)
             throw new NullPointerException("PointerInteractor was not initialized!");
     }
 
@@ -160,23 +161,12 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
             return null;
         }
 
-        if (mMachineryWidth == 0) {
-            mMachineryWidth = computeMachineryWidth(computedRoutes.get(0), computedRoutes.get(1));
-        }
-
         for (Route model : computedRoutes) {
             if (MapUtils.isLocationOnPath(position, model.getRoutePoints(), true, mMachineryWidth / 2)) {
                 return model;
             }
         }
         return null;
-    }
-
-    double computeMachineryWidth(Route current, Route next) {
-        double result = MapUtils.computeDistanceBetween(
-                current.getRoutePoints().get(ROUTE_START),
-                next.getRoutePoints().get(ROUTE_START));
-        return Math.round(result);
     }
 
     //TODO Check implementation

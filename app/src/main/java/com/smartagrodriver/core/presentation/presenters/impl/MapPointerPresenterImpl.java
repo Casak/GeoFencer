@@ -1,6 +1,7 @@
 package com.smartagrodriver.core.presentation.presenters.impl;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.LongSparseArray;
 
@@ -11,6 +12,7 @@ import com.google.android.gms.maps.model.Polyline;
 
 import javax.inject.Inject;
 
+import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.bluetooth.AntennaDataObservable;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
@@ -35,6 +37,9 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     private MapPresenter mMapPresenter;
     private AntennaDataObservable mAntennaDataObservable;
     private MapPointerPresenter.View mView;
+    private Resources mResources;
+    private Context mContext;
+    private SharedPreferences mPreferences;
 
     @Inject
     public MapPointerPresenterImpl(Executor executor, MainThread mainThread,
@@ -43,8 +48,9 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
         mInteractor = interactor;
         mAntennaDataObservable = observable;
         //TODO Refactor
-        Context context = MainActivity.getAbstractActivityComponent().getActivityContext();
-        mResources = context.getResources();
+        mContext = MainActivity.getAbstractActivityComponent().getActivityContext();
+        mPreferences = AndroidApplication.getComponent().getSharedPreferences();
+        mResources = mContext.getResources();
     }
 
     @Override
@@ -88,7 +94,11 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
             mView = MapPointerFragment.getPointerComponent().getPointerView();
         }
 
-        mInteractor.init(this, mMapPresenter.getCurrentFieldId());
+        String defaultWidth = mContext.getString(R.string.default_machinery_width);
+        String key = mContext.getString(R.string.machinery_width_key);
+        int width = Integer.parseInt(mPreferences.getString(key, defaultWidth));
+
+        mInteractor.init(this, mMapPresenter.getCurrentFieldId(), width);
         mAntennaDataObservable.registerObserver(mInteractor);
         mInteractor.execute();
     }
@@ -121,7 +131,6 @@ public class MapPointerPresenterImpl extends AbstractPresenter implements MapPoi
     //Pointer work visualization
     private PointerInteractor mPointerInteractor;
     private MapPresenter.View mGoogleMapPresenterView;
-    private Resources mResources;
     private long routeId;
 
     private void updatePointerVisualization() {

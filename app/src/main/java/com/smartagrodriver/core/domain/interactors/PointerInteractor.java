@@ -12,7 +12,7 @@ public interface PointerInteractor extends Interactor, LocationInteractor.OnLoca
         void showPointer(double value);
     }
 
-    void init(PointerInteractor.Callback callback, int fieldId);
+    void init(PointerInteractor.Callback callback, int fieldId, int machineryWidth);
 
     double getCurrentRouteBearing();
 
