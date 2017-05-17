@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import com.smartagrodriver.core.di.scopes.ActivityScope;
 import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
 import com.smartagrodriver.core.presentation.presenters.impl.MapSliderPresenterImpl;
-import com.smartagrodriver.core.presentation.ui.fragment.SliderLeftFragment;
-import com.smartagrodriver.core.presentation.ui.fragment.SliderRightFragment;
 import com.smartagrodriver.core.threading.Executor;
 import com.smartagrodriver.core.threading.MainThread;
 
@@ -20,10 +18,10 @@ import dagger.Provides;
  */
 
 @Module
-public class SliderModule {
+public class MapSliderControlModule {
     private final Fragment sliderControlView;
 
-    public SliderModule(Fragment sliderControlView) {
+    public MapSliderControlModule(Fragment sliderControlView) {
         this.sliderControlView = sliderControlView;
     }
 

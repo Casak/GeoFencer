@@ -8,6 +8,7 @@ import com.smartagrodriver.core.domain.interactors.PointerInteractor;
 import com.smartagrodriver.core.domain.interactors.impl.PointerInteractorImpl;
 import com.smartagrodriver.core.presentation.presenters.MapPointerPresenter;
 import com.smartagrodriver.core.presentation.presenters.impl.MapPointerPresenterImpl;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -16,10 +17,10 @@ import dagger.Provides;
  */
 
 @Module
-public class PointerModule {
+public class MapPointerModule {
     private final MapPointerPresenter.View pointerView;
 
-    public PointerModule(MapPointerPresenter.View view) {
+    public MapPointerModule(MapPointerPresenter.View view) {
         pointerView = view;
     }
 

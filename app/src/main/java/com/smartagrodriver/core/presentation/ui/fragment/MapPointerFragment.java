@@ -14,11 +14,12 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
-import com.smartagrodriver.core.di.components.DaggerPointerComponent;
-import com.smartagrodriver.core.di.components.PointerComponent;
-import com.smartagrodriver.core.di.modules.PointerModule;
+import com.smartagrodriver.core.di.components.DaggerMapPointerComponent;
+import com.smartagrodriver.core.di.components.MapPointerComponent;
+import com.smartagrodriver.core.di.modules.MapPointerModule;
 import com.smartagrodriver.core.presentation.presenters.MapPointerPresenter;
 import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
 
@@ -65,8 +66,8 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
     @BindView(R.id.pointer_anchor)
     ImageView mAnchor;
 
-    private static PointerComponent mComponent;
-    private static PointerModule mModule;
+    private static MapPointerComponent mComponent;
+    private static MapPointerModule mModule;
 
     private TextView mPreviousLight;
     private int mPreviousColor;
@@ -91,14 +92,14 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
 
 
         if (mModule == null) {
-            mModule = new PointerModule(this);
+            mModule = new MapPointerModule(this);
         }
 
         if (mComponent == null) {
-            mComponent = DaggerPointerComponent.builder()
+            mComponent = DaggerMapPointerComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
                     .activityModule(BaseActivity.getActivityModule())
-                    .pointerModule(mModule)
+                    .mapPointerModule(mModule)
                     .build();
         }
 
@@ -229,11 +230,11 @@ public class MapPointerFragment extends Fragment implements MapPointerPresenter.
         animator.start();
     }
 
-    public static PointerModule getPointerModule() {
+    public static MapPointerModule getPointerModule() {
         return mModule;
     }
 
-    public static PointerComponent getPointerComponent() {
+    public static MapPointerComponent getPointerComponent() {
         return mComponent;
     }
 

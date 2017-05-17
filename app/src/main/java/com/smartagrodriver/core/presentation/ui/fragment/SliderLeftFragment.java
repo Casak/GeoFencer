@@ -20,9 +20,9 @@ import butterknife.OnClick;
 
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
-import com.smartagrodriver.core.di.components.DaggerSliderLeftComponent;
-import com.smartagrodriver.core.di.components.SliderLeftComponent;
-import com.smartagrodriver.core.di.modules.SliderLeftModule;
+import com.smartagrodriver.core.di.components.DaggerMapSliderLeftComponent;
+import com.smartagrodriver.core.di.components.MapSliderLeftComponent;
+import com.smartagrodriver.core.di.modules.MapSliderLeftModule;
 import com.smartagrodriver.core.domain.model.Arrow;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
@@ -35,8 +35,8 @@ import com.smartagrodriver.core.threading.MainThread;
 
 public class SliderLeftFragment extends Fragment implements MapSliderPresenter.View {
 
-    private static SliderLeftComponent mComponent;
-    private static SliderLeftModule mModule;
+    private static MapSliderLeftComponent mComponent;
+    private static MapSliderLeftModule mModule;
 
     @BindView(R.id.button_navigation)
     ImageButton mButtonNavigation;
@@ -51,13 +51,13 @@ public class SliderLeftFragment extends Fragment implements MapSliderPresenter.V
         super.onCreate(savedInstanceState);
 
         if (mModule == null) {
-            mModule = new SliderLeftModule(this);
+            mModule = new MapSliderLeftModule(this);
         }
 
         if (mComponent == null) {
-            mComponent = DaggerSliderLeftComponent.builder()
+            mComponent = DaggerMapSliderLeftComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
-                    .sliderLeftModule(mModule)
+                    .mapSliderLeftModule(mModule)
                     .build();
         }
 
@@ -164,11 +164,11 @@ public class SliderLeftFragment extends Fragment implements MapSliderPresenter.V
     }
 
 
-    public static SliderLeftModule getSliderRightModule() {
+    public static MapSliderLeftModule getSliderRightModule() {
         return mModule;
     }
 
-    public static SliderLeftComponent getSliderRightComponent() {
+    public static MapSliderLeftComponent getSliderRightComponent() {
         return mComponent;
     }
 

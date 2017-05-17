@@ -12,10 +12,10 @@ import dagger.Provides;
  */
 
 @Module
-public class SliderLeftModule {
+public class MapSliderLeftModule {
     private final MapSliderPresenter.View sliderLeftView;
 
-    public SliderLeftModule(MapSliderPresenter.View sliderLeftView) {
+    public MapSliderLeftModule(MapSliderPresenter.View sliderLeftView) {
         this.sliderLeftView = sliderLeftView;
     }
 

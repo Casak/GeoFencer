@@ -9,9 +9,9 @@ import android.widget.ImageButton;
 
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
-import com.smartagrodriver.core.di.components.DaggerSliderComponent;
-import com.smartagrodriver.core.di.components.SliderComponent;
-import com.smartagrodriver.core.di.modules.SliderModule;
+import com.smartagrodriver.core.di.components.DaggerMapSliderControlComponent;
+import com.smartagrodriver.core.di.components.MapSliderControlComponent;
+import com.smartagrodriver.core.di.modules.MapSliderControlModule;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,8 +23,8 @@ import butterknife.OnClick;
 
 public class SliderControlFragment extends Fragment {
 
-    private static SliderComponent mComponent;
-    private static SliderModule mModule;
+    private static MapSliderControlComponent mComponent;
+    private static MapSliderControlModule mModule;
 
     @BindView(R.id.button_close_left)
     ImageButton mButtonCloseLeft;
@@ -45,13 +45,13 @@ public class SliderControlFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (mModule == null) {
-            mModule = new SliderModule(this);
+            mModule = new MapSliderControlModule(this);
         }
 
         if (mComponent == null) {
-            mComponent = DaggerSliderComponent.builder()
+            mComponent = DaggerMapSliderControlComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
-                    .sliderModule(mModule)
+                    .mapSliderControlModule(mModule)
                     .build();
         }
 
@@ -121,11 +121,11 @@ public class SliderControlFragment extends Fragment {
 */
 
 
-    public static SliderModule getSliderModule() {
+    public static MapSliderControlModule getSliderModule() {
         return mModule;
     }
 
-    public static SliderComponent getSliderComponent() {
+    public static MapSliderControlComponent getSliderComponent() {
         return mComponent;
     }
 }
