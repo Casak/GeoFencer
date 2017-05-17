@@ -17,14 +17,23 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
+import com.smartagrodriver.core.di.components.SliderRightComponent;
+import com.smartagrodriver.core.di.modules.SliderRightModule;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
+import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
 
 /**
  * Created on 15.02.2017.
  */
 
-public class SliderRightFragment extends Fragment {
+public class SliderRightFragment extends Fragment implements MapSliderPresenter.View {
+
+    private static SliderRightComponent mComponent;
+    private static SliderRightModule mModule;
 
     @Inject
     MapPresenter mMapPresenter;
@@ -48,7 +57,19 @@ public class SliderRightFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapFragment.getMapComponent().inject(this);
+        if (mModule == null) {
+            mModule = new SliderRightModule(this);
+        }
+
+        if (mComponent == null) {
+            mComponent = DaggerSliderRightComponent.builder()
+                    .appComponent(AndroidApplication.getComponent())
+                    .mapModule(MapFragment.getMapComponent())
+                    .sliderModule(mModule)
+                    .build();
+        }
+
+        getSliderRightComponent().inject(this);
     }
 
     @Override
@@ -58,6 +79,7 @@ public class SliderRightFragment extends Fragment {
         mIsSliderOpen = true;
         ButterKnife.bind(this, mRootView);
 
+        //TODO Refactor
         mSeekBarZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -145,4 +167,21 @@ public class SliderRightFragment extends Fragment {
     }
 
 
+    public static SliderRightModule getSliderRightModule() {
+        return mModule;
+    }
+
+    public static SliderRightComponent getSliderRightComponent() {
+        return mComponent;
+    }
+
+    @Override
+    public void startCloseAnimation() {
+
+    }
+
+    @Override
+    public void startOpenAnimation() {
+
+    }
 }

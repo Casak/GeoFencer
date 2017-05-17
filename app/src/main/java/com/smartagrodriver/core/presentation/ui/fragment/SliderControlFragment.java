@@ -1,20 +1,22 @@
 package com.smartagrodriver.core.presentation.ui.fragment;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.Polyline;
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
+import com.smartagrodriver.core.di.components.DaggerPointerComponent;
+import com.smartagrodriver.core.di.components.SliderComponent;
+import com.smartagrodriver.core.di.modules.SliderModule;
 import com.smartagrodriver.core.domain.model.Arrow;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
+import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
+import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
 import com.smartagrodriver.core.storage.FieldRepositoryImpl;
 import com.smartagrodriver.core.threading.MainThread;
 
@@ -30,15 +32,41 @@ import butterknife.OnClick;
 
 public class SliderControlFragment extends Fragment {
 
+    private static SliderComponent mComponent;
+    private static SliderModule mModule;
 
-    ImageButton mButtonOpenClose;
-    @BindView(R.id.button_navigation)
-    ImageButton mButtonNavigation;
-    @BindView(R.id.button_messages)
-    ImageButton mButtonMessages;
+    @BindView(R.id.button_close_left)
+    ImageButton mButtonCloseLeft;
+    @BindView(R.id.button_open_left)
+    ImageButton mButtonOpenLeft;
+    @BindView(R.id.button_close_right)
+    ImageButton mButtonCloseRight;
+    @BindView(R.id.button_open_right)
+    ImageButton mButtonOpenRight;
+
 
     View mRootView;
     boolean mIsSliderOpen;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+/*        if (mModule == null) {
+            mModule = new SliderModule(this);
+        }
+
+        if (mComponent == null) {
+            mComponent = DaggerPointerComponent.builder()
+                    .appComponent(AndroidApplication.getComponent())
+                    .activityModule(BaseActivity.getActivityModule())
+                    .sliderModule(mModule)
+                    .build();
+        }
+
+        getSliderComponent().inject(this);*/
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,12 +74,18 @@ public class SliderControlFragment extends Fragment {
 
         mIsSliderOpen = true;
 
-//        ButterKnife.bind(this, mRootView);
+        ButterKnife.bind(this, mRootView);
 
         return mRootView;
     }
 
 
+    @OnClick(R.id.button_open_left)
+    public void openLeftSlider() {
+
+    }
+
+    /*
     public void openCloseSlider() {
         if (mIsSliderOpen) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -100);
@@ -94,7 +128,7 @@ public class SliderControlFragment extends Fragment {
             mIsSliderOpen = true;
         }
     }
-
+*/
     //TODO Delete
     boolean isNotFirstClick;
     @OnClick(R.id.button_navigation)
@@ -137,5 +171,13 @@ public class SliderControlFragment extends Fragment {
                 }
             }).start();
         }
+    }
+
+    public static SliderModule getSliderModule() {
+        return mModule;
+    }
+
+    public static SliderComponent getSliderComponent() {
+        return mComponent;
     }
 }
