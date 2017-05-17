@@ -98,15 +98,5 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <ImageButton
-        android:id="@+id/button_open_close_right"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/slider_background_primary"
-        android:paddingEnd="@dimen/button_close_padding_end"
-        android:paddingStart="@dimen/zero_padding"
-        android:rotation="180"
-        android:scaleType="fitEnd"
-        android:src="@drawable/button_open_close" />
 
 </LinearLayout>

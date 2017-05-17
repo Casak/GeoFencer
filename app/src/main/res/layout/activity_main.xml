@@ -34,4 +34,13 @@
         android:layout_gravity="top|center"
         tools:layout="@layout/fragment_pointer" />
 
+    <fragment
+        android:id="@+id/slider_control_fragment"
+        android:name="com.smartagrodriver.core.presentation.ui.fragment.SliderControlFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        tools:layout="@layout/fragment_map_slider_control"
+        />
+
 </FrameLayout>

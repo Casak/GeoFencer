@@ -11,13 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.Polyline;
-
-import java.util.Map;
-
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
 import com.smartagrodriver.core.domain.model.Arrow;
@@ -25,12 +18,20 @@ import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.storage.FieldRepositoryImpl;
 import com.smartagrodriver.core.threading.MainThread;
 
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created on 15.02.2017.
  */
 
-public class SliderLeftFragment extends Fragment {
+public class SliderControlFragment extends Fragment {
 
+
+    ImageButton mButtonOpenClose;
     @BindView(R.id.button_navigation)
     ImageButton mButtonNavigation;
     @BindView(R.id.button_messages)
@@ -41,19 +42,20 @@ public class SliderLeftFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_map_slider_left, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_map_slider_control, container, false);
 
         mIsSliderOpen = true;
 
-        ButterKnife.bind(this, mRootView);
+//        ButterKnife.bind(this, mRootView);
 
         return mRootView;
     }
 
+
     public void openCloseSlider() {
         if (mIsSliderOpen) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -100);
-            //ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
+            ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
             ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 0);
             ObjectAnimator messagesAnimator = ObjectAnimator.ofFloat(mButtonMessages, "rotation", 0, 360);
@@ -61,7 +63,7 @@ public class SliderLeftFragment extends Fragment {
 
             AnimatorSet animSet = new AnimatorSet();
             animSet.play(sliderAnimator)
-             //       .with(openCloseAnimator)
+                    .with(openCloseAnimator)
                     .with(navigationAnimator)
                     .with(navigationScaleAnimator)
                     .with(messagesAnimator)
@@ -69,11 +71,11 @@ public class SliderLeftFragment extends Fragment {
             animSet.start();
 
 
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
+            mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
             mIsSliderOpen = false;
         } else {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", 0);
-           // ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
+            ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
             ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 1);
             ObjectAnimator messagesAnimator = ObjectAnimator.ofFloat(mButtonMessages, "rotation", 0, 360);
@@ -81,14 +83,14 @@ public class SliderLeftFragment extends Fragment {
 
             AnimatorSet animSet = new AnimatorSet();
             animSet.play(sliderAnimator)
-                    //.with(openCloseAnimator)
+                    .with(openCloseAnimator)
                     .with(navigationAnimator)
                     .with(navigationScaleAnimator)
                     .with(messagesAnimator)
                     .with(messagesScaleAnimator);
             animSet.start();
 
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_END);
+            mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_END);
             mIsSliderOpen = true;
         }
     }

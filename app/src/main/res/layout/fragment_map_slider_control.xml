@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/slider_background_primary"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/button_close_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:paddingEnd="@dimen/button_open_close_padding"
+        android:paddingStart="@dimen/button_close_left_padding_start"
+        android:scaleType="fitEnd"
+        android:src="@drawable/button_open_close" />
+
+    <ImageButton
+        android:id="@+id/button_open_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:rotation="180"
+        android:scaleType="fitEnd"
+        android:src="@drawable/button_open_close" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/button_open_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:paddingEnd="@dimen/button_open_close_padding"
+        android:paddingStart="@dimen/zero_padding"
+        android:scaleType="fitEnd"
+        android:src="@drawable/button_open_close" />
+
+    <ImageButton
+        android:id="@+id/button_close_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:paddingEnd="@dimen/zero_padding"
+        android:paddingStart="@dimen/button_open_right_padding_end"
+        android:rotation="180"
+        android:scaleType="fitEnd"
+        android:src="@drawable/button_open_close" />
+
+
+</LinearLayout>
