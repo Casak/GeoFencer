@@ -3,10 +3,16 @@ package com.smartagrodriver.core.presentation.ui.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,6 +42,8 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
 
     @Inject
     MapPresenter mMapPresenter;
+    @Inject
+    Context mContext;
     @BindView(R.id.textview_harvested)
     TextView mTextViewHarvested;
     @BindView(R.id.textview_harvested_sign)
@@ -50,7 +58,9 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
     ImageButton mButton2d3d;
 
     View mRootView;
-    boolean mIsSliderOpen;
+    Point mScreenSize;
+    int mBaseSliderSize;
+    float mBaseSliderXPosition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,62 +85,22 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_map_slider_right, container, false);
 
-        mIsSliderOpen = true;
         ButterKnife.bind(this, mRootView);
 
-        //TODO Refactor
-        mSeekBarZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0) {
-                    progress++;
-                }
-                //mMapPresenter.changeZoom(progress);
-            }
+        Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        mScreenSize = new Point();
+        display.getSize(mScreenSize);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        mSeekBarZoom.setOnSeekBarChangeListener(new SeekBarListener());
 
         return mRootView;
     }
 
-
-    public void openCloseSlider() {
-        if (mIsSliderOpen) {
-            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX() + 100);
-            //ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
-            ObjectAnimator harvestedAnimator = ObjectAnimator.ofFloat(mTextViewHarvested, "scaleY", 0);
-            ObjectAnimator harvestedSignAnimator = ObjectAnimator.ofFloat(mTextViewHarvestedSign, "scaleY", 0);
-            ObjectAnimator speedAnimator = ObjectAnimator.ofFloat(mTextViewSpeed, "scaleY", 0);
-            ObjectAnimator speedSignAnimator = ObjectAnimator.ofFloat(mTextViewSpeedSign, "scaleY", 0);
-            ObjectAnimator seekbarZoomAnimator = ObjectAnimator.ofFloat(mSeekBarZoom, "scaleY", 0);
-            ObjectAnimator button2d3dAnimator = ObjectAnimator.ofFloat(mButton2d3d, "scaleY", 0);
-
-            AnimatorSet animSet = new AnimatorSet();
-            animSet.play(sliderAnimator)
-                    //.with(openCloseAnimator)
-                    .with(harvestedAnimator)
-                    .with(harvestedSignAnimator)
-                    .with(speedAnimator)
-                    .with(seekbarZoomAnimator)
-                    .with(speedSignAnimator)
-                    .with(button2d3dAnimator);
-            animSet.start();
-
-
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
-            mIsSliderOpen = false;
-        } else {
+    @Override
+    public void openPartially() {
+        float x = mRootView.getWidth();
+        if (x < mScreenSize.x / 2) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX() - 100);
-            //ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
             ObjectAnimator harvestedAnimator = ObjectAnimator.ofFloat(mTextViewHarvested, "scaleY", 1);
             ObjectAnimator harvestedSignAnimator = ObjectAnimator.ofFloat(mTextViewHarvestedSign, "scaleY", 1);
             ObjectAnimator speedAnimator = ObjectAnimator.ofFloat(mTextViewSpeed, "scaleY", 1);
@@ -140,7 +110,6 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
 
             AnimatorSet animSet = new AnimatorSet();
             animSet.play(sliderAnimator)
-                    //.with(openCloseAnimator)
                     .with(harvestedAnimator)
                     .with(harvestedSignAnimator)
                     .with(speedAnimator)
@@ -148,10 +117,42 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
                     .with(speedSignAnimator)
                     .with(button2d3dAnimator);
             animSet.start();
-
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_END);
-            mIsSliderOpen = true;
+        } else {
+            mRootView.setLayoutParams(new FrameLayout.LayoutParams(mBaseSliderSize, mScreenSize.y));
+            mRootView.setX(mBaseSliderXPosition);
         }
+    }
+
+    @Override
+    public void openFully() {
+        if (mBaseSliderSize == 0) {
+            mBaseSliderSize = mRootView.getWidth();
+            mBaseSliderXPosition = mRootView.getX();
+        }
+        //TODO Fix first time usage misposition bug
+        mRootView.setLayoutParams(new FrameLayout.LayoutParams(mScreenSize.x / 2, mScreenSize.y));
+        mRootView.setX(mScreenSize.x / 2);
+    }
+
+    @Override
+    public void close() {
+        ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", mRootView.getX() + 100);
+        ObjectAnimator harvestedAnimator = ObjectAnimator.ofFloat(mTextViewHarvested, "scaleY", 0);
+        ObjectAnimator harvestedSignAnimator = ObjectAnimator.ofFloat(mTextViewHarvestedSign, "scaleY", 0);
+        ObjectAnimator speedAnimator = ObjectAnimator.ofFloat(mTextViewSpeed, "scaleY", 0);
+        ObjectAnimator speedSignAnimator = ObjectAnimator.ofFloat(mTextViewSpeedSign, "scaleY", 0);
+        ObjectAnimator seekbarZoomAnimator = ObjectAnimator.ofFloat(mSeekBarZoom, "scaleY", 0);
+        ObjectAnimator button2d3dAnimator = ObjectAnimator.ofFloat(mButton2d3d, "scaleY", 0);
+
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(sliderAnimator)
+                .with(harvestedAnimator)
+                .with(harvestedSignAnimator)
+                .with(speedAnimator)
+                .with(seekbarZoomAnimator)
+                .with(speedSignAnimator)
+                .with(button2d3dAnimator);
+        animSet.start();
     }
 
     @OnClick(R.id.button_zoom_in)
@@ -173,18 +174,24 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
         return mComponent;
     }
 
-    @Override
-    public void openPartially() {
+    class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (progress == 0) {
+                progress++;
+            }
+            mMapPresenter.changeZoom(progress);
+        }
 
-    }
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
 
-    @Override
-    public void openFully() {
+        }
 
-    }
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
 
-    @Override
-    public void close() {
-
+        }
     }
 }
+
