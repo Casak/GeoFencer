@@ -48,6 +48,8 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
 
     @Inject
     Context mContext;
+    @Inject
+    MapPresenter.View mMapView;
     @BindView(R.id.button_navigation)
     ImageButton mButtonNavigation;
     @BindView(R.id.button_messages)
@@ -68,6 +70,7 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
         if (mComponent == null) {
             mComponent = DaggerMapSliderLeftComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
+                    .mapModule(MapFragment.getMapModule())
                     .mapSliderLeftModule(mModule)
                     .build();
         }
@@ -81,7 +84,7 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
 
         ButterKnife.bind(this, mRootView);
 
-        Display display = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         mScreenSize = new Point();
         display.getSize(mScreenSize);
 
@@ -91,7 +94,7 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
     @Override
     public void openPartially() {
         float x = mRootView.getWidth();
-        if (x < mScreenSize.x/2) {
+        if (x < mScreenSize.x / 2) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", 0);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
             ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 1);
@@ -112,10 +115,10 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
 
     @Override
     public void openFully() {
-        if(mBaseSliderSize == 0) {
+        if (mBaseSliderSize == 0) {
             mBaseSliderSize = mRootView.getWidth();
         }
-        mRootView.setLayoutParams(new FrameLayout.LayoutParams(mScreenSize.x/2, mScreenSize.y));
+        mRootView.setLayoutParams(new FrameLayout.LayoutParams(mScreenSize.x / 2, mScreenSize.y));
     }
 
     @Override
@@ -133,6 +136,26 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
                 .with(messagesAnimator)
                 .with(messagesScaleAnimator);
         animSet.start();
+    }
+
+    //TODO Refactor when icons will come
+    private static final int STYLE_DAY = 0;
+    private static final int STYLE_NIGHT = 1;
+
+    private int mCurrentMapStyle = STYLE_DAY;
+
+    @OnClick(R.id.button_messages)
+    public void onMsgClick() {
+        switch (mCurrentMapStyle) {
+            case STYLE_DAY:
+                mCurrentMapStyle = STYLE_NIGHT;
+                mMapView.changeMapStyle(R.raw.mapstyle_night);
+                break;
+            case STYLE_NIGHT:
+                mCurrentMapStyle = STYLE_DAY;
+                mMapView.changeMapStyle(R.raw.mapstyle);
+                break;
+        }
     }
 
     //TODO Delete

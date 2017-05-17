@@ -103,6 +103,13 @@ public class MapFragment extends Fragment implements MapPresenter.View {
     }
 
     @Override
+    public void changeMapStyle(int rawId) {
+        checkMapReady();
+        MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(mContext, rawId);
+        mMap.setMapStyle(style);
+    }
+
+    @Override
     public Polyline showPolyline(PolylineOptions options) {
         checkMapReady();
         return mMap.addPolyline(options);

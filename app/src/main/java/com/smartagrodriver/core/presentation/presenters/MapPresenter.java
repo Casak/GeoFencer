@@ -32,6 +32,8 @@ public interface MapPresenter extends BasePresenter, CreateFieldInteractor.Callb
 
         void changeMapType(int type);
 
+        void changeMapStyle(int rawId);
+
         Polyline showPolyline(PolylineOptions options);
 
         Polygon showPolygon(PolygonOptions options);

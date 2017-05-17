@@ -1,5 +1,6 @@
 package com.smartagrodriver.core.di.components;
 
+import com.smartagrodriver.core.di.modules.MapModule;
 import com.smartagrodriver.core.di.modules.MapSliderLeftModule;
 import com.smartagrodriver.core.di.scopes.ActivityScope;
 import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
@@ -12,7 +13,7 @@ import dagger.Component;
  */
 
 @ActivityScope
-@Component(modules = {MapSliderLeftModule.class},
+@Component(modules = {MapSliderLeftModule.class, MapModule.class},
         dependencies = {AppComponent.class})
 public interface MapSliderLeftComponent {
     void inject(MapSliderLeftFragment fragment);
