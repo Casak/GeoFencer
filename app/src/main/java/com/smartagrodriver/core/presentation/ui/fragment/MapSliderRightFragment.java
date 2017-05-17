@@ -29,7 +29,7 @@ import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
  * Created on 15.02.2017.
  */
 
-public class SliderRightFragment extends Fragment implements MapSliderPresenter.View {
+public class MapSliderRightFragment extends Fragment implements MapSliderPresenter.View {
 
     private static MapSliderRightComponent mComponent;
     private static MapSliderRightModule mModule;
@@ -174,12 +174,17 @@ public class SliderRightFragment extends Fragment implements MapSliderPresenter.
     }
 
     @Override
-    public void startCloseAnimation() {
+    public void openPartially() {
 
     }
 
     @Override
-    public void startOpenAnimation() {
+    public void openFully() {
+
+    }
+
+    @Override
+    public void close() {
 
     }
 }

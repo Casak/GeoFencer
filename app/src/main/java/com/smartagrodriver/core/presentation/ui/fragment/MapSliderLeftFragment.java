@@ -33,7 +33,7 @@ import com.smartagrodriver.core.threading.MainThread;
  * Created on 15.02.2017.
  */
 
-public class SliderLeftFragment extends Fragment implements MapSliderPresenter.View {
+public class MapSliderLeftFragment extends Fragment implements MapSliderPresenter.View {
 
     private static MapSliderLeftComponent mComponent;
     private static MapSliderLeftModule mModule;
@@ -61,7 +61,7 @@ public class SliderLeftFragment extends Fragment implements MapSliderPresenter.V
                     .build();
         }
 
-        getSliderRightComponent().inject(this);
+        getSliderLeftComponent().inject(this);
     }
 
     @Override
@@ -164,21 +164,26 @@ public class SliderLeftFragment extends Fragment implements MapSliderPresenter.V
     }
 
 
-    public static MapSliderLeftModule getSliderRightModule() {
+    public static MapSliderLeftModule getSliderLeftModule() {
         return mModule;
     }
 
-    public static MapSliderLeftComponent getSliderRightComponent() {
+    public static MapSliderLeftComponent getSliderLeftComponent() {
         return mComponent;
     }
 
     @Override
-    public void startCloseAnimation() {
+    public void openPartially() {
 
     }
 
     @Override
-    public void startOpenAnimation() {
+    public void openFully() {
+
+    }
+
+    @Override
+    public void close() {
 
     }
 }

@@ -9,9 +9,11 @@ import com.smartagrodriver.core.presentation.presenters.base.BasePresenter;
 
 public interface MapSliderPresenter extends BasePresenter {
     interface View {
-        void startCloseAnimation();
+        void openPartially();
 
-        void startOpenAnimation();
+        void openFully();
+
+        void close();
     }
 
 }
