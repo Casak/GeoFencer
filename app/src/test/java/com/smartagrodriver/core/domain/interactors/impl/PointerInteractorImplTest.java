@@ -94,18 +94,9 @@ public class PointerInteractorImplTest {
 
         when(mMockRouteRepository.getAll(anyInt()))
                 .thenReturn(mRoutesList);
-        mInteractor.init(mMockCallback, FIELD_ID);
+        mInteractor.init(mMockCallback, FIELD_ID, 10);
     }
 
-    @Test
-    public void computeMachineryWidth() {
-        double result = mInteractor.computeMachineryWidth(
-                mComputedRoutesList.get(0),
-                mComputedRoutesList.get(1)
-        );
-
-        assertEquals(10, result, 0.01);
-    }
 
     @Test(expected = NullPointerException.class)
     public void beforeRun_shouldBeInited() {

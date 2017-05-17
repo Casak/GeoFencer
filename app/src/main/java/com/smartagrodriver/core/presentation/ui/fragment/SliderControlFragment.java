@@ -7,20 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.google.android.gms.maps.model.Polyline;
-import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
-import com.smartagrodriver.core.di.components.DaggerPointerComponent;
 import com.smartagrodriver.core.di.components.SliderComponent;
 import com.smartagrodriver.core.di.modules.SliderModule;
-import com.smartagrodriver.core.domain.model.Arrow;
-import com.smartagrodriver.core.presentation.presenters.MapPresenter;
-import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
-import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
-import com.smartagrodriver.core.storage.FieldRepositoryImpl;
-import com.smartagrodriver.core.threading.MainThread;
-
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -129,49 +118,7 @@ public class SliderControlFragment extends Fragment {
         }
     }
 */
-    //TODO Delete
-    boolean isNotFirstClick;
-    @OnClick(R.id.button_navigation)
-    public void onNavClick() {
-        if (!isNotFirstClick) {
-            isNotFirstClick = true;
-            new Thread(new Runnable() {
-                MapPresenter presenter = MapFragment.getMapComponent().getGoogleMapPresenter();
-                MainThread mainThread = AndroidApplication.getComponent().getMainThread();
 
-                @Override
-                public void run() {
-                    try {
-                        presenter.startBuildField();
-                        Thread.sleep(5000);
-                        presenter.finishBuildField();
-                        Thread.sleep(1000);
-                        int i = 0;
-                        for (final Map.Entry<Arrow, Polyline> e : presenter.getArrows().entrySet()) {
-                            if (e.getKey().getType() == Arrow.Type.LEFT) {
-                                mainThread.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        presenter.onPolylineClick(e.getValue());
-                                    }
-                                });
-                            }
-                        }
-                        Thread.sleep(10000);
-                        final int[] ids = new FieldRepositoryImpl().getAllFieldIds();
-                        mainThread.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                presenter.onFieldLoad(ids[ids.length - 1]);
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-        }
-    }
 
     public static SliderModule getSliderModule() {
         return mModule;

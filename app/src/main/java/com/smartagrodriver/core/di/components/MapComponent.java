@@ -11,7 +11,7 @@ import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.presenters.impl.MapPresenterImpl;
 import com.smartagrodriver.core.presentation.ui.fragment.MapFragment;
 import com.smartagrodriver.core.presentation.ui.fragment.MapButtonFragment;
-import com.smartagrodriver.core.presentation.ui.fragment.SliderRightFragment;
+
 import dagger.Component;
 
 /**
@@ -29,8 +29,6 @@ public interface MapComponent extends AbstractActivityComponent, InteractorCompo
     void inject(MapFragment fragment);
 
     void inject(MapButtonFragment fragment);
-
-    void inject(SliderRightFragment fragment);
 
     void inject(MapPresenterImpl presenter);
 

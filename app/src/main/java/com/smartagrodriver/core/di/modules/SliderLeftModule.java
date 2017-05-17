@@ -1,13 +1,8 @@
 package com.smartagrodriver.core.di.modules;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.smartagrodriver.core.di.scopes.ActivityScope;
 import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
-import com.smartagrodriver.core.presentation.presenters.impl.MapSliderPresenterImpl;
-import com.smartagrodriver.core.threading.Executor;
-import com.smartagrodriver.core.threading.MainThread;
 
 import dagger.Module;
 import dagger.Provides;
@@ -22,5 +17,11 @@ public class SliderLeftModule {
 
     public SliderLeftModule(MapSliderPresenter.View sliderLeftView) {
         this.sliderLeftView = sliderLeftView;
+    }
+
+    @Provides
+    @ActivityScope
+    public MapSliderPresenter.View getSliderLeftView() {
+        return sliderLeftView;
     }
 }

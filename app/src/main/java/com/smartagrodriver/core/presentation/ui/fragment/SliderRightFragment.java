@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -20,11 +19,11 @@ import butterknife.OnClick;
 
 import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
+import com.smartagrodriver.core.di.components.DaggerSliderRightComponent;
 import com.smartagrodriver.core.di.components.SliderRightComponent;
 import com.smartagrodriver.core.di.modules.SliderRightModule;
 import com.smartagrodriver.core.presentation.presenters.MapPresenter;
 import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
-import com.smartagrodriver.core.presentation.ui.base.BaseActivity;
 
 /**
  * Created on 15.02.2017.
@@ -64,8 +63,8 @@ public class SliderRightFragment extends Fragment implements MapSliderPresenter.
         if (mComponent == null) {
             mComponent = DaggerSliderRightComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
-                    .mapModule(MapFragment.getMapComponent())
-                    .sliderModule(mModule)
+                    .mapModule(MapFragment.getMapModule())
+                    .sliderRightModule(mModule)
                     .build();
         }
 
@@ -83,10 +82,10 @@ public class SliderRightFragment extends Fragment implements MapSliderPresenter.
         mSeekBarZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(progress == 0){
+                if (progress == 0) {
                     progress++;
                 }
-                mMapPresenter.changeZoom(progress);
+                //mMapPresenter.changeZoom(progress);
             }
 
             @Override
@@ -102,7 +101,6 @@ public class SliderRightFragment extends Fragment implements MapSliderPresenter.
 
         return mRootView;
     }
-
 
 
     public void openCloseSlider() {
