@@ -55,7 +55,7 @@ public class SliderLeftFragment extends Fragment {
     @OnClick(R.id.button_open_close_left)
     public void openCloseSlider() {
         if (mIsSliderOpen) {
-            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -140);
+            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -100);
             ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
             ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 0);

@@ -40,7 +40,6 @@ public class PointerInteractorImpl extends AbstractInteractor implements Pointer
         mRepository = routeRepository;
     }
 
-    //TODO Pass machinery width
     @Override
     public void init(PointerInteractor.Callback callback, int fieldId, int machineryWidth) {
         mCallback = callback;
