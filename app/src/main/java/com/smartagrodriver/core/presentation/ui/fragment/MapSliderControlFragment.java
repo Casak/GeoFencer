@@ -88,9 +88,11 @@ public class MapSliderControlFragment extends Fragment {
         switch (mCurrentLeftSliderState) {
             case STATE_CLOSE:
                 mLeftSliderView.openPartially();
+                mCurrentLeftSliderState = STATE_OPEN_PART;
                 break;
             case STATE_OPEN_PART:
                 mLeftSliderView.openFully();
+                mCurrentLeftSliderState = STATE_OPEN_FULL;
                 break;
             default:
                 break;
@@ -102,9 +104,11 @@ public class MapSliderControlFragment extends Fragment {
         switch (mCurrentRightSliderState) {
             case STATE_CLOSE:
                 mRightSliderView.openPartially();
+                mCurrentRightSliderState = STATE_OPEN_PART;
                 break;
             case STATE_OPEN_PART:
                 mRightSliderView.openFully();
+                mCurrentRightSliderState = STATE_OPEN_FULL;
                 break;
             default:
                 break;
@@ -113,12 +117,14 @@ public class MapSliderControlFragment extends Fragment {
 
     @OnClick(R.id.button_close_left)
     public void closeLeftSlider() {
-        switch (mCurrentRightSliderState) {
+        switch (mCurrentLeftSliderState) {
             case STATE_OPEN_FULL:
                 mLeftSliderView.openPartially();
+                mCurrentLeftSliderState = STATE_OPEN_PART;
                 break;
             case STATE_OPEN_PART:
                 mLeftSliderView.close();
+                mCurrentLeftSliderState = STATE_CLOSE;
                 break;
             default:
                 break;
@@ -130,9 +136,11 @@ public class MapSliderControlFragment extends Fragment {
         switch (mCurrentRightSliderState) {
             case STATE_OPEN_FULL:
                 mRightSliderView.openPartially();
+                mCurrentRightSliderState = STATE_OPEN_PART;
                 break;
             case STATE_OPEN_PART:
                 mRightSliderView.close();
+                mCurrentRightSliderState = STATE_CLOSE;
                 break;
             default:
                 break;

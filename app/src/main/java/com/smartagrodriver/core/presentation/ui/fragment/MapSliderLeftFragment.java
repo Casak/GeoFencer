@@ -3,11 +3,17 @@ package com.smartagrodriver.core.presentation.ui.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.Polyline;
 
@@ -29,6 +35,8 @@ import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
 import com.smartagrodriver.core.storage.FieldRepositoryImpl;
 import com.smartagrodriver.core.threading.MainThread;
 
+import javax.inject.Inject;
+
 /**
  * Created on 15.02.2017.
  */
@@ -38,13 +46,16 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
     private static MapSliderLeftComponent mComponent;
     private static MapSliderLeftModule mModule;
 
+    @Inject
+    Context mContext;
     @BindView(R.id.button_navigation)
     ImageButton mButtonNavigation;
     @BindView(R.id.button_messages)
     ImageButton mButtonMessages;
 
     View mRootView;
-    boolean mIsSliderOpen;
+    Point mScreenSize;
+    int mBaseSliderSize;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,37 +79,20 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_map_slider_left, container, false);
 
-        mIsSliderOpen = true;
-
         ButterKnife.bind(this, mRootView);
+
+        Display display = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        mScreenSize = new Point();
+        display.getSize(mScreenSize);
 
         return mRootView;
     }
 
-    public void openCloseSlider() {
-        if (mIsSliderOpen) {
-            ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -100);
-            //ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", 0, -180);
-            ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
-            ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 0);
-            ObjectAnimator messagesAnimator = ObjectAnimator.ofFloat(mButtonMessages, "rotation", 0, 360);
-            ObjectAnimator messagesScaleAnimator = ObjectAnimator.ofFloat(mButtonMessages, "scaleY", 0);
-
-            AnimatorSet animSet = new AnimatorSet();
-            animSet.play(sliderAnimator)
-                    //       .with(openCloseAnimator)
-                    .with(navigationAnimator)
-                    .with(navigationScaleAnimator)
-                    .with(messagesAnimator)
-                    .with(messagesScaleAnimator);
-            animSet.start();
-
-
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_START);
-            mIsSliderOpen = false;
-        } else {
+    @Override
+    public void openPartially() {
+        float x = mRootView.getWidth();
+        if (x < mScreenSize.x/2) {
             ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", 0);
-            // ObjectAnimator openCloseAnimator = ObjectAnimator.ofFloat(mButtonOpenClose, "rotation", -180, 0);
             ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
             ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 1);
             ObjectAnimator messagesAnimator = ObjectAnimator.ofFloat(mButtonMessages, "rotation", 0, 360);
@@ -106,16 +100,39 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
 
             AnimatorSet animSet = new AnimatorSet();
             animSet.play(sliderAnimator)
-                    //.with(openCloseAnimator)
                     .with(navigationAnimator)
                     .with(navigationScaleAnimator)
                     .with(messagesAnimator)
                     .with(messagesScaleAnimator);
             animSet.start();
-
-            //mButtonOpenClose.setScaleType(ImageView.ScaleType.FIT_END);
-            mIsSliderOpen = true;
+        } else {
+            mRootView.setLayoutParams(new FrameLayout.LayoutParams(mBaseSliderSize, mScreenSize.y));
         }
+    }
+
+    @Override
+    public void openFully() {
+        if(mBaseSliderSize == 0) {
+            mBaseSliderSize = mRootView.getWidth();
+        }
+        mRootView.setLayoutParams(new FrameLayout.LayoutParams(mScreenSize.x/2, mScreenSize.y));
+    }
+
+    @Override
+    public void close() {
+        ObjectAnimator sliderAnimator = ObjectAnimator.ofFloat(mRootView, "x", -100);
+        ObjectAnimator navigationAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "rotation", 0, 360);
+        ObjectAnimator navigationScaleAnimator = ObjectAnimator.ofFloat(mButtonNavigation, "scaleY", 0);
+        ObjectAnimator messagesAnimator = ObjectAnimator.ofFloat(mButtonMessages, "rotation", 0, 360);
+        ObjectAnimator messagesScaleAnimator = ObjectAnimator.ofFloat(mButtonMessages, "scaleY", 0);
+
+        AnimatorSet animSet = new AnimatorSet();
+        animSet.play(sliderAnimator)
+                .with(navigationAnimator)
+                .with(navigationScaleAnimator)
+                .with(messagesAnimator)
+                .with(messagesScaleAnimator);
+        animSet.start();
     }
 
     //TODO Delete
@@ -170,20 +187,5 @@ public class MapSliderLeftFragment extends Fragment implements MapSliderPresente
 
     public static MapSliderLeftComponent getSliderLeftComponent() {
         return mComponent;
-    }
-
-    @Override
-    public void openPartially() {
-
-    }
-
-    @Override
-    public void openFully() {
-
-    }
-
-    @Override
-    public void close() {
-
     }
 }
