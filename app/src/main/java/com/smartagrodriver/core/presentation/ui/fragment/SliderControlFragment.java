@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.smartagrodriver.core.AndroidApplication;
 import com.smartagrodriver.core.R;
+import com.smartagrodriver.core.di.components.DaggerSliderComponent;
 import com.smartagrodriver.core.di.components.SliderComponent;
 import com.smartagrodriver.core.di.modules.SliderModule;
 
@@ -42,19 +44,18 @@ public class SliderControlFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-/*        if (mModule == null) {
+        if (mModule == null) {
             mModule = new SliderModule(this);
         }
 
         if (mComponent == null) {
-            mComponent = DaggerPointerComponent.builder()
+            mComponent = DaggerSliderComponent.builder()
                     .appComponent(AndroidApplication.getComponent())
-                    .activityModule(BaseActivity.getActivityModule())
                     .sliderModule(mModule)
                     .build();
         }
 
-        getSliderComponent().inject(this);*/
+        getSliderComponent().inject(this);
     }
 
     @Override
