@@ -24,6 +24,7 @@
     <dimen name="button_width">90dp</dimen>
     <dimen name="button_height">90dp</dimen>
     <dimen name="button_margin">10dp</dimen>
+    <dimen name="button_3d2d_padding_top">10dp</dimen>
 
     <!--LeftSlider-->
     <dimen name="text_values_size">32sp</dimen>

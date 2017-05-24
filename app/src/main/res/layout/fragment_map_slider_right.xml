@@ -87,6 +87,7 @@
         android:id="@+id/button_2d3d"
         android:layout_width="@dimen/button_2d3d_width"
         android:layout_height="@dimen/button_2d3d_height"
+        android:paddingTop="@dimen/button_3d2d_padding_top"
         android:layout_gravity="center_horizontal|center_vertical"
         android:background="@null"
         android:scaleType="fitCenter"

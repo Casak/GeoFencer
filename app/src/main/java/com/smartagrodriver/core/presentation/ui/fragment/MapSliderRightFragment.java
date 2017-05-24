@@ -4,7 +4,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -37,6 +39,9 @@ import com.smartagrodriver.core.presentation.presenters.MapSliderPresenter;
 
 public class MapSliderRightFragment extends Fragment implements MapSliderPresenter.View {
 
+    private static final int MAP_3D = 90;
+    private static final int MAP_2D = 0;
+
     private static MapSliderRightComponent mComponent;
     private static MapSliderRightModule mModule;
 
@@ -61,10 +66,13 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
     Point mScreenSize;
     int mBaseSliderSize;
     float mBaseSliderXPosition;
+    int mCurrentTilt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCurrentTilt = MAP_2D;
 
         if (mModule == null) {
             mModule = new MapSliderRightModule(this);
@@ -132,6 +140,7 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
         //TODO Fix first time usage misposition bug
         mRootView.setLayoutParams(new FrameLayout.LayoutParams(mScreenSize.x / 2, mScreenSize.y));
         mRootView.setX(mScreenSize.x / 2);
+        Log.d("TAG", mRootView.getX()+"");
     }
 
     @Override
@@ -165,6 +174,23 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
         mSeekBarZoom.incrementProgressBy(-1);
     }
 
+    @OnClick(R.id.button_2d3d)
+    public void on2d3dClicked() {
+        Resources resources = getResources();
+        switch (mCurrentTilt) {
+            case MAP_2D:
+                mCurrentTilt = MAP_3D;
+                mMapPresenter.changeTilt(MAP_3D);
+                mButton2d3d.setImageDrawable(resources.getDrawable(R.drawable.button_3d2d));
+                break;
+            case MAP_3D:
+                mCurrentTilt = MAP_2D;
+                mMapPresenter.changeTilt(MAP_2D);
+                mButton2d3d.setImageDrawable(resources.getDrawable(R.drawable.button_2d3d));
+                break;
+        }
+    }
+
 
     public static MapSliderRightModule getSliderRightModule() {
         return mModule;
@@ -174,7 +200,7 @@ public class MapSliderRightFragment extends Fragment implements MapSliderPresent
         return mComponent;
     }
 
-    class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
+    private class SeekBarListener implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (progress == 0) {
